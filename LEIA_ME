@@ -1,0 +1,26 @@
+doc/     contém documentação gerada com o Doxygen. A documentação que você pode
+         querer gerar deve ir para este diretório.
+
+include/ contém, depois da fase de 'make install', os arquivos headers (.h)
+         que declaram as estruturas de dados que você pode querer programar.
+	 Por exemplo, as pilhas e tabelas de símbolos acabarão sendo copiadas
+	 aqui. Dessa forma, um programa externo que queira usar essas estruturas
+	 de dados apenas deverá incluir os .h deste diretório.
+
+Makefile é o arquivo Makefile geral. Declara todas as variáveis de uso geral
+         para a compilação de Pico: compilador C, opções de compilação,
+	 localização dos diretórios, etc. Seus alvos basicamente chamam os
+	 arquivos Makefiles locais a cada sub-diretórios (src/Etapa1, etc...).
+	 'make install' efetua a cópia dos src/*/*.h em include/; a cópia
+	 dos src/*/*.o em objects/. 
+
+objects/ contém, depois da fase de 'make install', os arquivos objetos (.o)
+         resultando da compilação de seus programas. 
+	 Dessa forma, um programa externo que queira usar essas estruturas
+	 de dados apenas deverá ser compilado junto com os .o deste diretório.
+
+src/     contém 7 sub-diretórios chamados Etapa1, Etap2, ..., Etapa7. Todo o 
+         trabalho desenvolvido deverá se encontrar em um desses diretórios.
+	 Por enquanto, ver o src/Etapa1.
+
+Tests/   conterá aplicativos de testes.
