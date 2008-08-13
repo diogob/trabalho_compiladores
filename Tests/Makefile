@@ -5,7 +5,7 @@
 
 # A usar depois do 'make install' em src/Etapa1
 
-all: teste-stack
+all: teste-stack teste-symbol-table
 
 teste-stack: $(OBJ_DIR)/stack.o $(INC_DIR)/stack.h teste-stack.c
 	$(CC) $(CFLAGS) -o teste-stack $(OBJ_DIR)/stack.o -I$(INC_DIR) \
