@@ -1,7 +1,7 @@
 [Breakpoint 0]
 Enabled=true
-File=teste-stack.c
-Line=8
+File=/home/diogo/Desktop/Pico/Tests/teste-symbol-table.c
+Line=12
 Temporary=false
 
 [General]

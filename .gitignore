@@ -2,3 +2,4 @@ doc
 objects
 include
 *.o
+*.kdbgrc*

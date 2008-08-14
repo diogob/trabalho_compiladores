@@ -3,6 +3,8 @@
 #ifndef _SYMBOL_TABLE_H_
 #define _SYMBOL_TABLE_H_
 
+#define TAMANHO_TABELA 101
+
 #include <stdio.h>
 /**
  * Tipo abstrato das entradas na tabela de Hash. (Obs.: futuramente, os campos
@@ -24,9 +26,9 @@ typedef struct {
  * Cada elemento da tabela hash e uma lista encadeada para tratamento de colisao
  *
  */
-typedef struct {
+typedef struct symbol_list {
    entry_t* element;
-   entry_t* next;
+   struct symbol_list* next;
 } symbol_list;
 
 /** \brief Encapsulacao de um tipo abstrato que se chamara 'symbol_t'
@@ -91,5 +93,15 @@ int print_table(symbol_t table);
  * @return o numero de entradas na tabela.
  */
 int print_file_table(FILE* out, symbol_t table);
+
+/**
+ * \brief Mapeia char para int
+ *
+ * Faz um hash da chave executando uma serie de operacoes bitwise.
+ *
+ * @param key, a chave a ser mapeada.
+ * @return o inteiro resultante.
+ */
+int hashpjw(const void *key);
 
 #endif
