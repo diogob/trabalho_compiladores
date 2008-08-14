@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 
 #include "symbol_table.h"
@@ -84,6 +85,7 @@ int insert(symbol_t* table, entry_t* entry)
 			{
 				new_item = malloc(sizeof(symbol_list));
 				new_item->element = entry;
+				new_item->next = NULL;
 				list_item->next = new_item;
 				break;
 			}
@@ -95,12 +97,61 @@ int insert(symbol_t* table, entry_t* entry)
 
 int print_table(symbol_t table)
 {
-    // laço imprimindo
-    return 0;
+	return print_file_table(stdout, table);
 }
+
 int print_file_table(FILE* out, symbol_t table)
 {
-    return 0;
+	int indice;
+	int contador = 0;
+	entry_t* temp ;
+	symbol_t list_item ;
+	fprintf(out, "\nConteudo da tabela de symbolos:\n");
+	for(indice=0; indice < TAMANHO_TABELA; indice++)
+	{
+		temp = table[indice].element;
+		list_item = &(table[indice]);
+		if(temp != NULL){
+			fprintf(out, "--------------\nIndice: %d\n",indice);    
+			while(1)
+			{
+				// Encontrou o item
+				fprintf(out, "Elemento: %s\n",list_item->element->name);
+				contador++;
+				if(list_item->next == NULL)
+					break;
+				list_item = list_item->next;
+			}
+		}
+	}
+	fprintf(out, "\n");
+	return contador;
 }
 
+void free_list(symbol_t list)
+{
+	if(list->next != NULL)
+	{
+		free_list(list->next);
+		free(list->element);
+	}
+}
 
+void free_table(symbol_t* table)
+{
+	int indice;
+	int contador = 0;
+	entry_t* temp ;
+	symbol_t list_item;
+	for(indice = 0; indice < TAMANHO_TABELA; indice++)
+	{
+		if((*table)[indice].element != NULL)
+		{
+			list_item = &((*table)[indice]);
+			free_list(list_item);
+		}
+	}
+	// Zera toda a memoria alocada
+	memset(*table, 0, sizeof(symbol_list) * TAMANHO_TABELA);
+	free(*table);
+}

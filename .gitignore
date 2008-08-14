@@ -3,3 +3,4 @@ objects
 include
 *.o
 *.kdbgrc*
+*.swp

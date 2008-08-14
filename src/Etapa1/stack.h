@@ -5,14 +5,19 @@
 #define __STACK_H__
 
 
-/** \brief Aqui, voce deve completar a parte entre o 'typedef' e o 'stack'
- * para inserir sua implementacao da estrutura de dados abstrata de pilha.
+/** \brief Estrutura de pilha.
+ * Temos basicamente uma lista encadeada simples de ponteiros para void.
  */
 struct stack {
-	void* 			element;
-	struct stack* 	next;
+	void* 			element; 	/**< elemento da pilha. */
+	struct stack* 	next;		/**< proximo elemento da pilha. */
 };
 
+/** \brief Encapsulamento de uma pilha
+ *
+ * O tipo stack e um ponteiro para a estrutura stack.
+ *
+ */
 typedef struct stack* stack;
 
 /**  \brief Inicializar a pilha.
@@ -52,8 +57,8 @@ int empty(stack s) ;
  *         (O tipo do elemento é void *.)
  *
  * Empilha um elemento na pilha.
- * @param s, uma referencia sobre a pilha onde se deve inserir o elemento.
- * @param item, uma referencia sobre o elemento a ser inserido.
+ * @param s uma referencia sobre a pilha onde se deve inserir o elemento.
+ * @param item uma referencia sobre o elemento a ser inserido.
  * @return 0 se a insercao deu certo.
  */
 int push(stack* s, void* item) ;
@@ -62,7 +67,7 @@ int push(stack* s, void* item) ;
  *
  *  Desempilha o elemento no topo da pilha, e retorna-o. Remove este elemento 
  *  da pilha.
- *  @param s, um ponteiro sobre a pilha de onde se deve tirar um elemento.
+ *  @param s um ponteiro sobre a pilha de onde se deve tirar um elemento.
  *  @return o elemento que foi desempilhado, ou NULL se nao tinha como 
  *  desempilhar alguma coisa. 
  */
@@ -72,7 +77,7 @@ void* pop(stack* s) ;
  *
  *  Retorna um ponteiro sobre o elemento no topo da pilha. Nao remove este 
  *  elemento da pilha.
- *  @param s, a pilha de que se deve consultar o topo.
+ *  @param s a pilha de que se deve consultar o topo.
  *  @return o elemento, ou NULL se nao tinha nada no topo.
  */
 

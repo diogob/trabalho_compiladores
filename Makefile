@@ -1,6 +1,6 @@
 export
 # Localizacao do diretorio principal de Pico
-PICO_DIR   = /home/diogo/Desktop/Pico
+PICO_DIR   = /Users/diogo/Desktop/Pico-Denys-Diogo-etapa1
 
 # Localizacao dos arquivos headers:
 INC_DIR    = $(PICO_DIR)/include
