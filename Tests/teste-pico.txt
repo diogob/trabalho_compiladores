@@ -1,0 +1,16 @@
+
+main()
+{
+	int var_i, varii;
+	mint var_i;;;
+	double var_d;
+	float var_f;
+	char var_c;
+	char string[];
+
+	i = 10;
+	if( i == 10 )then
+		printf("teste 1");
+	else
+		printf("teste 2");
+}
