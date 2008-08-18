@@ -4,3 +4,5 @@ include
 *.o
 *.kdbgrc*
 *.swp
+Tests/teste-stack
+Tests/teste-symbol-table
