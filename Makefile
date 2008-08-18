@@ -24,7 +24,7 @@ CFLAGS     = -Wall -g
 # all: etapa1 etapa2 etapa3
 #   ou ainda, para compilar apenas a sexta etapa:
 # all: etapa6
-all: etapa1
+all: etapa2 etapa1 
 
 ############# ETAPA 1 ##########################
 DIR1    = $(SRC_DIR)/Etapa1
@@ -32,6 +32,14 @@ etapa1: $(DIR1)/stack.h $(DIR1)/symbol_table.h
 	cd $(DIR1) && $(MAKE) -w install
 
 test1: etapa1
+	cd $(PICO_DIR)/Tests && $(MAKE) -w
+
+DIR2    = $(SRC_DIR)/Etapa2
+
+etapa2: $(DIR2)/tokens.h $(DIR2)/scanner.l
+	cd $(DIR2) && $(MAKE) -w install
+
+test2: etapa2
 	cd $(PICO_DIR)/Tests && $(MAKE) -w
 
 clean:

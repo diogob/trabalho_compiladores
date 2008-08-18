@@ -6,3 +6,6 @@ include
 *.swp
 Tests/teste-stack
 Tests/teste-symbol-table
+Tests/pico.c
+Tests/pico
+src/Etapa2/pico
