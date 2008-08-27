@@ -59,7 +59,9 @@ branco		[ \t\n]
 "!"						{ return( NOT ) ; }
 {letra}{alphanum}*		{ return( IDF ); }
 {digito}+				{ VAL_INT = (int)strtol(yytext, (char **)NULL, 10); return(INT_LIT); }
-({digito}*\.{digito}+)	{ VAL_DOUBLE = strtod(yytext, (char **)NULL); return(F_LIT); }
+({digito}*\.{digito}+([Ee][+-]{digito}+)?)	{ VAL_DOUBLE = strtod(yytext, (char **)NULL); return(F_LIT); }
+.                     	{ printf("Erro lexical - caractere nao reconhecido: %c.\n", yytext[0]); /*exit(-1);*/ }
+
 %%
  /* Secao dos  Procedimentos auxiliares  */
 void get_token_name(int token, char *buffer)
@@ -140,12 +142,7 @@ int main(int argc, char* argv[])
 	int token;
 	char buff[10];
 
-	if (argc != 2) 
-	{
-		printf("uso: %s <input_file>. Try again!\n", argv[0]);
-		exit(-1);
-	}
-	yyin = fopen(argv[1], "r");
+	yyin = stdin;
 	if (!yyin) 
 	{
 		printf("Uso: %s <input_file>. Could not find %s. Try again!\n", 
