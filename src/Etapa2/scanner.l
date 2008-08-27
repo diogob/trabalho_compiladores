@@ -8,9 +8,11 @@
    
     /* este include eh importante... */
     #include "tokens.h"
+	#include "symbol_table.h"
 	/* Globais para valores de literais encontradas */
 	int VAL_INT;
 	double VAL_DOUBLE;
+	symbol_t stable = NULL;
 %}
  
   /* Definicoes regulares */
@@ -57,7 +59,14 @@ branco		[ \t\n]
 "&&"					{ return( AND ) ; }
 "||"					{ return( OR ) ; }
 "!"						{ return( NOT ) ; }
-{letra}{alphanum}*		{ return( IDF ); }
+{letra}{alphanum}*		{
+							entry_t *idf;
+							idf = malloc(sizeof(entry_t));
+							idf->name = malloc(sizeof(char) * (strlen(yytext) + 1));
+							strcpy(idf->name, yytext);
+							insert(&stable, idf);
+							return( IDF ); 
+						}
 {digito}+				{ VAL_INT = (int)strtol(yytext, (char **)NULL, 10); return(INT_LIT); }
 ({digito}*\.{digito}+([Ee][+-]{digito}+)?)	{ VAL_DOUBLE = strtod(yytext, (char **)NULL); return(F_LIT); }
 .                     	{ printf("Erro lexical - caractere nao reconhecido: %c.\n", yytext[0]); /*exit(-1);*/ }
@@ -141,7 +150,7 @@ int main(int argc, char* argv[])
 {
 	int token;
 	char buff[10];
-
+	init_table(&stable);
 	yyin = stdin;
 	if (!yyin) 
 	{
@@ -150,10 +159,11 @@ int main(int argc, char* argv[])
 		exit(-1);
 	}
 	/* Laco chamando analisador lexical do FLEX */
-	while (token=yylex()) 
+	while ((token=yylex())) 
 	{
 		get_token_name(token, buff);
 		printf("  %s: %s\n", buff, yytext);
 	}
+	print_table(stable);
 	return(0);
 }
