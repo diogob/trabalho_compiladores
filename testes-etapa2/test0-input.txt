@@ -1,0 +1,17 @@
+int
+double
+float
+char
+'
+"
+<=
+>=
+==
+!=
+&&
+||
+!
+if
+then
+else
+while

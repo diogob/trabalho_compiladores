@@ -2026,6 +2026,7 @@ void get_token_name(int token, char *buffer)
 }
 /* Para redefinir a entrada padrao do LEX. */
 extern FILE *yyin;
+/*
 int main(int argc, char* argv[])
 {
 	int token;
@@ -2038,7 +2039,6 @@ int main(int argc, char* argv[])
 		argv[0], argv[1]);
 		exit(-1);
 	}
-	/* Laco chamando analisador lexical do FLEX */
 	while ((token=yylex())) 
 	{
 		get_token_name(token, buff);
@@ -2047,4 +2047,5 @@ int main(int argc, char* argv[])
 	print_table(stable);
 	return(0);
 }
+*/
 
