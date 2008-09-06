@@ -956,7 +956,7 @@ YY_RULE_SETUP
 case 37:
 YY_RULE_SETUP
 #line 72 "scanner.l"
-{ printf("Erro lexical - caractere nao reconhecido: %c.\n", yytext[0]); /*exit(-1);*/ }
+{ printf("Erro lexical - caractere nao reconhecido: %c.\n", yytext[0]); /* exit(-1); */ }
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
