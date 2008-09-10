@@ -1,6 +1,6 @@
-Simbolo		&	'('	')'	'*'	'+'	'-'	'/'	F_LIT		IDF	   INT_LIT		$
-E			(E)X					       F_LIT X         IDF X      INT_LIT X
-X		&   			'*'E	'+'E	'-'E	'/'E	
+Simbolo		&	'('	')'	'*'	'+'	'-'	'/'	F_LIT		IDF	INT_LIT		$
+E		0	1(E)X	0	0	0	0	0       4F_LIT X        2IDF X	3INT_LIT X	0
+X		9&   	0	0	7'*'E	5'+'E	6'-'E	8'/'E	0		0	0		0
 
 
 

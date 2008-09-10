@@ -4,7 +4,17 @@
  * A escolha dos valores constantes eh totalmente arbitraria.
  * Cada valor deve ser distinto...
  */
-#define IDF 	100
+#define VAZIO 		1
+#define OPEN_PAR 	2
+#define CLOSE_PAR 	3
+#define MUL 		4
+#define ADD 		5
+#define SUB 		6
+#define DIV 		7
+#define F_LIT		8
+#define IDF 		9
+#define INT_LIT		10
+
 #define DIG 	101
 #define OPCMP 	102
 #define INT 	103
@@ -24,6 +34,4 @@
 #define THEN	117
 #define ELSE	118
 #define WHILE	119
-#define INT_LIT	120
-#define F_LIT	121
-
+#define BRANCO 	120

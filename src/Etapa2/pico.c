@@ -2026,6 +2026,7 @@ void get_token_name(int token, char *buffer)
 }
 /* Para redefinir a entrada padrao do LEX. */
 extern FILE *yyin;
+
 /*
 int main(int argc, char* argv[])
 {

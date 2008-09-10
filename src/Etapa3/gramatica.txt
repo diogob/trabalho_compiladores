@@ -1,11 +1,10 @@
-E -> ’(’ E ’)’ X
-E -> IDF X
-E -> INT_LIT X
-E -> F_LIT X
-
-X -> ’+’ E
-X -> ’-’ E
-X -> ’*’ E
-X -> ’/’ E
-X ->  &
+1) E -> ’(’ E ’)’ X
+2) E -> IDF X
+3) E -> INT_LIT X
+4) E -> F_LIT X
+5) X -> ’+’ E
+6) X -> ’-’ E
+7) X -> ’*’ E
+8) X -> ’/’ E
+9) X ->  &
 

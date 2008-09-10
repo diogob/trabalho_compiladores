@@ -34,17 +34,17 @@ branco		[ \t\n]
 "double"		 		{ return( DOUBLE ); }
 "float"			 		{ return( FLOAT ); }
 "char"			 		{ return( CHAR ); }
-{branco}+				{ printf("BRANCO"); }
-"*"						{ return( '*' ) ; }
-"+"						{ return( '+' ) ; }
-"-"						{ return( '-' ) ; }
-"/"						{ return( '/' ) ; }
+{branco}+				{ return( BRANCO ); }
+"*"						{ return( MUL ) ; }
+"+"						{ return( ADD ) ; }
+"-"						{ return( SUB ) ; }
+"/"						{ return( DIV ) ; }
 ","						{ return( ',' ) ; }
 ";"						{ return( ';' ) ; }
 "'"						{ return( QUOTE ) ; }
 "\""					{ return( DQUOTE ) ; }
-"("						{ return( '(' ) ; }
-")"						{ return( ')' ) ; }
+"("						{ return( OPEN_PAR ) ; }
+")"						{ return( CLOSE_PAR ) ; }
 "["						{ return( '[' ) ; }
 "]"						{ return( ']' ) ; }
 "{"						{ return( '{' ) ; }
@@ -146,6 +146,7 @@ void get_token_name(int token, char *buffer)
 }
 /* Para redefinir a entrada padrao do LEX. */
 extern FILE *yyin;
+
 /*
 int main(int argc, char* argv[])
 {
