@@ -1,5 +1,5 @@
-#include "pico.c"
 #include "stack.h"
+#include "pico.c"
 
 /*
 	Definicao de simbolos nao terminais
@@ -48,15 +48,25 @@ if entrada[index_entrada]==vazio "ACEITA"
 	int token = 0;
 	int tabela[2][11] = {{0, 1, 0, 0, 0, 0, 0, 4, 2, 3, 0},{9, 0, 0, 7, 5, 6, 8, 0, 0, 0, 0}};
 	stack pilha;
-	yyin = fopen(argv[1], "r");
+	
+	yyin = stdin;
 	if (!yyin) 
 	{
-		printf("Uso: %s <input_file>. Could not find %s. Try again!\n", argv[0], argv[1]);
+		printf("Uso: %s <input_file>. Could not find %s. Try again!\n", 
+		argv[0], argv[1]);
 		exit(-1);
 	}
+	while ((token=yylex())) 
+	{
+		printf("%s\n", yytext);
+	}
+	exit(0);
 
+	printf("Iniciando dados.\n");
 	init_stack(&pilha);
+	printf("Push.\n");
 	push(&pilha, (void *) &START);
+	printf("Le o primeiro token.\n");
 	token = yylex();
 	if(token)
 	{

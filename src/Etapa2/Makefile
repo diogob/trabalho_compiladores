@@ -4,7 +4,7 @@ install: pico
 
 pico: scanner.l tokens.h
 	flex -o pico.c scanner.l; \
-#	gcc $(CFLAGS) -I$(INC_DIR) -o pico $(OBJ_DIR)/symbol_table.o pico.c 
+	gcc $(CFLAGS) -I$(INC_DIR) -o pico $(OBJ_DIR)/symbol_table.o pico.c 
 
 clean:
 	/bin/rm -f pico pico.c

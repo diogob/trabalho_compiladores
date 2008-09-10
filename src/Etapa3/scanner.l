@@ -9,6 +9,7 @@
     /* este include eh importante... */
     #include "tokens.h"
 	#include "symbol_table.h"
+	#include "stack.h"
 	/* Globais para valores de literais encontradas */
 	int VAL_INT;
 	double VAL_DOUBLE;
@@ -149,22 +150,110 @@ extern FILE *yyin;
 
 int main(int argc, char* argv[])
 {
-	int token;
+	const int E = -1, X = -2, START = E;
+	int* simbolo = NULL;
+	int tabela[2][11] = {{0, 1, 0, 0, 0, 0, 0, 4, 2, 3, 0},{9, 0, 0, 7, 5, 6, 8, 0, 0, 0, 0}};
+	stack pilha;
+
+	int token, producao;
 	char buff[10];
 	init_table(&stable);
-	yyin = stdin;
+	yyin = fopen(argv[1], "r");
 	if (!yyin) 
 	{
 		printf("Uso: %s <input_file>. Could not find %s. Try again!\n", 
 		argv[0], argv[1]);
 		exit(-1);
 	}
+	
+	printf("Iniciando dados.\n");
+	init_stack(&pilha);
+	printf("Push.\n");
+	push(&pilha, (void *) &START);
+	printf("Le o primeiro token.\n");
+	token = yylex();
+	if(token)
+	{
+		while(!empty(pilha))
+		{
+			simbolo = (int *) pop(&pilha);
+			printf("Desempilhando: %i\n", *simbolo);
+			if(*simbolo == E || *simbolo == X)
+			{
+				producao = tabela[(abs(*simbolo) - 1)][(token - 1)];
+				printf("tabela[%i][%i] = %i\n", (abs(*simbolo) - 1), (token - 1), producao);
+				if(producao)
+				{
+					printf("Empilha %i\n", producao);
+					switch(producao)
+					{
+					case 1:
+						//) E -> ’(’ E ’)’ X
+						break;
+					case 2:
+						//) E -> IDF X
+						break;
+					case 3:
+						//) E -> INT_LIT X
+						break;
+					case 4:
+						//) E -> F_LIT X
+						break;
+					case 5:
+						//) X -> ’+’ E
+						break;
+					case 6:
+						//) X -> ’-’ E
+						break;
+					case 7:
+						//) X -> ’*’ E
+						break;
+					case 8:
+						//) X -> ’/’ E
+						break;
+					case 9:
+						//) X ->  &
+						break;
+					}
+					// empilha cada_elemento_da_producao
+				}
+				else
+				{
+					printf("Erro sintatico.");
+					exit(-1);
+				}
+			}
+			else
+			{
+				if(*simbolo == token)
+				{
+					token = yylex();
+				}
+				else
+				{
+					printf("Erro sintatico.");
+					exit(-1);
+				}
+			}
+		}
+	}
+	else
+	{
+		printf("Entrada vazia.\n");
+	}
+	if(!yylex())
+	{
+		printf("Aceita.\n");
+	}
+
+	/*
 	while ((token=yylex())) 
 	{
 		get_token_name(token, buff);
 		printf("  %s: %s\n", buff, yytext);
 	}
 	print_table(stable);
+	*/
 	return(0);
 }
 

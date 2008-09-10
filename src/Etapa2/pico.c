@@ -809,27 +809,27 @@ case 9:
 /* rule 9 can match eol */
 YY_RULE_SETUP
 #line 37 "scanner.l"
-{ printf("BRANCO"); }
+{ return( BRANCO ); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 38 "scanner.l"
-{ return( '*' ) ; }
+{ return( MUL ) ; }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
 #line 39 "scanner.l"
-{ return( '+' ) ; }
+{ return( ADD ) ; }
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
 #line 40 "scanner.l"
-{ return( '-' ) ; }
+{ return( SUB ) ; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 41 "scanner.l"
-{ return( '/' ) ; }
+{ return( DIV ) ; }
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
@@ -854,12 +854,12 @@ YY_RULE_SETUP
 case 18:
 YY_RULE_SETUP
 #line 46 "scanner.l"
-{ return( '(' ) ; }
+{ return( OPEN_PAR ) ; }
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
 #line 47 "scanner.l"
-{ return( ')' ) ; }
+{ return( CLOSE_PAR ) ; }
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
@@ -2027,7 +2027,6 @@ void get_token_name(int token, char *buffer)
 /* Para redefinir a entrada padrao do LEX. */
 extern FILE *yyin;
 
-/*
 int main(int argc, char* argv[])
 {
 	int token;
@@ -2048,5 +2047,5 @@ int main(int argc, char* argv[])
 	print_table(stable);
 	return(0);
 }
-*/
+
 
