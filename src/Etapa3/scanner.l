@@ -152,7 +152,7 @@ int main(int argc, char* argv[])
 {
 	const int E = -1, X = -2, START = E, TVAZIO = VAZIO, TOPEN_PAR = OPEN_PAR, TCLOSE_PAR = CLOSE_PAR, TMUL = MUL, TADD = ADD, TSUB = SUB, TDIV = DIV, TF_LIT = F_LIT, TIDF = IDF, TINT_LIT = INT_LIT;
 	int* simbolo = NULL;
-	int tabela[2][11] = {{0, 1, 0, 0, 0, 0, 0, 4, 2, 3, 0},{9, 0, 0, 7, 5, 6, 8, 0, 0, 0, 0}};
+	int tabela[2][11] = {{1, 0, 0, 0, 0, 0, 4, 2, 3, 0},{0, TVAZIO, 7, 5, 6, 8, 0, 0, 0, TVAZIO}};
 	stack pilha;
 
 	int token, producao;
@@ -250,7 +250,8 @@ int main(int argc, char* argv[])
 					token = yylex();
 					if(!token)
 					{
-						token = 11;
+						// Sinaliza o fim do arquivo
+						token = TEOF;
 					}
 				}
 				else

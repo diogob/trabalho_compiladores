@@ -8,3 +8,6 @@
 8) X -> ’/’ E
 9) X ->  &
 
+Simbolo			First					Follow
+E		{ F_LIT, IDF, INT_LIT, '(' }		{ $, ')' } u first x
+X		{ &, '*', '+', '-', '/' } 			{ $, ')' }

@@ -4,16 +4,17 @@
  * A escolha dos valores constantes eh totalmente arbitraria.
  * Cada valor deve ser distinto...
  */
-#define VAZIO 		1
-#define OPEN_PAR 	2
-#define CLOSE_PAR 	3
-#define MUL 		4
-#define ADD 		5
-#define SUB 		6
-#define DIV 		7
-#define F_LIT		8
-#define IDF 		9
-#define INT_LIT		10
+#define OPEN_PAR 	1
+#define CLOSE_PAR 	2
+#define MUL 		3
+#define ADD 		4
+#define SUB 		5
+#define DIV 		6
+#define F_LIT		7
+#define IDF 		8
+#define INT_LIT		9
+#define TEOF		10
+#define VAZIO 		11
 
 #define DIG 	101
 #define OPCMP 	102
