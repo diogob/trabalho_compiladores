@@ -42,7 +42,7 @@ test2: etapa2
 	cd $(PICO_DIR)/Tests && $(MAKE) -w
 
 DIR3    = $(SRC_DIR)/Etapa3
-etapa3: $(DIR3)/pico_ll1.c
+etapa3: $(DIR3)/pico.c
 	cd $(DIR3) && $(MAKE) -w install
 
 clean:
