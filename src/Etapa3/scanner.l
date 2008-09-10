@@ -35,7 +35,7 @@ branco		[ \t\n]
 "double"		 		{ return( DOUBLE ); }
 "float"			 		{ return( FLOAT ); }
 "char"			 		{ return( CHAR ); }
-{branco}+				{ return( BRANCO ); }
+{branco}+				{ }
 "*"						{ return( MUL ) ; }
 "+"						{ return( ADD ) ; }
 "-"						{ return( SUB ) ; }
@@ -150,7 +150,7 @@ extern FILE *yyin;
 
 int main(int argc, char* argv[])
 {
-	const int E = -1, X = -2, START = E;
+	const int E = -1, X = -2, START = E, TVAZIO = VAZIO, TOPEN_PAR = OPEN_PAR, TCLOSE_PAR = CLOSE_PAR, TMUL = MUL, TADD = ADD, TSUB = SUB, TDIV = DIV, TF_LIT = F_LIT, TIDF = IDF, TINT_LIT = INT_LIT;
 	int* simbolo = NULL;
 	int tabela[2][11] = {{0, 1, 0, 0, 0, 0, 0, 4, 2, 3, 0},{9, 0, 0, 7, 5, 6, 8, 0, 0, 0, 0}};
 	stack pilha;
@@ -184,42 +184,62 @@ int main(int argc, char* argv[])
 				printf("tabela[%i][%i] = %i\n", (abs(*simbolo) - 1), (token - 1), producao);
 				if(producao)
 				{
-					printf("Empilha %i\n", producao);
+					printf("Empilha producao %i\n", producao);
 					switch(producao)
 					{
 					case 1:
 						//) E -> ’(’ E ’)’ X
+						push(&pilha, (void *) &X);
+						push(&pilha, (void *) &TCLOSE_PAR);
+						push(&pilha, (void *) &E);
+						push(&pilha, (void *) &TOPEN_PAR);
+
 						break;
 					case 2:
 						//) E -> IDF X
+						push(&pilha, (void *) &X);
+						push(&pilha, (void *) &TIDF);
 						break;
 					case 3:
 						//) E -> INT_LIT X
+						push(&pilha, (void *) &X);
+						push(&pilha, (void *) &TINT_LIT);
 						break;
 					case 4:
 						//) E -> F_LIT X
+						push(&pilha, (void *) &X);
+						push(&pilha, (void *) &TF_LIT);
 						break;
 					case 5:
 						//) X -> ’+’ E
+						push(&pilha, (void *) &E);
+						push(&pilha, (void *) &TADD);
 						break;
 					case 6:
 						//) X -> ’-’ E
+						push(&pilha, (void *) &E);
+						push(&pilha, (void *) &TSUB);
 						break;
 					case 7:
 						//) X -> ’*’ E
+						push(&pilha, (void *) &E);
+						push(&pilha, (void *) &TMUL);
 						break;
 					case 8:
 						//) X -> ’/’ E
+						push(&pilha, (void *) &E);
+						push(&pilha, (void *) &TDIV);
 						break;
 					case 9:
 						//) X ->  &
+						push(&pilha, (void *) &TVAZIO);
 						break;
 					}
 					// empilha cada_elemento_da_producao
 				}
 				else
 				{
-					printf("Erro sintatico.");
+					printf("Erro sintatico 1.");
 					exit(-1);
 				}
 			}
@@ -228,10 +248,14 @@ int main(int argc, char* argv[])
 				if(*simbolo == token)
 				{
 					token = yylex();
+					if(!token)
+					{
+						token = 11;
+					}
 				}
 				else
 				{
-					printf("Erro sintatico.");
+					printf("Erro sintatico 2.");
 					exit(-1);
 				}
 			}
