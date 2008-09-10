@@ -1,0 +1,9 @@
+Simbolo		&	'('	')'	'*'	'+'	'-'	'/'	F_LIT		IDF	   INT_LIT		$
+E			(E)X					       F_LIT X         IDF X      INT_LIT X
+X		&   			'*'E	'+'E	'-'E	'/'E	
+
+
+
+Simbolo			First					Follow
+E		{ F_LIT, IDF, INT_LIT, '(', ')' }		{ $, ')' }
+X		{ &, '*', '+', '-', '/' } 			{ $, ')' }

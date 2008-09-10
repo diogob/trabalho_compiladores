@@ -35,12 +35,15 @@ test1: etapa1
 	cd $(PICO_DIR)/Tests && $(MAKE) -w
 
 DIR2    = $(SRC_DIR)/Etapa2
-
 etapa2: $(DIR2)/tokens.h $(DIR2)/scanner.l
 	cd $(DIR2) && $(MAKE) -w install
 
 test2: etapa2
 	cd $(PICO_DIR)/Tests && $(MAKE) -w
+
+DIR3    = $(SRC_DIR)/Etapa3
+etapa3: $(DIR3)/pico_ll1.c
+	cd $(DIR3) && $(MAKE) -w install
 
 clean:
 	rm -f $(INC_DIR)/* $(OBJ_DIR)/* ; \
