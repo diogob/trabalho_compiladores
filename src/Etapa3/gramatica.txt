@@ -9,5 +9,5 @@
 9) X ->  &
 
 Simbolo			First					Follow
-E		{ F_LIT, IDF, INT_LIT, '(' }		{ $, ')' } u first x
+E		{ F_LIT, IDF, INT_LIT, '(' }		{ $, ')' }
 X		{ &, '*', '+', '-', '/' } 			{ $, ')' }

@@ -73,90 +73,27 @@ branco		[ \t\n]
 .                     	{ printf("Erro lexical - caractere nao reconhecido: %c.\n", yytext[0]); /* exit(-1); */ }
 
 %%
+
  /* Secao dos  Procedimentos auxiliares  */
-void get_token_name(int token, char *buffer)
-{
-	strcpy(buffer, "\0");
-	switch(token)
-	{
-		case IDF:
-			strcpy(buffer, "IDF");
-			break;
-		case INT:
-			strcpy(buffer, "INT");
-			break;
-		case DOUBLE:
-			strcpy(buffer, "DOUBLE");
-			break;
-		case FLOAT:
-			strcpy(buffer, "FLOAT");
-			break;
-		case CHAR:
-			strcpy(buffer, "CHAR");
-			break;
-		case QUOTE:
-			strcpy(buffer, "QUOTE");
-			break;
-		case DQUOTE:
-			strcpy(buffer, "DQUOTE");
-			break;
-		case LE:
-			strcpy(buffer, "LE");
-			break;
-		case GE:
-			strcpy(buffer, "GE");
-			break;
-		case EQ:
-			strcpy(buffer, "EQ");
-			break;
-		case NE:
-			strcpy(buffer, "NE");
-			break;
-		case AND:
-			strcpy(buffer, "AND");
-			break;
-		case OR:
-			strcpy(buffer, "OR");
-			break;
-		case NOT:
-			strcpy(buffer, "NOT");
-			break;
-		case IF:
-			strcpy(buffer, "IF");
-			break;
-		case THEN:
-			strcpy(buffer, "THEN");
-			break;
-		case ELSE:
-			strcpy(buffer, "ELSE");
-			break;
-		case WHILE:
-			strcpy(buffer, "WHILE");
-			break;
-		case INT_LIT:
-			strcpy(buffer, "INT_LIT");
-			break;
-		case F_LIT:
-			strcpy(buffer, "F_LIT");
-			break;
-		default:
-			buffer[0] = token;
-			buffer[1] = '\0';
-			break;
-	}
-}
+
 /* Para redefinir a entrada padrao do LEX. */
 extern FILE *yyin;
 
 int main(int argc, char* argv[])
 {
+	/*
+	Criamos constantes para podermos usar ponteiros para os valores
+	*/
 	const int E = -1, X = -2, START = E, TVAZIO = VAZIO, TOPEN_PAR = OPEN_PAR, TCLOSE_PAR = CLOSE_PAR, TMUL = MUL, TADD = ADD, TSUB = SUB, TDIV = DIV, TF_LIT = F_LIT, TIDF = IDF, TINT_LIT = INT_LIT;
 	int* simbolo = NULL;
+
+	/*
+	A tabela de parse LL1 foi codificada como um array bidimensional
+	*/
 	int tabela[2][11] = {{1, 0, 0, 0, 0, 0, 4, 2, 3, 0},{0, TVAZIO, 7, 5, 6, 8, 0, 0, 0, TVAZIO}};
 	stack pilha;
 
 	int token, producao;
-	char buff[10];
 	init_table(&stable);
 	yyin = fopen(argv[1], "r");
 	if (!yyin) 
@@ -166,25 +103,31 @@ int main(int argc, char* argv[])
 		exit(-1);
 	}
 	
-	printf("Iniciando dados.\n");
+	//printf("Iniciando dados.\n");
 	init_stack(&pilha);
-	printf("Push.\n");
+	//printf("Push.\n");
 	push(&pilha, (void *) &START);
-	printf("Le o primeiro token.\n");
+	//printf("Le o primeiro token.\n");
 	token = yylex();
 	if(token)
 	{
 		while(!empty(pilha))
 		{
 			simbolo = (int *) pop(&pilha);
-			printf("Desempilhando: %i\n", *simbolo);
+			//printf("Desempilhando: %i\n", *simbolo);
+			/* Caso seja um simbolo nao terminal */
 			if(*simbolo == E || *simbolo == X)
 			{
+				/* 
+				Mapeamos o valor do simbolo e do token para enderecos no array 
+				e buscamos a producao que tambem eh codificada com um inteiro
+				*/
 				producao = tabela[(abs(*simbolo) - 1)][(token - 1)];
-				printf("tabela[%i][%i] = %i\n", (abs(*simbolo) - 1), (token - 1), producao);
+				//printf("tabela[%i][%i] = %i\n", (abs(*simbolo) - 1), (token - 1), producao);
 				if(producao)
 				{
-					printf("Empilha producao %i\n", producao);
+					//printf("Empilha producao %i\n", producao);
+					/* empilha cada elemento da producao */
 					switch(producao)
 					{
 					case 1:
@@ -235,28 +178,28 @@ int main(int argc, char* argv[])
 						push(&pilha, (void *) &TVAZIO);
 						break;
 					}
-					// empilha cada_elemento_da_producao
 				}
 				else
 				{
-					printf("Erro sintatico 1.");
+					printf("ERROR");
 					exit(-1);
 				}
 			}
 			else
 			{
+				/* Quando o simbolo da pilha foi lido da entrada avancamos a leitura */
 				if(*simbolo == token)
 				{
 					token = yylex();
 					if(!token)
 					{
-						// Sinaliza o fim do arquivo
+						/* Sinaliza o fim do arquivo quando o yylex nao encontrar nada */
 						token = TEOF;
 					}
 				}
 				else
 				{
-					printf("Erro sintatico 2.");
+					printf("ERROR");
 					exit(-1);
 				}
 			}
@@ -264,21 +207,13 @@ int main(int argc, char* argv[])
 	}
 	else
 	{
-		printf("Entrada vazia.\n");
+		printf("ERROR");
+		exit(-1);
 	}
 	if(!yylex())
 	{
-		printf("Aceita.\n");
+		printf("OKAY");
 	}
-
-	/*
-	while ((token=yylex())) 
-	{
-		get_token_name(token, buff);
-		printf("  %s: %s\n", buff, yytext);
-	}
-	print_table(stable);
-	*/
 	return(0);
 }
 
