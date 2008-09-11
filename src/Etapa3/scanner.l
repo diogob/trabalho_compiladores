@@ -84,7 +84,20 @@ int main(int argc, char* argv[])
 	/*
 	Criamos constantes para podermos usar ponteiros para os valores
 	*/
-	const int E = -1, X = -2, START = E, TVAZIO = VAZIO, TOPEN_PAR = OPEN_PAR, TCLOSE_PAR = CLOSE_PAR, TMUL = MUL, TADD = ADD, TSUB = SUB, TDIV = DIV, TF_LIT = F_LIT, TIDF = IDF, TINT_LIT = INT_LIT;
+	const int E = -1;			
+	const int X = -2;
+	const int START = E;			
+	const int TOPEN_PAR = OPEN_PAR;		
+	const int TCLOSE_PAR = CLOSE_PAR;	
+	const int TMUL = MUL;			
+	const int TADD = ADD;			
+	const int TSUB = SUB;			
+	const int TDIV = DIV;			
+	const int TF_LIT = F_LIT;		
+	const int TIDF = IDF;			
+	const int TINT_LIT = INT_LIT;		
+	const int TVAZIO = VAZIO;		
+
 	int* simbolo = NULL;
 
 	/*
