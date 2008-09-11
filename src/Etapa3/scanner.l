@@ -70,7 +70,7 @@ branco		[ \t\n]
 						}
 {digito}+				{ VAL_INT = (int)strtol(yytext, (char **)NULL, 10); return(INT_LIT); }
 ({digito}*\.{digito}+([Ee][+-]{digito}+)?)	{ VAL_DOUBLE = strtod(yytext, (char **)NULL); return(F_LIT); }
-.                     	{ printf("Erro lexical - caractere nao reconhecido: %c.\n", yytext[0]); /* exit(-1); */ }
+.                     	{ printf("ERROR"); exit(-1); }
 
 %%
 
