@@ -24,7 +24,7 @@ CFLAGS     = -Wall -g
 # all: etapa1 etapa2 etapa3
 #   ou ainda, para compilar apenas a sexta etapa:
 # all: etapa6
-all: etapa2 etapa1 
+all: etapa3 etapa2 etapa1 
 
 ############# ETAPA 1 ##########################
 DIR1    = $(SRC_DIR)/Etapa1
@@ -44,6 +44,17 @@ test2: etapa2
 DIR3    = $(SRC_DIR)/Etapa3
 etapa3: $(DIR3)/pico.c
 	cd $(DIR3) && $(MAKE) -w install
+
+DIR_TESTE2    = $(PICO_DIR)/testes-etapa2
+teste2: $(PICO_DIR)/testes-etapa2/pico.c
+	cd $(DIR_TESTE2) && $(MAKE)
+
+DIR4    = $(SRC_DIR)/Etapa4
+etapa4: $(DIR4)/tokens.h $(DIR4)/scanner.l
+	cd $(DIR4) && $(MAKE) -w install
+
+test4: etapa4
+	cd $(PICO_DIR)/Tests && $(MAKE) -w
 
 clean:
 	rm -f $(INC_DIR)/* $(OBJ_DIR)/* ; \

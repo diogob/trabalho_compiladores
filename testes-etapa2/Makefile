@@ -13,12 +13,12 @@ all: $(alvos)
 # Cada um dos .o em $(objects) depende de de seu .c, de pico.c e de tokens.h
 # e eh compilador a partir do .c tranquilamente:
 # (Inserir um -I PICO_DIR/include...)
-$(objects): %.o : %.c 
-	$(CC) -c $(CFLAGS) -I../src/Etapa2/ -I../include/ $< -o $@
+$(objects): %.o : %.c pico.c $(INC_DIR)/tokens.h 
+	$(CC) -c $(CFLAGS) -I$(INC_DIR) $< -o $@
 
 # regra usada para compilar o executavel a partir do .o
 $(alvos): % : %.o
-	$(CC) $(LDFLAGS) -o $@ ../objects/symbol_table.o $<
+	$(CC) $(LDFLAGS) -o $@ $(OBJ_DIR)/symbol_table.o $<
 
 clean:
 	rm -f $(objects) $(alvos)

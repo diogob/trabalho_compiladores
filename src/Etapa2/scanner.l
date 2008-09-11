@@ -138,6 +138,27 @@ void get_token_name(int token, char *buffer)
 		case F_LIT:
 			strcpy(buffer, "F_LIT");
 			break;
+		case OPEN_PAR:
+			strcpy(buffer, "OPEN_PAR");
+			break;
+		case CLOSE_PAR:
+			strcpy(buffer, "CLOSE_PAR");
+			break;
+		case MUL: 		
+			strcpy(buffer, "MUL");
+			break;
+		case ADD: 		
+			strcpy(buffer, "ADD");
+			break;
+		case SUB: 		
+			strcpy(buffer, "SUB");
+			break;
+		case DIV: 		
+			strcpy(buffer, "DIV");
+			break;
+		case BRANCO: 		
+			strcpy(buffer, "BRANCO");
+			break;
 		default:
 			buffer[0] = token;
 			buffer[1] = '\0';
