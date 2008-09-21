@@ -35,3 +35,6 @@
 #define ELSE	118
 #define WHILE	119
 #define BRANCO 	120
+#define END	121
+#define TRUE	122
+#define FALSE	123

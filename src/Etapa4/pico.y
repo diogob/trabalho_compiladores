@@ -6,7 +6,7 @@
   #include <stdio.h>
 %}
 
-%token IDF 
+%token IDF
  /* A completar com seus tokens - compilar com 'yacc -d' */
 
 %%
@@ -23,7 +23,7 @@ comando:
 %%
  /* A partir daqui, insere-se qlqer codigo C necessario.
   */
-#include "lex.yy.c"   /* Para poder usar o scanner da Etapa 2 */
+#include "lex.yy.c"   /* Para poder usar o scanner */
 
 char* progname;
 int lineno;

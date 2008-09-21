@@ -34,6 +34,10 @@ branco		[ \t\n]
 "double"		 		{ return( DOUBLE ); }
 "float"			 		{ return( FLOAT ); }
 "char"			 		{ return( CHAR ); }
+":"   					{return(':');}
+"end"   				{return(END);}
+"true" 					{return(TRUE);}
+"false" 				{return(FALSE);}
 {branco}+				{ return( BRANCO ); }
 "*"						{ return( MUL ) ; }
 "+"						{ return( ADD ) ; }
