@@ -13,19 +13,27 @@
 	int VAL_INT;
 	double VAL_DOUBLE;
 	symbol_t stable = NULL;
+
+//void yyerror(char *);
+
 %}
  
+%option noyywrap
+
   /* Definicoes regulares */
 digito		[0-9]
 letra		[A-Za-z]
 alphanum	[A-Za-z0-9_]
-branco		[ \t\n]
+branco		[ |\t|\n]
 %%
 
  /* Secao das Regras de traducao */
  /* O que consta aqui eh puramente ilustrativo... 
   * Ver tambem "tokens.h" para a definicao de DIG e OPCMP
   */
+
+"\""					{ return( DQUOTE ) ; }
+"\|\|"					{ return( OR ) ; }
 "if"					{ return( IF ) ; }
 "then"					{ return( THEN ) ; }
 "else"					{ return( ELSE ) ; }
@@ -38,7 +46,7 @@ branco		[ \t\n]
 "end"   				{return(END);}
 "true" 					{return(TRUE);}
 "false" 				{return(FALSE);}
-{branco}+				{ return( BRANCO ); }
+{branco}+				{  }
 "*"						{ return( MUL ) ; }
 "+"						{ return( ADD ) ; }
 "-"						{ return( SUB ) ; }
@@ -46,7 +54,6 @@ branco		[ \t\n]
 ","						{ return( ',' ) ; }
 ";"						{ return( ';' ) ; }
 "'"						{ return( QUOTE ) ; }
-"\""					{ return( DQUOTE ) ; }
 "("						{ return( OPEN_PAR ) ; }
 ")"						{ return( CLOSE_PAR ) ; }
 "["						{ return( '[' ) ; }
@@ -61,7 +68,6 @@ branco		[ \t\n]
 "=="					{ return( EQ ) ; }
 "!="					{ return( NE ) ; }
 "&&"					{ return( AND ) ; }
-"||"					{ return( OR ) ; }
 "!"						{ return( NOT ) ; }
 {letra}{alphanum}*		{
 							entry_t *idf;
@@ -73,7 +79,8 @@ branco		[ \t\n]
 						}
 {digito}+				{ VAL_INT = (int)strtol(yytext, (char **)NULL, 10); return(INT_LIT); }
 ({digito}*\.{digito}+([Ee][+-]{digito}+)?)	{ VAL_DOUBLE = strtod(yytext, (char **)NULL); return(F_LIT); }
-.                     	{ printf("Erro lexical - caractere nao reconhecido: %c.\n", yytext[0]); /* exit(-1); */ }
+
+.                     	{ printf("Erro lexical - caractere nao reconhecido: %c.\n", yytext[0]);  exit(-1); }
 
 %%
  /* Secao dos  Procedimentos auxiliares  */
@@ -192,4 +199,7 @@ int main(int argc, char* argv[])
 	print_table(stable);
 	return(0);
 }
+
+
+
 

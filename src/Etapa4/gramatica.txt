@@ -1,60 +1,3 @@
-%{
-  /* Aqui, pode-se inserir qualquer codigo C necessario ah compilacao
-   * final do parser. Sera copiado tal como esta no inicio do y.tab.c
-   * gerado por Yacc.
-   */
-  #include <stdio.h>
-
-//extern void yyerror(char *msg);
-//extern char* yylval;
-//extern YYSTYPE yylval;
-
-//void yyerror(char *);
-//int yylex(void);
-
-
-%}
-
-%token IDF 
-%token VAZIO 
-%token OPEN_PAR
-%token CLOSE_PAR
-%token MUL
-%token ADD
-%token SUB
-%token DIV
-%token F_LIT
-%token INT_LIT
-%token DIG
-%token OPCMP
-%token INT
-%token DOUBLE
-%token FLOAT
-%token CHAR
-%token QUOTE
-%token DQUOTE
-%token LE
-%token GE
-%token EQ
-%token NE
-%token AND
-%token OR
-%token NOT
-%token IF
-%token THEN
-%token ELSE
-%token WHILE
-%token BRANCO
-%token END
-%token TRUE
-%token FALSE
-
- /* A completar com seus tokens - compilar com 'yacc -d' */
-
-%%
-
-/* area de definicao de gramatica */
-
 code:			decls action |
 				action
 				;
@@ -91,7 +34,6 @@ type_array:		INT_LIT ':' INT_LIT ',' type_array |
 /*----Actions----*/			
 action:			command |
 				command ';' action |
-				simple_enun action 
 				;
 		
 command:		attr |
@@ -160,33 +102,3 @@ bool_expr:		TRUE |
 				;
 
 /*----END Actions----*/
-
-
-
-
-%%
- /* A partir daqui, insere-se qlqer codigo C necessario.
-  */
-  #include "lex.yy.c"   /* Para poder usar o scanner */
-
-char* progname;
-int lineno;
-int yydebug=1;
-
-int main(int argc, char* argv[]) {
-   progname = argv[0];
-
-   init_table(&stable);
-
-   if (!yyparse()) 
-      printf("OKAY.\n");
-   else 
-      printf("ERROR.\n");
-   return(0);
-}
-
-yyerror(char* s) {
-  fprintf(stderr, "%s: %s", progname, s);
-  fprintf(stderr, "line %d\n", lineno);
-}
-

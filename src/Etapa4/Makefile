@@ -18,7 +18,7 @@ pico: pico.c lex.yy.c
 #    scanner).
 #
 pico.c: pico.y
-	yacc -d pico.y ;\
+	yacc --debug --verbose -d pico.y ;\
 	mv y.tab.c pico.c ; mv y.tab.h tokens.h
 
 # o scanner 'lex.yy.c' eh gerado pelo flex
@@ -29,7 +29,7 @@ pico.c: pico.y
 # EM src/Etapa2/scanner.h !!
 #
 lex.yy.c: $(DIR2)/scanner.l
-	sed -e 's/main(/main-etapa2(/g' $(DIR2)/scanner.l > scanner.l
+	sed -e 's/main(/mainetapa2(/g' $(DIR2)/scanner.l > scanner.l
 	flex scanner.l ; rm -f scanner.l
 
 # o 'install' soh copia 'pico' em Tests/, mas primeiro ele deve ter sido
