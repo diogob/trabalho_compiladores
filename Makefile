@@ -24,7 +24,7 @@ CFLAGS     = -Wall -g
 # all: etapa1 etapa2 etapa3
 #   ou ainda, para compilar apenas a sexta etapa:
 # all: etapa6
-all: etapa4 
+all: etapa5
 
 ############# ETAPA 1 ##########################
 DIR1    = $(SRC_DIR)/Etapa1

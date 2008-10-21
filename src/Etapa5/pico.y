@@ -41,6 +41,12 @@
 %token TRUE
 %token FALSE
 
+%left ADD SUB
+%left MUL DIV
+%left OR
+%left AND
+%left NOT
+
  /* A completar com seus tokens - compilar com 'yacc -d' */
 
 %%

@@ -10,13 +10,6 @@ Terminals which are not used
 
 State 1 conflicts: 1 shift/reduce
 State 25 conflicts: 1 shift/reduce
-State 64 conflicts: 4 shift/reduce
-State 65 conflicts: 4 shift/reduce
-State 66 conflicts: 4 shift/reduce
-State 67 conflicts: 4 shift/reduce
-State 74 conflicts: 2 shift/reduce
-State 97 conflicts: 2 shift/reduce
-State 98 conflicts: 2 shift/reduce
 
 
 Grammar
@@ -945,15 +938,6 @@ state 64
    28     | expr MUL expr .
    29     | expr . DIV expr
 
-    MUL  shift, and go to state 41
-    ADD  shift, and go to state 42
-    SUB  shift, and go to state 43
-    DIV  shift, and go to state 44
-
-    MUL       [reduce using rule 28 (expr)]
-    ADD       [reduce using rule 28 (expr)]
-    SUB       [reduce using rule 28 (expr)]
-    DIV       [reduce using rule 28 (expr)]
     $default  reduce using rule 28 (expr)
 
 
@@ -966,14 +950,8 @@ state 65
    29     | expr . DIV expr
 
     MUL  shift, and go to state 41
-    ADD  shift, and go to state 42
-    SUB  shift, and go to state 43
     DIV  shift, and go to state 44
 
-    MUL       [reduce using rule 26 (expr)]
-    ADD       [reduce using rule 26 (expr)]
-    SUB       [reduce using rule 26 (expr)]
-    DIV       [reduce using rule 26 (expr)]
     $default  reduce using rule 26 (expr)
 
 
@@ -986,14 +964,8 @@ state 66
    29     | expr . DIV expr
 
     MUL  shift, and go to state 41
-    ADD  shift, and go to state 42
-    SUB  shift, and go to state 43
     DIV  shift, and go to state 44
 
-    MUL       [reduce using rule 27 (expr)]
-    ADD       [reduce using rule 27 (expr)]
-    SUB       [reduce using rule 27 (expr)]
-    DIV       [reduce using rule 27 (expr)]
     $default  reduce using rule 27 (expr)
 
 
@@ -1005,15 +977,6 @@ state 67
    29     | expr . DIV expr
    29     | expr DIV expr .
 
-    MUL  shift, and go to state 41
-    ADD  shift, and go to state 42
-    SUB  shift, and go to state 43
-    DIV  shift, and go to state 44
-
-    MUL       [reduce using rule 29 (expr)]
-    ADD       [reduce using rule 29 (expr)]
-    SUB       [reduce using rule 29 (expr)]
-    DIV       [reduce using rule 29 (expr)]
     $default  reduce using rule 29 (expr)
 
 
@@ -1105,11 +1068,6 @@ state 74
    50          | bool_expr . OR bool_expr
    57          | NOT bool_expr .
 
-    AND  shift, and go to state 82
-    OR   shift, and go to state 83
-
-    AND       [reduce using rule 57 (bool_expr)]
-    OR        [reduce using rule 57 (bool_expr)]
     $default  reduce using rule 57 (bool_expr)
 
 
@@ -1408,11 +1366,6 @@ state 97
    49          | bool_expr AND bool_expr .
    50          | bool_expr . OR bool_expr
 
-    AND  shift, and go to state 82
-    OR   shift, and go to state 83
-
-    AND       [reduce using rule 49 (bool_expr)]
-    OR        [reduce using rule 49 (bool_expr)]
     $default  reduce using rule 49 (bool_expr)
 
 
@@ -1423,10 +1376,7 @@ state 98
    50          | bool_expr OR bool_expr .
 
     AND  shift, and go to state 82
-    OR   shift, and go to state 83
 
-    AND       [reduce using rule 50 (bool_expr)]
-    OR        [reduce using rule 50 (bool_expr)]
     $default  reduce using rule 50 (bool_expr)
 
 
