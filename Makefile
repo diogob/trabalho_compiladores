@@ -54,6 +54,14 @@ etapa4: etapa2 etapa1
 test4: etapa4
 	cd $(PICO_DIR)/Tests && $(MAKE) -w
 
+DIR5    = $(SRC_DIR)/Etapa5
+# Depois de 'make etapa5', 'pico' eh copiado em Testes.
+etapa5: etapa2 etapa1
+	cd $(DIR5) && $(MAKE) -w install
+
+test4: etapa4
+	cd $(PICO_DIR)/Tests && $(MAKE) -w
+
 clean:
 	rm -f $(INC_DIR)/* $(OBJ_DIR)/* ; \
 	cd $(DIR1) && $(MAKE) -w clean ; \
