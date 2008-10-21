@@ -33,7 +33,7 @@ branco		[ |\t|\n]
   */
 
 "\""					{ return( DQUOTE ) ; }
-"\|\|"					{ return( OR ) ; }
+"||"					{ return( OR ) ; }
 "if"					{ return( IF ) ; }
 "then"					{ return( THEN ) ; }
 "else"					{ return( ELSE ) ; }

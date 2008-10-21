@@ -1,3 +1,4 @@
+
 code:			decls action |
 				action
 				;
@@ -34,6 +35,7 @@ type_array:		INT_LIT ':' INT_LIT ',' type_array |
 /*----Actions----*/			
 action:			command |
 				command ';' action |
+				simple_enun action 
 				;
 		
 command:		attr |

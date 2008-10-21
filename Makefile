@@ -1,6 +1,6 @@
 export
 # Localizacao do diretorio principal de Pico
-PICO_DIR   = /Users/diogo/Desktop/Pico-Denys-Diogo-etapa1
+PICO_DIR   = /home/diogo/Desktop/compiladores
 
 # Localizacao dos arquivos headers:
 INC_DIR    = $(PICO_DIR)/include
@@ -24,10 +24,11 @@ CFLAGS     = -Wall -g
 # all: etapa1 etapa2 etapa3
 #   ou ainda, para compilar apenas a sexta etapa:
 # all: etapa6
-all: etapa3 etapa2 etapa1 
+all: etapa4 
 
 ############# ETAPA 1 ##########################
 DIR1    = $(SRC_DIR)/Etapa1
+# depois de 'make etapa1', include/ contem os .h e objects/ os .o de src/Etapa1.
 etapa1: $(DIR1)/stack.h $(DIR1)/symbol_table.h
 	cd $(DIR1) && $(MAKE) -w install
 
@@ -35,22 +36,19 @@ test1: etapa1
 	cd $(PICO_DIR)/Tests && $(MAKE) -w
 
 DIR2    = $(SRC_DIR)/Etapa2
-etapa2: $(DIR2)/tokens.h $(DIR2)/scanner.l
+
+# depois de 'make etapa2':
+#    include/ contem uma copia de src/Etapa2/tokens.h
+#    Tests/ contem uma copia de pico.c (que contem um main).
+etapa2: etapa1
 	cd $(DIR2) && $(MAKE) -w install
 
 test2: etapa2
 	cd $(PICO_DIR)/Tests && $(MAKE) -w
 
-DIR3    = $(SRC_DIR)/Etapa3
-etapa3: $(DIR3)/pico.c
-	cd $(DIR3) && $(MAKE) -w install
-
-DIR_TESTE2    = $(PICO_DIR)/testes-etapa2
-teste2: $(PICO_DIR)/testes-etapa2/pico.c
-	cd $(DIR_TESTE2) && $(MAKE)
-
 DIR4    = $(SRC_DIR)/Etapa4
-etapa4: $(DIR4)/tokens.h $(DIR4)/scanner.l
+# Depois de 'make etapa4', 'pico' eh copiado em Testes.
+etapa4: etapa2 etapa1
 	cd $(DIR4) && $(MAKE) -w install
 
 test4: etapa4
@@ -59,4 +57,6 @@ test4: etapa4
 clean:
 	rm -f $(INC_DIR)/* $(OBJ_DIR)/* ; \
 	cd $(DIR1) && $(MAKE) -w clean ; \
+	cd $(DIR2) && $(MAKE) -w clean ; \
+	cd $(DIR4) && $(MAKE) -w clean ; \
 	cd $(PICO_DIR)/Tests && $(MAKE) -w clean ; \

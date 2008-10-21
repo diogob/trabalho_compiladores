@@ -1,6 +1,5 @@
-#line 2 "pico.c"
 
-#line 4 "pico.c"
+#line 3 "lex.yy.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -533,7 +532,7 @@ char *yytext;
 //void yyerror(char *);
 
 /* Definicoes regulares */
-#line 537 "pico.c"
+#line 536 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -694,7 +693,7 @@ YY_DECL
   * Ver tambem "tokens.h" para a definicao de DIG e OPCMP
   */
 
-#line 698 "pico.c"
+#line 697 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -995,7 +994,7 @@ YY_RULE_SETUP
 #line 85 "scanner.l"
 ECHO;
 	YY_BREAK
-#line 999 "pico.c"
+#line 998 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2092,7 +2091,7 @@ void get_token_name(int token, char *buffer)
 /* Para redefinir a entrada padrao do LEX. */
 extern FILE *yyin;
 
-int main(int argc, char* argv[])
+int mainetapa2(int argc, char* argv[])
 {
 	int token;
 	char buff[10];

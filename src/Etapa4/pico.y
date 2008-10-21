@@ -5,14 +5,6 @@
    */
   #include <stdio.h>
 
-//extern void yyerror(char *msg);
-//extern char* yylval;
-//extern YYSTYPE yylval;
-
-//void yyerror(char *);
-//int yylex(void);
-
-
 %}
 
 %token IDF 
@@ -171,7 +163,7 @@ bool_expr:		TRUE |
 
 char* progname;
 int lineno;
-int yydebug=1;
+int yydebug=0;
 
 int main(int argc, char* argv[]) {
    progname = argv[0];
