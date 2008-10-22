@@ -5,7 +5,7 @@
 
 # A usar depois do 'make install' em src/Etapa1
 
-all: teste-stack teste-symbol-table
+all: teste-stack teste-symbol-table teste-tac
 
 teste-stack: $(OBJ_DIR)/stack.o $(INC_DIR)/stack.h teste-stack.c
 	$(CC) $(CFLAGS) -o teste-stack $(OBJ_DIR)/stack.o -I$(INC_DIR) \
@@ -14,6 +14,9 @@ teste-stack: $(OBJ_DIR)/stack.o $(INC_DIR)/stack.h teste-stack.c
 teste-symbol-table: $(OBJ_DIR)/symbol_table.o $(INC_DIR)/stack.h teste-symbol-table.c
 	$(CC) $(CFLAGS) -o teste-symbol-table $(OBJ_DIR)/symbol_table.o -I$(INC_DIR) \
 	   teste-symbol-table.c
+
+teste-tac: $(OBJ_DIR)/tac_list.o $(INC_DIR)/tac_list.h teste-tac.c
+	$(CC) $(CFLAGS) -o teste-tac $(OBJ_DIR)/tac_list.o -I$(INC_DIR) teste-tac.c
 
 clean:
 	rm -f teste-lista1 teste-stack teste-symbol-table *.o

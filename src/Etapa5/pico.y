@@ -64,7 +64,7 @@ decls: 			decl |
 
 /*----Declarations----*/
 
-decl:			ident types  
+decl:			ident types {printf("DECL: %i", $1);} 
 		
 ident:			IDF ',' ident |
 				IDF ':'

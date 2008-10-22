@@ -1487,9 +1487,14 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-      
+        case 6:
+#line 67 "pico.y"
+    {printf("DECL: %i", (yyvsp[(1) - (2)]));}
+    break;
+
+
 /* Line 1267 of yacc.c.  */
-#line 1493 "y.tab.c"
+#line 1498 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);

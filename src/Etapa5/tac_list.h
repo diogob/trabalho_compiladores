@@ -22,7 +22,7 @@ typedef struct {
  *
  */
 typedef struct tac_list {
-   tac_instruction tac;		/**< elemento da lista TAC. */
+   tac_instruction* tac;		/**< elemento da lista TAC. */
    struct tac_list* next;	/**< proximo elemento da lista. */
 } *tac_list;
 
@@ -31,7 +31,7 @@ typedef struct tac_list {
  * @param table uma referencia sobre uma lista TAC.
  * @return o valor 0 se deu certo.
  */
-int init_table(tac_list* tac) ;
+int init_list(tac_list* tac) ;
 
 /** \brief Inserir uma entrada em uma tabela.
  *
@@ -40,7 +40,7 @@ int init_table(tac_list* tac) ;
  * @return um numero negativo se nao se conseguiu efetuar a insercao, zero se
  *   deu certo.
  */
-int insert(tac_list* tac, tac_instruction* i) ;
+int append(tac_list tac, tac_instruction* i) ;
 
 /** \brief Imprimir o conteudo de uma tabela.
  *
@@ -59,5 +59,10 @@ int print_tac(tac_list tac);
  * @param list tac_list.
  * @return nada (void).
  */
-void free_list(tac_list tac);
+void free_list(tac_list* tac);
+int empty_list(tac_list l);
+
+tac_list last(tac_list l);
+tac_list first(tac_list l);
+
 #endif

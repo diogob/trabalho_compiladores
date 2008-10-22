@@ -28,14 +28,18 @@ pico.c: pico.y
 # OBSERVACAO: QUALQUER ALTERACAO EFETUADA NO SCANNER DEVE SER FEITA
 # EM src/Etapa2/scanner.h !!
 #
-lex.yy.c: $(DIR2)/scanner.l
-	sed -e 's/main(/mainetapa2(/g' $(DIR2)/scanner.l > scanner.l
-	flex scanner.l ; rm -f scanner.l
+lex.yy.c: scanner.l
+	flex scanner.l
+
+tac: tac_list.c tac_list.h
+	gcc -c -o tac_list.o tac_list.c
+	cp tac_list.o $(OBJ_DIR)/
+	cp tac_list.h $(INC_DIR)/
 
 # o 'install' soh copia 'pico' em Tests/, mas primeiro ele deve ter sido
 # compilado, por isso a dependencia.
 #
-install: pico
+install: pico tac
 	cp pico $(PICO_DIR)/Tests
 
 clean:

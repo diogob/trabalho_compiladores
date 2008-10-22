@@ -32,7 +32,7 @@ DIR1    = $(SRC_DIR)/Etapa1
 etapa1: $(DIR1)/stack.h $(DIR1)/symbol_table.h
 	cd $(DIR1) && $(MAKE) -w install
 
-test1: etapa1
+test: etapa1 etapa5
 	cd $(PICO_DIR)/Tests && $(MAKE) -w
 
 DIR2    = $(SRC_DIR)/Etapa2
