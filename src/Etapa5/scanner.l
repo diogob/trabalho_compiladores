@@ -68,7 +68,11 @@ branco		[ |\t|\n]
 "!="					{ return( NE ) ; }
 "&&"					{ return( AND ) ; }
 "!"						{ return( NOT ) ; }
-{letra}{alphanum}*		{	yylval = yytext;
+{letra}{alphanum}*		{
+							char* tmp;
+							tmp = malloc(sizeof(char) * (strlen(yytext) + 1));
+							strcpy(tmp, yytext);
+							yylval.name = tmp;
 							return( IDF ); 
 						}
 {digito}+				{ VAL_INT = (int)strtol(yytext, (char **)NULL, 10); return(INT_LIT); }

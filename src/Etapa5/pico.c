@@ -180,7 +180,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 54 "pico.y"
+#line 59 "pico.y"
 {
    char* name;
 }
@@ -507,12 +507,12 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    72,    72,    73,    76,    77,    83,    92,    93,    96,
-      97,   100,   101,   102,   103,   106,   107,   113,   114,   115,
-     118,   119,   122,   125,   126,   129,   130,   133,   134,   135,
-     136,   137,   138,   139,   140,   141,   144,   147,   148,   151,
-     152,   155,   156,   159,   162,   163,   166,   169,   170,   171,
-     172,   173,   174,   175,   176,   177,   178,   179,   180
+       0,    69,    69,    70,    73,    74,    80,    89,    90,    93,
+      94,    97,    98,    99,   100,   103,   104,   110,   111,   112,
+     115,   116,   119,   122,   131,   136,   137,   140,   141,   142,
+     143,   144,   145,   146,   147,   148,   151,   154,   155,   158,
+     159,   162,   163,   166,   169,   170,   173,   176,   177,   178,
+     179,   180,   181,   182,   183,   184,   185,   186,   187
 };
 #endif
 
@@ -1505,20 +1505,40 @@ yyreduce:
   switch (yyn)
     {
         case 6:
-#line 83 "pico.y"
+#line 80 "pico.y"
     {
 								entry_t *idf;
 								idf = malloc(sizeof(entry_t));
-								idf->name = malloc(sizeof(char) * (strlen((yyvsp[(1) - (2)].name).name) + 1));
-								strcpy(idf->name, (yyvsp[(1) - (2)].name).name);
+								idf->name = malloc(sizeof(char) * (strlen((yyvsp[(1) - (2)].name)) + 1));
+								strcpy(idf->name, (yyvsp[(1) - (2)].name));
 								insert(&stable, idf);
-								printf("DECL: %i", (yyvsp[(1) - (2)].name).name);
+								/* printf("Declaracao da variavel %s\n", $1); */
 							}
+    break;
+
+  case 23:
+#line 122 "pico.y"
+    {
+						entry_t *idf = NULL;
+						idf = lookup(stable, (yyvsp[(1) - (1)].name));
+						if( idf == NULL )
+						{
+							printf("Erro de sintaxe. Variavel %s nao declarada.\n", (yyvsp[(1) - (1)].name));
+							return -1;
+						}
+					}
+    break;
+
+  case 24:
+#line 131 "pico.y"
+    {
+										
+									}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1522 "y.tab.c"
+#line 1542 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1732,7 +1752,7 @@ yyreturn:
 }
 
 
-#line 188 "pico.y"
+#line 192 "pico.y"
 
  /* A partir daqui, insere-se qlqer codigo C necessario.
   */

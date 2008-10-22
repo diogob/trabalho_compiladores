@@ -16,7 +16,6 @@
 	symbol_t stable = NULL;
 
 %}
-
 %token IDF 
 %token VAZIO 
 %token OPEN_PAR
@@ -51,20 +50,18 @@
 %token TRUE
 %token FALSE
 
-%union {
-   char* name;
-}
-
-%type<name> ident
-
 %left ADD SUB
 %left MUL DIV
 %left OR
 %left AND
 %left NOT
 
- /* A completar com seus tokens - compilar com 'yacc -d' */
+%union {
+   char* name;
+}
 
+%type<name> ident
+%type<name> IDF
 %%
 
 /* area de definicao de gramatica */
@@ -83,10 +80,10 @@ decls: 			decl |
 decl:			ident types {
 								entry_t *idf;
 								idf = malloc(sizeof(entry_t));
-								idf->name = malloc(sizeof(char) * (strlen($1.name) + 1));
-								strcpy(idf->name, $1.name);
+								idf->name = malloc(sizeof(char) * (strlen($1) + 1));
+								strcpy(idf->name, $1);
 								insert(&stable, idf);
-								printf("DECL: %i", $1.name);
+								/* printf("Declaracao da variavel %s\n", $1); */
 							}
 		
 ident:			IDF ',' ident |
@@ -122,8 +119,18 @@ command:		attr |
 attr:			lvalue '=' expr
 				;
 
-lvalue:			IDF |
-				IDF '[' expr_list
+lvalue:			IDF {
+						entry_t *idf = NULL;
+						idf = lookup(stable, $1);
+						if( idf == NULL )
+						{
+							printf("Erro de sintaxe. Variavel %s nao declarada.\n", $1);
+							return -1;
+						}
+					}
+				| IDF '[' expr_list {
+										
+									}
 				;
 		
 expr_list:		expr ',' expr_list |
@@ -181,9 +188,6 @@ bool_expr:		TRUE |
 				;
 
 /*----END Actions----*/
-
-
-
 
 %%
  /* A partir daqui, insere-se qlqer codigo C necessario.
