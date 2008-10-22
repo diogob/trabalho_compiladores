@@ -3,7 +3,17 @@
    * final do parser. Sera copiado tal como esta no inicio do y.tab.c
    * gerado por Yacc.
    */
-  #include <stdio.h>
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <string.h>
+
+	/* este include eh importante... */
+	#include "tokens.h"
+	#include "symbol_table.h"
+	/* Globais para valores de literais encontradas */
+	int VAL_INT;
+	double VAL_DOUBLE;
+	symbol_t stable = NULL;
 
 %}
 
@@ -41,6 +51,12 @@
 %token TRUE
 %token FALSE
 
+%union {
+   char* name;
+}
+
+%type<name> ident
+
 %left ADD SUB
 %left MUL DIV
 %left OR
@@ -64,7 +80,14 @@ decls: 			decl |
 
 /*----Declarations----*/
 
-decl:			ident types {printf("DECL: %i", $1);} 
+decl:			ident types {
+								entry_t *idf;
+								idf = malloc(sizeof(entry_t));
+								idf->name = malloc(sizeof(char) * (strlen($1.name) + 1));
+								strcpy(idf->name, $1.name);
+								insert(&stable, idf);
+								printf("DECL: %i", $1.name);
+							}
 		
 ident:			IDF ',' ident |
 				IDF ':'

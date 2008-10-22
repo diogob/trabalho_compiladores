@@ -12,7 +12,6 @@
 	/* Globais para valores de literais encontradas */
 	int VAL_INT;
 	double VAL_DOUBLE;
-	symbol_t stable = NULL;
 
 //void yyerror(char *);
 
@@ -69,12 +68,7 @@ branco		[ |\t|\n]
 "!="					{ return( NE ) ; }
 "&&"					{ return( AND ) ; }
 "!"						{ return( NOT ) ; }
-{letra}{alphanum}*		{
-							entry_t *idf;
-							idf = malloc(sizeof(entry_t));
-							idf->name = malloc(sizeof(char) * (strlen(yytext) + 1));
-							strcpy(idf->name, yytext);
-							insert(&stable, idf);
+{letra}{alphanum}*		{	yylval = yytext;
 							return( IDF ); 
 						}
 {digito}+				{ VAL_INT = (int)strtol(yytext, (char **)NULL, 10); return(INT_LIT); }

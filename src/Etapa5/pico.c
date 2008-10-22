@@ -146,7 +146,17 @@
    * final do parser. Sera copiado tal como esta no inicio do y.tab.c
    * gerado por Yacc.
    */
-  #include <stdio.h>
+	#include <stdio.h>
+	#include <stdlib.h>
+	#include <string.h>
+
+	/* este include eh importante... */
+	#include "tokens.h"
+	#include "symbol_table.h"
+	/* Globais para valores de literais encontradas */
+	int VAL_INT;
+	double VAL_DOUBLE;
+	symbol_t stable = NULL;
 
 
 
@@ -169,7 +179,14 @@
 #endif
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+typedef union YYSTYPE
+#line 54 "pico.y"
+{
+   char* name;
+}
+/* Line 187 of yacc.c.  */
+#line 189 "y.tab.c"
+	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
 # define YYSTYPE_IS_TRIVIAL 1
@@ -181,7 +198,7 @@ typedef int YYSTYPE;
 
 
 /* Line 216 of yacc.c.  */
-#line 185 "y.tab.c"
+#line 202 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -490,12 +507,12 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    56,    56,    57,    60,    61,    67,    69,    70,    73,
-      74,    77,    78,    79,    80,    83,    84,    90,    91,    92,
-      95,    96,    99,   102,   103,   106,   107,   110,   111,   112,
-     113,   114,   115,   116,   117,   118,   121,   124,   125,   128,
-     129,   132,   133,   136,   139,   140,   143,   146,   147,   148,
-     149,   150,   151,   152,   153,   154,   155,   156,   157
+       0,    72,    72,    73,    76,    77,    83,    92,    93,    96,
+      97,   100,   101,   102,   103,   106,   107,   113,   114,   115,
+     118,   119,   122,   125,   126,   129,   130,   133,   134,   135,
+     136,   137,   138,   139,   140,   141,   144,   147,   148,   151,
+     152,   155,   156,   159,   162,   163,   166,   169,   170,   171,
+     172,   173,   174,   175,   176,   177,   178,   179,   180
 };
 #endif
 
@@ -1488,13 +1505,20 @@ yyreduce:
   switch (yyn)
     {
         case 6:
-#line 67 "pico.y"
-    {printf("DECL: %i", (yyvsp[(1) - (2)]));}
+#line 83 "pico.y"
+    {
+								entry_t *idf;
+								idf = malloc(sizeof(entry_t));
+								idf->name = malloc(sizeof(char) * (strlen((yyvsp[(1) - (2)].name).name) + 1));
+								strcpy(idf->name, (yyvsp[(1) - (2)].name).name);
+								insert(&stable, idf);
+								printf("DECL: %i", (yyvsp[(1) - (2)].name).name);
+							}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1498 "y.tab.c"
+#line 1522 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1708,7 +1732,7 @@ yyreturn:
 }
 
 
-#line 165 "pico.y"
+#line 188 "pico.y"
 
  /* A partir daqui, insere-se qlqer codigo C necessario.
   */
