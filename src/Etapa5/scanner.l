@@ -37,10 +37,10 @@ branco		[ |\t|\n]
 "then"					{ return( THEN ) ; }
 "else"					{ return( ELSE ) ; }
 "while"					{ return( WHILE ) ; }
-"int"		 			{ return( INT ); }
-"double"		 		{ return( DOUBLE ); }
-"float"			 		{ return( FLOAT ); }
-"char"			 		{ return( CHAR ); }
+"int"		 			{ yylval.type = INT; return( INT ); }
+"double"		 		{ yylval.type = DOUBLE; return( DOUBLE ); }
+"float"			 		{ yylval.type = FLOAT; return( FLOAT ); }
+"char"			 		{ yylval.type = CHAR; return( CHAR ); }
 ":"   					{return(':');}
 "end"   				{return(END);}
 "true" 					{return(TRUE);}

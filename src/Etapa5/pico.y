@@ -1,8 +1,8 @@
 %{
-  /* Aqui, pode-se inserir qualquer codigo C necessario ah compilacao
-   * final do parser. Sera copiado tal como esta no inicio do y.tab.c
-   * gerado por Yacc.
-   */
+    /* Aqui, pode-se inserir qualquer codigo C necessario ah compilacao
+     * final do parser. Sera copiado tal como esta no inicio do y.tab.c
+     * gerado por Yacc.
+     */
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include <string.h>
@@ -14,6 +14,25 @@
 	int VAL_INT;
 	double VAL_DOUBLE;
 	symbol_t stable = NULL;
+	
+	int get_size(int type)
+	{
+		switch(type)
+		{
+			case INT:
+				return 4;
+				break;
+			case DOUBLE:
+				return 8;
+				break;
+			case FLOAT:
+				return 4;
+				break;
+			case CHAR:
+				return 1;
+				break;
+		}
+	}
 
 %}
 %token IDF 
@@ -58,10 +77,13 @@
 
 %union {
    char* name;
+   int type;
 }
 
 %type<name> ident
 %type<name> IDF
+%type<type> types
+
 %%
 
 /* area de definicao de gramatica */
@@ -82,8 +104,10 @@ decl:			ident types {
 								idf = malloc(sizeof(entry_t));
 								idf->name = malloc(sizeof(char) * (strlen($1) + 1));
 								strcpy(idf->name, $1);
+								idf->type = $2;
+								idf->size = get_size($2); 
 								insert(&stable, idf);
-								/* printf("Declaracao da variavel %s\n", $1); */
+								/* printf("Decl da var %s tipo: %i tamanho: %i\n", $1, $2, idf->size); */
 							}
 		
 ident:			IDF ',' ident |

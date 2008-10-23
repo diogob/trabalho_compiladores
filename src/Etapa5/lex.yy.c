@@ -808,22 +808,22 @@ YY_RULE_SETUP
 case 7:
 YY_RULE_SETUP
 #line 40 "scanner.l"
-{ return( INT ); }
+{ yylval.type = INT; return( INT ); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 41 "scanner.l"
-{ return( DOUBLE ); }
+{ yylval.type = DOUBLE; return( DOUBLE ); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 42 "scanner.l"
-{ return( FLOAT ); }
+{ yylval.type = FLOAT; return( FLOAT ); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 43 "scanner.l"
-{ return( CHAR ); }
+{ yylval.type = CHAR; return( CHAR ); }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP

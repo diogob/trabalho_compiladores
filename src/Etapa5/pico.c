@@ -142,10 +142,10 @@
 /* Copy the first part of user declarations.  */
 #line 1 "pico.y"
 
-  /* Aqui, pode-se inserir qualquer codigo C necessario ah compilacao
-   * final do parser. Sera copiado tal como esta no inicio do y.tab.c
-   * gerado por Yacc.
-   */
+    /* Aqui, pode-se inserir qualquer codigo C necessario ah compilacao
+     * final do parser. Sera copiado tal como esta no inicio do y.tab.c
+     * gerado por Yacc.
+     */
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include <string.h>
@@ -157,6 +157,25 @@
 	int VAL_INT;
 	double VAL_DOUBLE;
 	symbol_t stable = NULL;
+	
+	int get_size(int type)
+	{
+		switch(type)
+		{
+			case INT:
+				return 4;
+				break;
+			case DOUBLE:
+				return 8;
+				break;
+			case FLOAT:
+				return 4;
+				break;
+			case CHAR:
+				return 1;
+				break;
+		}
+	}
 
 
 
@@ -180,12 +199,13 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 59 "pico.y"
+#line 78 "pico.y"
 {
    char* name;
+   int type;
 }
 /* Line 187 of yacc.c.  */
-#line 189 "y.tab.c"
+#line 209 "y.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -198,7 +218,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 202 "y.tab.c"
+#line 222 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -507,12 +527,12 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    69,    69,    70,    73,    74,    80,    89,    90,    93,
-      94,    97,    98,    99,   100,   103,   104,   110,   111,   112,
-     115,   116,   119,   122,   131,   136,   137,   140,   141,   142,
-     143,   144,   145,   146,   147,   148,   151,   154,   155,   158,
-     159,   162,   163,   166,   169,   170,   173,   176,   177,   178,
-     179,   180,   181,   182,   183,   184,   185,   186,   187
+       0,    91,    91,    92,    95,    96,   102,   113,   114,   117,
+     118,   121,   122,   123,   124,   127,   128,   134,   135,   136,
+     139,   140,   143,   146,   155,   160,   161,   164,   165,   166,
+     167,   168,   169,   170,   171,   172,   175,   178,   179,   182,
+     183,   186,   187,   190,   193,   194,   197,   200,   201,   202,
+     203,   204,   205,   206,   207,   208,   209,   210,   211
 };
 #endif
 
@@ -1505,19 +1525,21 @@ yyreduce:
   switch (yyn)
     {
         case 6:
-#line 80 "pico.y"
+#line 102 "pico.y"
     {
 								entry_t *idf;
 								idf = malloc(sizeof(entry_t));
 								idf->name = malloc(sizeof(char) * (strlen((yyvsp[(1) - (2)].name)) + 1));
 								strcpy(idf->name, (yyvsp[(1) - (2)].name));
+								idf->type = (yyvsp[(2) - (2)].type);
+								idf->size = get_size((yyvsp[(2) - (2)].type)); 
 								insert(&stable, idf);
-								/* printf("Declaracao da variavel %s\n", $1); */
+								printf("Decl da var %s tipo: %i tamanho: %i\n", (yyvsp[(1) - (2)].name), (yyvsp[(2) - (2)].type), idf->size);
 							}
     break;
 
   case 23:
-#line 122 "pico.y"
+#line 146 "pico.y"
     {
 						entry_t *idf = NULL;
 						idf = lookup(stable, (yyvsp[(1) - (1)].name));
@@ -1530,7 +1552,7 @@ yyreduce:
     break;
 
   case 24:
-#line 131 "pico.y"
+#line 155 "pico.y"
     {
 										
 									}
@@ -1538,7 +1560,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 1542 "y.tab.c"
+#line 1564 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1752,7 +1774,7 @@ yyreturn:
 }
 
 
-#line 192 "pico.y"
+#line 216 "pico.y"
 
  /* A partir daqui, insere-se qlqer codigo C necessario.
   */
