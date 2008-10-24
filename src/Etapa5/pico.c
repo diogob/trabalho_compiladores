@@ -153,11 +153,22 @@
 	/* este include eh importante... */
 	#include "tokens.h"
 	#include "symbol_table.h"
+	#include "tac_list.h"
+	
 	/* Globais para valores de literais encontradas */
 	int VAL_INT;
 	double VAL_DOUBLE;
 	symbol_t stable = NULL;
 	int deslocamento = 0;
+	int desloc_temp = 0;
+	tac_list codigo_tac = NULL;
+
+	int gera_temp(int type)
+	{
+		int tmp = desloc_temp;
+		desloc_temp += get_size(type);
+		return tmp;
+	}
 
 	int get_size(int type)
 	{
@@ -200,7 +211,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 79 "pico.y"
+#line 90 "pico.y"
 {
 	char* name;
 	struct tinfo{ 
@@ -213,11 +224,16 @@ typedef union YYSTYPE
 		int int_val;
 		double double_val;
 	} linfo;
+	struct einfo {
+		int type;
+		int desloc;
+		void* codigo;
+	} einfo;
 	char* double_val;
 	void* stable_entry;
 }
 /* Line 187 of yacc.c.  */
-#line 221 "y.tab.c"
+#line 237 "y.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -230,7 +246,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 234 "y.tab.c"
+#line 250 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -539,12 +555,12 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   107,   107,   108,   111,   112,   118,   131,   132,   135,
-     136,   139,   140,   141,   142,   145,   149,   158,   159,   160,
-     163,   164,   167,   170,   180,   185,   186,   189,   197,   205,
-     213,   221,   225,   229,   233,   237,   240,   243,   244,   247,
-     248,   251,   252,   255,   258,   259,   262,   265,   266,   267,
-     268,   269,   270,   271,   272,   273,   274,   275,   276
+       0,   123,   123,   124,   127,   128,   134,   147,   148,   151,
+     152,   155,   156,   157,   158,   161,   165,   174,   175,   176,
+     179,   180,   183,   189,   199,   204,   205,   208,   218,   226,
+     234,   242,   246,   250,   254,   258,   261,   264,   265,   268,
+     269,   272,   273,   276,   279,   280,   283,   286,   287,   288,
+     289,   290,   291,   292,   293,   294,   295,   296,   297
 };
 #endif
 
@@ -1537,7 +1553,7 @@ yyreduce:
   switch (yyn)
     {
         case 6:
-#line 118 "pico.y"
+#line 134 "pico.y"
     {
 								entry_t *idf;
 								idf = malloc(sizeof(entry_t));
@@ -1553,31 +1569,38 @@ yyreduce:
     break;
 
   case 9:
-#line 135 "pico.y"
+#line 151 "pico.y"
     { (yyval.tinfo).size = 0; }
     break;
 
   case 10:
-#line 136 "pico.y"
+#line 152 "pico.y"
     { (yyval.tinfo).size = (yyvsp[(3) - (3)].nelements); }
     break;
 
   case 15:
-#line 146 "pico.y"
+#line 162 "pico.y"
     {
 					(yyval.nelements) = (yyvsp[(3) - (5)].linfo).int_val - (yyvsp[(1) - (5)].linfo).int_val + (yyvsp[(5) - (5)].nelements);
 				}
     break;
 
   case 16:
-#line 150 "pico.y"
+#line 166 "pico.y"
     {
 					(yyval.nelements) = (yyvsp[(3) - (4)].linfo).int_val - (yyvsp[(1) - (4)].linfo).int_val;
 				}
     break;
 
+  case 22:
+#line 184 "pico.y"
+    {
+					//gera_cod($1->desloc);
+				}
+    break;
+
   case 23:
-#line 170 "pico.y"
+#line 189 "pico.y"
     {
 						entry_t *idf = NULL;
 						idf = lookup(stable, (yyvsp[(1) - (1)].name));
@@ -1591,27 +1614,29 @@ yyreduce:
     break;
 
   case 24:
-#line 180 "pico.y"
+#line 199 "pico.y"
     {
 										
 									}
     break;
 
   case 27:
-#line 190 "pico.y"
+#line 209 "pico.y"
     {
-					if((yyvsp[(1) - (3)].tinfo).type == CHAR || (yyvsp[(3) - (3)].tinfo).type == CHAR)
+					if((yyvsp[(1) - (3)].einfo).type == CHAR || (yyvsp[(3) - (3)].einfo).type == CHAR)
 					{
 						printf("Erro de tipo. Tentativa de somar um char\n");
 						return -1;
 					}
+					(yyval.einfo).desloc = gera_temp((yyvsp[(1) - (3)].einfo).type);
+//					gera_codigo(ADD, );
 				}
     break;
 
   case 28:
-#line 198 "pico.y"
+#line 219 "pico.y"
     {
-					if((yyvsp[(1) - (3)].tinfo).type == CHAR || (yyvsp[(3) - (3)].tinfo).type == CHAR)
+					if((yyvsp[(1) - (3)].einfo).type == CHAR || (yyvsp[(3) - (3)].einfo).type == CHAR)
 					{
 						printf("Erro de tipo. Tentativa de subtrair um char\n");
 						return -1;
@@ -1620,9 +1645,9 @@ yyreduce:
     break;
 
   case 29:
-#line 206 "pico.y"
+#line 227 "pico.y"
     {
-					if((yyvsp[(1) - (3)].tinfo).type == CHAR || (yyvsp[(3) - (3)].tinfo).type == CHAR)
+					if((yyvsp[(1) - (3)].einfo).type == CHAR || (yyvsp[(3) - (3)].einfo).type == CHAR)
 					{
 						printf("Erro de tipo. Tentativa de multiplicar um char\n");
 						return -1;
@@ -1631,9 +1656,9 @@ yyreduce:
     break;
 
   case 30:
-#line 214 "pico.y"
+#line 235 "pico.y"
     {
-					if((yyvsp[(1) - (3)].tinfo).type == CHAR || (yyvsp[(3) - (3)].tinfo).type == CHAR)
+					if((yyvsp[(1) - (3)].einfo).type == CHAR || (yyvsp[(3) - (3)].einfo).type == CHAR)
 					{
 						printf("Erro de tipo. Tentativa de dividir um char\n");
 						return -1;
@@ -1642,36 +1667,36 @@ yyreduce:
     break;
 
   case 31:
-#line 222 "pico.y"
+#line 243 "pico.y"
     {
-					(yyval.tinfo).type = (yyvsp[(2) - (3)].tinfo).type;
+					(yyval.einfo).type = (yyvsp[(2) - (3)].einfo).type;
 				}
     break;
 
   case 32:
-#line 226 "pico.y"
+#line 247 "pico.y"
     {
-					(yyval.tinfo).type = INT;
+					(yyval.einfo).type = INT;
 				}
     break;
 
   case 33:
-#line 230 "pico.y"
+#line 251 "pico.y"
     {
-					(yyval.tinfo).type = FLOAT;
+					(yyval.einfo).type = FLOAT;
 				}
     break;
 
   case 34:
-#line 234 "pico.y"
+#line 255 "pico.y"
     {
-					(yyval.tinfo).type = ((entry_t *) (yyvsp[(1) - (1)].stable_entry))->type;
+					(yyval.einfo).type = ((entry_t *) (yyvsp[(1) - (1)].stable_entry))->type;
 				}
     break;
 
 
 /* Line 1267 of yacc.c.  */
-#line 1675 "y.tab.c"
+#line 1700 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1885,7 +1910,7 @@ yyreturn:
 }
 
 
-#line 281 "pico.y"
+#line 302 "pico.y"
 
  /* A partir daqui, insere-se qlqer codigo C necessario.
   */
@@ -1899,6 +1924,7 @@ int main(int argc, char* argv[]) {
    progname = argv[0];
 
    init_table(&stable);
+   init_list(&codigo_tac);
 
    if (!yyparse()) 
       printf("OKAY.\n");

@@ -3,12 +3,12 @@
 # 'make' sem argumento vai resolver a depencia abaixo, e compilar pico:
 #   sem fazer a instalacao.
 #
-all: pico
+all: pico tac
 #
 # 'pico' depende de pico.c (codigo fonte do parser) e lex.yy.c (codigo fonte
 # do scanner).
-pico: pico.c lex.yy.c
-	gcc -o pico -I$(INC_DIR) $(OBJ_DIR)/symbol_table.o pico.c -lfl
+pico: pico.c lex.yy.c tac
+	gcc -o pico -I$(INC_DIR) $(OBJ_DIR)/symbol_table.o $(OBJ_DIR)/tac_list.o pico.c -lfl
 #
 # 'pico.c' eh gerado pelo Yacc a partir de pico.y.
 # o comando yacc -d gera tanto y.tab.c como y.tab.h. 

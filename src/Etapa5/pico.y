@@ -10,11 +10,22 @@
 	/* este include eh importante... */
 	#include "tokens.h"
 	#include "symbol_table.h"
+	#include "tac_list.h"
+	
 	/* Globais para valores de literais encontradas */
 	int VAL_INT;
 	double VAL_DOUBLE;
 	symbol_t stable = NULL;
 	int deslocamento = 0;
+	int desloc_temp = 0;
+	tac_list codigo_tac = NULL;
+
+	int gera_temp(int type)
+	{
+		int tmp = desloc_temp;
+		desloc_temp += get_size(type);
+		return tmp;
+	}
 
 	int get_size(int type)
 	{
@@ -88,6 +99,11 @@
 		int int_val;
 		double double_val;
 	} linfo;
+	struct einfo {
+		int type;
+		int desloc;
+		void* codigo;
+	} einfo;
 	char* double_val;
 	void* stable_entry;
 }
@@ -99,7 +115,7 @@
 %type<linfo> INT_LIT
 %type<linfo> F_LIT
 %type<stable_entry> lvalue
-%type<tinfo> expr
+%type<einfo> expr
 %%
 
 /* area de definicao de gramatica */
@@ -165,6 +181,9 @@ command:		attr |
 				;
 		
 attr:			lvalue '=' expr
+				{
+					//gera_cod($1->desloc);
+				}
 				;
 
 lvalue:			IDF {
@@ -193,6 +212,8 @@ expr:			expr ADD expr
 						printf("Erro de tipo. Tentativa de somar um char\n");
 						return -1;
 					}
+					$$.desloc = gera_temp($1.type);
+//					gera_codigo(ADD, );
 				}
 				| expr SUB expr 
 				{
@@ -291,6 +312,7 @@ int main(int argc, char* argv[]) {
    progname = argv[0];
 
    init_table(&stable);
+   init_list(&codigo_tac);
 
    if (!yyparse()) 
       printf("OKAY.\n");

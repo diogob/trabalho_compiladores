@@ -59,7 +59,7 @@ int print_tac(tac_list tac);
  * @param list tac_list.
  * @return nada (void).
  */
-void free_list(tac_list* tac);
+void free_tac_list(tac_list* tac);
 int empty_list(tac_list l);
 
 tac_list last(tac_list l);

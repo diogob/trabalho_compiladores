@@ -11,7 +11,7 @@ int init_list(tac_list* l)
 	return 0;
 } 
 
-void free_list(tac_list* l)
+void free_tac_list(tac_list* l)
 {
 	if((*l)->next != NULL)
 		free_list(&(*l)->next);
