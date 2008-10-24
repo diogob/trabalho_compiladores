@@ -83,8 +83,12 @@
 		int size;
 	} tinfo;
 	int nelements;
-	int int_val;
-	double double_val;
+	struct linfo {
+		char* text;
+		int int_val;
+		double double_val;
+	} linfo;
+	char* double_val;
 	void* stable_entry;
 }
 
@@ -92,7 +96,8 @@
 %type<name> IDF
 %type<tinfo> types
 %type<nelements> type_array
-%type<int_val> INT_LIT
+%type<linfo> INT_LIT
+%type<linfo> F_LIT
 %type<stable_entry> lvalue
 %type<tinfo> expr
 %%
@@ -116,7 +121,7 @@ decl:			ident types {
 								idf->name = malloc(sizeof(char) * (strlen($1) + 1));
 								strcpy(idf->name, $1);
 								idf->type = $2.type;
-								idf->size = get_size($2.type);
+								idf->size = get_size($2.type) * ($2.size ? $2.size : 1);
 								idf->desloc = deslocamento;
 								deslocamento += idf->size;
 								insert(&stable, idf);
@@ -127,8 +132,8 @@ ident:			IDF ',' ident |
 				IDF ':'
 				;
 		
-types:			type |
-				type '[' type_array { $$.size = $3; }
+types:			type { $$.size = 0; }
+				| type '[' type_array { $$.size = $3; }
 				;
 		
 type:			INT |
@@ -139,11 +144,11 @@ type:			INT |
 		
 type_array:		INT_LIT ':' INT_LIT ',' type_array
 				{
-					$$ = $3 - $1 + $5;
+					$$ = $3.int_val - $1.int_val + $5;
 				}
 				| INT_LIT ':' INT_LIT ']'
 				{
-					$$ = $3 - $1;
+					$$ = $3.int_val - $1.int_val;
 				}
 				;
 

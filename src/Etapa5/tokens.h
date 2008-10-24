@@ -122,12 +122,16 @@ typedef union YYSTYPE
 		int size;
 	} tinfo;
 	int nelements;
-	int int_val;
-	double double_val;
+	struct linfo {
+		char* text;
+		int int_val;
+		double double_val;
+	} linfo;
+	char* double_val;
 	void* stable_entry;
 }
 /* Line 1489 of yacc.c.  */
-#line 131 "y.tab.h"
+#line 135 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

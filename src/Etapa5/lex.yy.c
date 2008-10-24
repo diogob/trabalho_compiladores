@@ -975,24 +975,38 @@ YY_RULE_SETUP
 case 39:
 YY_RULE_SETUP
 #line 78 "scanner.l"
-{ yylval.int_val = (int)strtol(yytext, (char **)NULL, 10); return(INT_LIT); }
+{
+							char* tmp;
+							tmp = malloc(sizeof(char) * (strlen(yytext) + 1));
+							strcpy(tmp, yytext);
+							yylval.linfo.text = tmp;
+							yylval.linfo.int_val = (int)strtol(yytext, (char **)NULL, 10);
+							return(INT_LIT);
+						}
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 79 "scanner.l"
-{ yylval.double_val  = strtod(yytext, (char **)NULL); return(F_LIT); }
+#line 86 "scanner.l"
+{ 
+												char* tmp;
+												tmp = malloc(sizeof(char) * (strlen(yytext) + 1));
+												strcpy(tmp, yytext);
+												yylval.linfo.text = tmp;
+												yylval.linfo.double_val = strtod(yytext, (char **)NULL);
+												return(F_LIT); 
+											}
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 81 "scanner.l"
+#line 95 "scanner.l"
 { printf("Erro lexical - caractere nao reconhecido: %c.\n", yytext[0]);  exit(-1); }
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 83 "scanner.l"
+#line 97 "scanner.l"
 ECHO;
 	YY_BREAK
-#line 996 "lex.yy.c"
+#line 1010 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1990,7 +2004,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 83 "scanner.l"
+#line 97 "scanner.l"
 
 
  /* Secao dos  Procedimentos auxiliares  */

@@ -75,8 +75,22 @@ branco		[ |\t|\n]
 							yylval.name = tmp;
 							return( IDF ); 
 						}
-{digito}+				{ yylval.int_val = (int)strtol(yytext, (char **)NULL, 10); return(INT_LIT); }
-({digito}*\.{digito}+([Ee][+-]{digito}+)?)	{ yylval.double_val  = strtod(yytext, (char **)NULL); return(F_LIT); }
+{digito}+				{
+							char* tmp;
+							tmp = malloc(sizeof(char) * (strlen(yytext) + 1));
+							strcpy(tmp, yytext);
+							yylval.linfo.text = tmp;
+							yylval.linfo.int_val = (int)strtol(yytext, (char **)NULL, 10);
+							return(INT_LIT);
+						}
+({digito}*\.{digito}+([Ee][+-]{digito}+)?)	{ 
+												char* tmp;
+												tmp = malloc(sizeof(char) * (strlen(yytext) + 1));
+												strcpy(tmp, yytext);
+												yylval.linfo.text = tmp;
+												yylval.linfo.double_val = strtod(yytext, (char **)NULL);
+												return(F_LIT); 
+											}
 
 .                     	{ printf("Erro lexical - caractere nao reconhecido: %c.\n", yytext[0]);  exit(-1); }
 
