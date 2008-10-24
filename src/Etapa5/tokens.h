@@ -124,9 +124,10 @@ typedef union YYSTYPE
 	int nelements;
 	int int_val;
 	double double_val;
+	void* stable_entry;
 }
 /* Line 1489 of yacc.c.  */
-#line 130 "y.tab.h"
+#line 131 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

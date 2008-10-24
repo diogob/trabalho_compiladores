@@ -158,7 +158,7 @@
 	double VAL_DOUBLE;
 	symbol_t stable = NULL;
 	int deslocamento = 0;
-	
+
 	int get_size(int type)
 	{
 		switch(type)
@@ -210,9 +210,10 @@ typedef union YYSTYPE
 	int nelements;
 	int int_val;
 	double double_val;
+	void* stable_entry;
 }
 /* Line 187 of yacc.c.  */
-#line 216 "y.tab.c"
+#line 217 "y.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -225,7 +226,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 229 "y.tab.c"
+#line 230 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -532,14 +533,14 @@ static const yytype_int8 yyrhs[] =
 };
 
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
-static const yytype_uint8 yyrline[] =
+static const yytype_uint16 yyrline[] =
 {
-       0,   100,   100,   101,   104,   105,   111,   124,   125,   128,
-     129,   132,   133,   134,   135,   138,   142,   151,   152,   153,
-     156,   157,   160,   163,   172,   177,   178,   181,   182,   183,
-     184,   185,   186,   187,   188,   189,   192,   195,   196,   199,
-     200,   203,   204,   207,   210,   211,   214,   217,   218,   219,
-     220,   221,   222,   223,   224,   225,   226,   227,   228
+       0,   102,   102,   103,   106,   107,   113,   126,   127,   130,
+     131,   134,   135,   136,   137,   140,   144,   153,   154,   155,
+     158,   159,   162,   165,   175,   180,   181,   184,   192,   200,
+     208,   216,   220,   224,   228,   232,   235,   238,   239,   242,
+     243,   246,   247,   250,   253,   254,   257,   260,   261,   262,
+     263,   264,   265,   266,   267,   268,   269,   270,   271
 };
 #endif
 
@@ -1532,7 +1533,7 @@ yyreduce:
   switch (yyn)
     {
         case 6:
-#line 111 "pico.y"
+#line 113 "pico.y"
     {
 								entry_t *idf;
 								idf = malloc(sizeof(entry_t));
@@ -1548,26 +1549,26 @@ yyreduce:
     break;
 
   case 10:
-#line 129 "pico.y"
+#line 131 "pico.y"
     { (yyval.tinfo).size = (yyvsp[(3) - (3)].nelements); }
     break;
 
   case 15:
-#line 139 "pico.y"
+#line 141 "pico.y"
     {
 					(yyval.nelements) = (yyvsp[(3) - (5)].int_val) - (yyvsp[(1) - (5)].int_val) + (yyvsp[(5) - (5)].nelements);
 				}
     break;
 
   case 16:
-#line 143 "pico.y"
+#line 145 "pico.y"
     {
 					(yyval.nelements) = (yyvsp[(3) - (4)].int_val) - (yyvsp[(1) - (4)].int_val);
 				}
     break;
 
   case 23:
-#line 163 "pico.y"
+#line 165 "pico.y"
     {
 						entry_t *idf = NULL;
 						idf = lookup(stable, (yyvsp[(1) - (1)].name));
@@ -1576,19 +1577,92 @@ yyreduce:
 							printf("Erro de sintaxe. Variavel %s nao declarada.\n", (yyvsp[(1) - (1)].name));
 							return -1;
 						}
+						(yyval.stable_entry) = idf;
 					}
     break;
 
   case 24:
-#line 172 "pico.y"
+#line 175 "pico.y"
     {
 										
 									}
     break;
 
+  case 27:
+#line 185 "pico.y"
+    {
+					if((yyvsp[(1) - (3)].tinfo).type == CHAR || (yyvsp[(3) - (3)].tinfo).type == CHAR)
+					{
+						printf("Erro de tipo. Tentativa de somar um char\n");
+						return -1;
+					}
+				}
+    break;
+
+  case 28:
+#line 193 "pico.y"
+    {
+					if((yyvsp[(1) - (3)].tinfo).type == CHAR || (yyvsp[(3) - (3)].tinfo).type == CHAR)
+					{
+						printf("Erro de tipo. Tentativa de subtrair um char\n");
+						return -1;
+					}
+				}
+    break;
+
+  case 29:
+#line 201 "pico.y"
+    {
+					if((yyvsp[(1) - (3)].tinfo).type == CHAR || (yyvsp[(3) - (3)].tinfo).type == CHAR)
+					{
+						printf("Erro de tipo. Tentativa de multiplicar um char\n");
+						return -1;
+					}
+				}
+    break;
+
+  case 30:
+#line 209 "pico.y"
+    {
+					if((yyvsp[(1) - (3)].tinfo).type == CHAR || (yyvsp[(3) - (3)].tinfo).type == CHAR)
+					{
+						printf("Erro de tipo. Tentativa de dividir um char\n");
+						return -1;
+					}
+				}
+    break;
+
+  case 31:
+#line 217 "pico.y"
+    {
+					(yyval.tinfo).type = (yyvsp[(2) - (3)].tinfo).type;
+				}
+    break;
+
+  case 32:
+#line 221 "pico.y"
+    {
+					(yyval.tinfo).type = INT;
+				}
+    break;
+
+  case 33:
+#line 225 "pico.y"
+    {
+					(yyval.tinfo).type = FLOAT;
+				}
+    break;
+
+  case 34:
+#line 229 "pico.y"
+    {
+					(yyval.tinfo).type = ((entry_t *) (yyvsp[(1) - (1)].stable_entry))->type;
+				}
+    break;
+
 
 /* Line 1267 of yacc.c.  */
-#line 1592 "y.tab.c"
+#line 1666 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1802,7 +1876,7 @@ yyreturn:
 }
 
 
-#line 233 "pico.y"
+#line 276 "pico.y"
 
  /* A partir daqui, insere-se qlqer codigo C necessario.
   */

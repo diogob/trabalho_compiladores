@@ -15,7 +15,7 @@
 	double VAL_DOUBLE;
 	symbol_t stable = NULL;
 	int deslocamento = 0;
-	
+
 	int get_size(int type)
 	{
 		switch(type)
@@ -85,6 +85,7 @@
 	int nelements;
 	int int_val;
 	double double_val;
+	void* stable_entry;
 }
 
 %type<name> ident
@@ -92,7 +93,8 @@
 %type<tinfo> types
 %type<nelements> type_array
 %type<int_val> INT_LIT
-
+%type<stable_entry> lvalue
+%type<tinfo> expr
 %%
 
 /* area de definicao de gramatica */
@@ -168,6 +170,7 @@ lvalue:			IDF {
 							printf("Erro de sintaxe. Variavel %s nao declarada.\n", $1);
 							return -1;
 						}
+						$$ = idf;
 					}
 				| IDF '[' expr_list {
 										
@@ -178,17 +181,57 @@ expr_list:		expr ',' expr_list |
 				expr ']'
 				;
 			
-expr:			expr ADD expr |
-				expr SUB expr |
-				expr MUL expr |
-				expr DIV expr |
-				OPEN_PAR expr CLOSE_PAR |
-				INT_LIT |
-				F_LIT |
-				lvalue |
-				proc_call
+expr:			expr ADD expr
+				{
+					if($1.type == CHAR || $3.type == CHAR)
+					{
+						printf("Erro de tipo. Tentativa de somar um char\n");
+						return -1;
+					}
+				}
+				| expr SUB expr 
+				{
+					if($1.type == CHAR || $3.type == CHAR)
+					{
+						printf("Erro de tipo. Tentativa de subtrair um char\n");
+						return -1;
+					}
+				}
+				| expr MUL expr
+				{
+					if($1.type == CHAR || $3.type == CHAR)
+					{
+						printf("Erro de tipo. Tentativa de multiplicar um char\n");
+						return -1;
+					}
+				} 
+				| expr DIV expr
+				{
+					if($1.type == CHAR || $3.type == CHAR)
+					{
+						printf("Erro de tipo. Tentativa de dividir um char\n");
+						return -1;
+					}
+				} 
+				| OPEN_PAR expr CLOSE_PAR
+				{
+					$$.type = $2.type;
+				}
+				| INT_LIT
+				{
+					$$.type = INT;
+				}
+				| F_LIT
+				{
+					$$.type = FLOAT;
+				}
+				| lvalue 
+				{
+					$$.type = ((entry_t *) $1)->type;
+				}
+				| proc_call
 				;
-		
+
 proc_call:		IDF OPEN_PAR expr_list2
 				;
 

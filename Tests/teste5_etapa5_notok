@@ -1,0 +1,6 @@
+x:int;
+y:char;
+z:int
+x=10;
+y=32;
+z = x+y
