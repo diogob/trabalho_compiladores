@@ -157,6 +157,7 @@
 	int VAL_INT;
 	double VAL_DOUBLE;
 	symbol_t stable = NULL;
+	int deslocamento = 0;
 	
 	int get_size(int type)
 	{
@@ -199,13 +200,19 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 78 "pico.y"
+#line 79 "pico.y"
 {
-   char* name;
-   int type;
+	char* name;
+	struct tinfo{ 
+		int type;
+		int size;
+	} tinfo;
+	int nelements;
+	int int_val;
+	double double_val;
 }
 /* Line 187 of yacc.c.  */
-#line 209 "y.tab.c"
+#line 216 "y.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -218,7 +225,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 222 "y.tab.c"
+#line 229 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -527,12 +534,12 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    91,    91,    92,    95,    96,   102,   113,   114,   117,
-     118,   121,   122,   123,   124,   127,   128,   134,   135,   136,
-     139,   140,   143,   146,   155,   160,   161,   164,   165,   166,
-     167,   168,   169,   170,   171,   172,   175,   178,   179,   182,
-     183,   186,   187,   190,   193,   194,   197,   200,   201,   202,
-     203,   204,   205,   206,   207,   208,   209,   210,   211
+       0,   100,   100,   101,   104,   105,   111,   124,   125,   128,
+     129,   132,   133,   134,   135,   138,   142,   151,   152,   153,
+     156,   157,   160,   163,   172,   177,   178,   181,   182,   183,
+     184,   185,   186,   187,   188,   189,   192,   195,   196,   199,
+     200,   203,   204,   207,   210,   211,   214,   217,   218,   219,
+     220,   221,   222,   223,   224,   225,   226,   227,   228
 };
 #endif
 
@@ -1525,21 +1532,42 @@ yyreduce:
   switch (yyn)
     {
         case 6:
-#line 102 "pico.y"
+#line 111 "pico.y"
     {
 								entry_t *idf;
 								idf = malloc(sizeof(entry_t));
 								idf->name = malloc(sizeof(char) * (strlen((yyvsp[(1) - (2)].name)) + 1));
 								strcpy(idf->name, (yyvsp[(1) - (2)].name));
-								idf->type = (yyvsp[(2) - (2)].type);
-								idf->size = get_size((yyvsp[(2) - (2)].type)); 
+								idf->type = (yyvsp[(2) - (2)].tinfo).type;
+								idf->size = get_size((yyvsp[(2) - (2)].tinfo).type);
+								idf->desloc = deslocamento;
+								deslocamento += idf->size;
 								insert(&stable, idf);
-								printf("Decl da var %s tipo: %i tamanho: %i\n", (yyvsp[(1) - (2)].name), (yyvsp[(2) - (2)].type), idf->size);
+								printf("Decl da var %s tipo: %i tamanho: %i desloc: %i el: %i\n", (yyvsp[(1) - (2)].name), (yyvsp[(2) - (2)].tinfo).type, idf->size, idf->desloc, (yyvsp[(2) - (2)].tinfo).size);
 							}
     break;
 
+  case 10:
+#line 129 "pico.y"
+    { (yyval.tinfo).size = (yyvsp[(3) - (3)].nelements); }
+    break;
+
+  case 15:
+#line 139 "pico.y"
+    {
+					(yyval.nelements) = (yyvsp[(3) - (5)].int_val) - (yyvsp[(1) - (5)].int_val) + (yyvsp[(5) - (5)].nelements);
+				}
+    break;
+
+  case 16:
+#line 143 "pico.y"
+    {
+					(yyval.nelements) = (yyvsp[(3) - (4)].int_val) - (yyvsp[(1) - (4)].int_val);
+				}
+    break;
+
   case 23:
-#line 146 "pico.y"
+#line 163 "pico.y"
     {
 						entry_t *idf = NULL;
 						idf = lookup(stable, (yyvsp[(1) - (1)].name));
@@ -1552,7 +1580,7 @@ yyreduce:
     break;
 
   case 24:
-#line 155 "pico.y"
+#line 172 "pico.y"
     {
 										
 									}
@@ -1560,7 +1588,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 1564 "y.tab.c"
+#line 1592 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1774,7 +1802,7 @@ yyreturn:
 }
 
 
-#line 216 "pico.y"
+#line 233 "pico.y"
 
  /* A partir daqui, insere-se qlqer codigo C necessario.
   */

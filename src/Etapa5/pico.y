@@ -14,6 +14,7 @@
 	int VAL_INT;
 	double VAL_DOUBLE;
 	symbol_t stable = NULL;
+	int deslocamento = 0;
 	
 	int get_size(int type)
 	{
@@ -76,13 +77,21 @@
 %left NOT
 
 %union {
-   char* name;
-   int type;
+	char* name;
+	struct tinfo{ 
+		int type;
+		int size;
+	} tinfo;
+	int nelements;
+	int int_val;
+	double double_val;
 }
 
 %type<name> ident
 %type<name> IDF
-%type<type> types
+%type<tinfo> types
+%type<nelements> type_array
+%type<int_val> INT_LIT
 
 %%
 
@@ -104,10 +113,12 @@ decl:			ident types {
 								idf = malloc(sizeof(entry_t));
 								idf->name = malloc(sizeof(char) * (strlen($1) + 1));
 								strcpy(idf->name, $1);
-								idf->type = $2;
-								idf->size = get_size($2); 
+								idf->type = $2.type;
+								idf->size = get_size($2.type);
+								idf->desloc = deslocamento;
+								deslocamento += idf->size;
 								insert(&stable, idf);
-								/* printf("Decl da var %s tipo: %i tamanho: %i\n", $1, $2, idf->size); */
+								printf("Decl da var %s tipo: %i tamanho: %i desloc: %i el: %i\n", $1, $2.type, idf->size, idf->desloc, $2.size);
 							}
 		
 ident:			IDF ',' ident |
@@ -115,7 +126,7 @@ ident:			IDF ',' ident |
 				;
 		
 types:			type |
-				type '[' type_array
+				type '[' type_array { $$.size = $3; }
 				;
 		
 type:			INT |
@@ -124,8 +135,14 @@ type:			INT |
 				CHAR
 				;
 		
-type_array:		INT_LIT ':' INT_LIT ',' type_array |
-				INT_LIT ':' INT_LIT ']'
+type_array:		INT_LIT ':' INT_LIT ',' type_array
+				{
+					$$ = $3 - $1 + $5;
+				}
+				| INT_LIT ':' INT_LIT ']'
+				{
+					$$ = $3 - $1;
+				}
 				;
 
 /*----END Declarations----*/		

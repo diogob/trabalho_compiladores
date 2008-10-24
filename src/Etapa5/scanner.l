@@ -37,10 +37,10 @@ branco		[ |\t|\n]
 "then"					{ return( THEN ) ; }
 "else"					{ return( ELSE ) ; }
 "while"					{ return( WHILE ) ; }
-"int"		 			{ yylval.type = INT; return( INT ); }
-"double"		 		{ yylval.type = DOUBLE; return( DOUBLE ); }
-"float"			 		{ yylval.type = FLOAT; return( FLOAT ); }
-"char"			 		{ yylval.type = CHAR; return( CHAR ); }
+"int"		 			{ yylval.tinfo.type = INT; return( INT ); }
+"double"		 		{ yylval.tinfo.type = DOUBLE; return( DOUBLE ); }
+"float"			 		{ yylval.tinfo.type = FLOAT; return( FLOAT ); }
+"char"			 		{ yylval.tinfo.type = CHAR; return( CHAR ); }
 ":"   					{return(':');}
 "end"   				{return(END);}
 "true" 					{return(TRUE);}
@@ -75,8 +75,8 @@ branco		[ |\t|\n]
 							yylval.name = tmp;
 							return( IDF ); 
 						}
-{digito}+				{ VAL_INT = (int)strtol(yytext, (char **)NULL, 10); return(INT_LIT); }
-({digito}*\.{digito}+([Ee][+-]{digito}+)?)	{ VAL_DOUBLE = strtod(yytext, (char **)NULL); return(F_LIT); }
+{digito}+				{ yylval.int_val = (int)strtol(yytext, (char **)NULL, 10); return(INT_LIT); }
+({digito}*\.{digito}+([Ee][+-]{digito}+)?)	{ yylval.double_val  = strtod(yytext, (char **)NULL); return(F_LIT); }
 
 .                     	{ printf("Erro lexical - caractere nao reconhecido: %c.\n", yytext[0]);  exit(-1); }
 

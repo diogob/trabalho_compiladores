@@ -1,0 +1,6 @@
+arranjo:int[0:10];
+segundo_ar:int[0:10,0:10,0:5];
+x:float;
+y:char;
+z:double
+arranjo[0] = 1

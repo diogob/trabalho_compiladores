@@ -1,0 +1,6 @@
+x:int;
+y:int;
+variavel:int;
+nome_estranho:int
+x=1;
+y=2

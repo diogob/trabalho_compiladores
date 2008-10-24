@@ -808,22 +808,22 @@ YY_RULE_SETUP
 case 7:
 YY_RULE_SETUP
 #line 40 "scanner.l"
-{ yylval.type = INT; return( INT ); }
+{ yylval.tinfo.type = INT; return( INT ); }
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
 #line 41 "scanner.l"
-{ yylval.type = DOUBLE; return( DOUBLE ); }
+{ yylval.tinfo.type = DOUBLE; return( DOUBLE ); }
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
 #line 42 "scanner.l"
-{ yylval.type = FLOAT; return( FLOAT ); }
+{ yylval.tinfo.type = FLOAT; return( FLOAT ); }
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
 #line 43 "scanner.l"
-{ yylval.type = CHAR; return( CHAR ); }
+{ yylval.tinfo.type = CHAR; return( CHAR ); }
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
@@ -975,12 +975,12 @@ YY_RULE_SETUP
 case 39:
 YY_RULE_SETUP
 #line 78 "scanner.l"
-{ VAL_INT = (int)strtol(yytext, (char **)NULL, 10); return(INT_LIT); }
+{ yylval.int_val = (int)strtol(yytext, (char **)NULL, 10); return(INT_LIT); }
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
 #line 79 "scanner.l"
-{ VAL_DOUBLE = strtod(yytext, (char **)NULL); return(F_LIT); }
+{ yylval.double_val  = strtod(yytext, (char **)NULL); return(F_LIT); }
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
