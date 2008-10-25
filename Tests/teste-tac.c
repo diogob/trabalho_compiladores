@@ -6,6 +6,9 @@
 int main(int argc, char** argv)
 {
 	tac_list l = NULL;
+	tac_list l2 = NULL;
+	tac_list l3 = NULL;
+
 	tac_list lasti = NULL;
 	tac_instruction tac1;
 	tac_instruction tac2;
@@ -54,6 +57,17 @@ int main(int argc, char** argv)
 		printf(" OK\n");
 	else
 		printf(" ERROR\n");
+
+	printf("Testando concat (1,5,5,1):\n");
+	init_list(&l2);
+	append(l2, &tac2);
+	append(l2, &tac1);
+	concat_tac(l, l2);
+
+	init_list(&l3);
+	l3 = concat_tac(l3, l);
+	for(lasti = l3; lasti->next != NULL; lasti = lasti->next)
+		printf("Elemento: %i\n", lasti->tac->op);
 
 	return 0;
 }

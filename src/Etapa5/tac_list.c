@@ -14,7 +14,7 @@ int init_list(tac_list* l)
 void free_tac_list(tac_list* l)
 {
 	if((*l)->next != NULL)
-		free_list(&(*l)->next);
+		free_tac_list(&(*l)->next);
 
 	free((*l)->tac);
 	free(*l);
@@ -44,6 +44,20 @@ int append(tac_list l, tac_instruction* i)
 		return -1;
 	lasti->next = new;
 	return 0;
+}
+
+tac_list concat_tac(tac_list l1, tac_list l2)
+{
+
+	tac_list before_last = NULL, last = NULL;
+	tac_list new = NULL;
+	for(last = before_last = l1; last->tac != NULL; before_last = last, last = last->next);
+
+	// Se a primeira lista esta vazia retornamos a segunda 
+	if(last == l1)
+		return l2;
+	before_last->next = l2;
+	return l1;
 }
 
 tac_list first(tac_list l)

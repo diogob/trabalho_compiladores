@@ -12,8 +12,12 @@
 typedef struct {
    int op;  /**< operador. */
    int arg1;    /**< argumento 1. */
+   char arg1_location;
    int arg2;    /**< argumento 2. */
+   char arg2_location;
    int res;  /**< resultado. */
+   char res_location;   
+   char* literal;
 } tac_instruction ;
 
 /** \brief Encapsulamento da lista de instrucoes TAC
@@ -64,5 +68,7 @@ int empty_list(tac_list l);
 
 tac_list last(tac_list l);
 tac_list first(tac_list l);
+
+tac_list concat_tac(tac_list l1, tac_list l2);
 
 #endif

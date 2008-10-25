@@ -20,6 +20,24 @@
 	int desloc_temp = 0;
 	tac_list codigo_tac = NULL;
 
+	tac_list gera_codigo( int op, int arg1, char arg1_location, int arg2, char arg2_location, int res, char res_location, char* literal)
+	{
+		tac_list new;
+		tac_instruction* taci;
+		init_list(&new);
+		taci = malloc(sizeof(tac_instruction));
+		taci->op = op;
+		taci->arg1 = arg1;
+		taci->arg1_location = arg1_location;
+		taci->arg2 = arg2;
+		taci->arg2_location = arg1_location;
+		taci->res = res;
+		taci->res_location = res_location;
+		taci->literal = literal;
+		append(new, taci);
+		return new;
+	}
+
 	int gera_temp(int type)
 	{
 		int tmp = desloc_temp;
@@ -182,6 +200,10 @@ command:		attr |
 		
 attr:			lvalue '=' expr
 				{
+					if($3.codigo == NULL)
+						codigo_tac = concat_tac(codigo_tac, gera_codigo('=', -1, '\0', -1, '\0', ((entry_t *) $1)->desloc, 'r', NULL));
+					else
+						codigo_tac = concat_tac(codigo_tac, $3.codigo);//concat_tac((tac_list) $3.codigo, gera_codigo('=', $3.desloc, 'r', -1, '\0', ((entry_t *) $1)->desloc, 'r', NULL)));
 					//gera_cod($1->desloc);
 				}
 				;
@@ -213,7 +235,7 @@ expr:			expr ADD expr
 						return -1;
 					}
 					$$.desloc = gera_temp($1.type);
-//					gera_codigo(ADD, );
+//					$$.codigo = (void*) concat_tac(concat_tac((tac_list) $1.codigo, (tac_list) $3.codigo), gera_codigo(ADD, $1.desloc, 's', $3.desloc, 's', $$.desloc, 'r', NULL));
 				}
 				| expr SUB expr 
 				{
@@ -222,6 +244,7 @@ expr:			expr ADD expr
 						printf("Erro de tipo. Tentativa de subtrair um char\n");
 						return -1;
 					}
+					$$.desloc = gera_temp($1.type);
 				}
 				| expr MUL expr
 				{
@@ -230,6 +253,7 @@ expr:			expr ADD expr
 						printf("Erro de tipo. Tentativa de multiplicar um char\n");
 						return -1;
 					}
+					$$.desloc = gera_temp($1.type);
 				} 
 				| expr DIV expr
 				{
@@ -238,22 +262,28 @@ expr:			expr ADD expr
 						printf("Erro de tipo. Tentativa de dividir um char\n");
 						return -1;
 					}
+					$$.desloc = gera_temp($1.type);
 				} 
 				| OPEN_PAR expr CLOSE_PAR
 				{
 					$$.type = $2.type;
+					$$.desloc = $2.desloc;
 				}
 				| INT_LIT
 				{
 					$$.type = INT;
+					$$.codigo = NULL;
+
 				}
 				| F_LIT
 				{
 					$$.type = FLOAT;
+					$$.codigo = NULL;
 				}
 				| lvalue 
 				{
 					$$.type = ((entry_t *) $1)->type;
+					$$.desloc = ((entry_t *) $1)->desloc;
 				}
 				| proc_call
 				;
