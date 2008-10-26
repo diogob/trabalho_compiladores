@@ -26,7 +26,7 @@
 	int desloc_temp = -1;
 	tac_list codigo_tac = NULL;
 
-	tac_list gera_codigo( int op, int arg1, int arg2, int res, char* literal)
+	tac_list gera_codigo( int op, int arg1, int arg2, int res, char* literal1, char* literal2)
 	{
 		tac_list new;
 		tac_instruction* taci;
@@ -36,7 +36,8 @@
 		taci->arg1 = arg1;
 		taci->arg2 = arg2;
 		taci->res = res;
-		taci->literal = literal;
+		taci->literal1 = literal1;
+		taci->literal2 = literal2;
 		append(new, taci);
 		return new;
 	}
@@ -204,7 +205,7 @@ command:		attr |
 		
 attr:			lvalue '=' expr
 				{
-					codigo_tac = concat_tac(codigo_tac, concat_tac($3.codigo, gera_codigo('=', $3.desloc, 0, ((entry_t *) $1)->desloc, $3.literal)));
+					codigo_tac = concat_tac(codigo_tac, concat_tac($3.codigo, gera_codigo(0, $3.desloc, 0, ((entry_t *) $1)->desloc, $3.literal, NULL)));
 				}
 				;
 
@@ -235,8 +236,8 @@ expr:			expr ADD expr
 						return -1;
 					}
 					$$.desloc = gera_temp($1.type);
-					$$.codigo = (void*) concat_tac(concat_tac((tac_list) $1.codigo, (tac_list) $3.codigo), gera_codigo(ADD, $1.desloc, $3.desloc, $$.desloc, NULL));
-					//printf("Gerando codigo para soma: %i = %i + %i");
+					$$.codigo = (void*) concat_tac(concat_tac((tac_list) $1.codigo, (tac_list) $3.codigo), gera_codigo(ADD, $1.desloc, $3.desloc, $$.desloc, $1.literal, $3.literal));
+					printf("Gerando codigo para soma: %i = %i + %i - l1: %s l2: %s\n", $$.desloc, $1.desloc, $3.desloc, $1.literal, $3.literal);
 				}
 				| expr SUB expr 
 				{

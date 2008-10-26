@@ -10,11 +10,12 @@
  * Tipo abstrato das entradas na lista TAC.
  */
 typedef struct {
-   int op;  /**< operador. */
-   int arg1;    /**< argumento 1. */
-   int arg2;    /**< argumento 2. */
-   int res;  /**< resultado. */
-   char* literal;
+	int op;  /**< operador. */
+	int arg1;    /**< argumento 1. */
+	int arg2;    /**< argumento 2. */
+	int res;  /**< resultado. */
+	char* literal1;
+	char* literal2;
 } tac_instruction ;
 
 /** \brief Encapsulamento da lista de instrucoes TAC
