@@ -16,11 +16,17 @@
 	int VAL_INT;
 	double VAL_DOUBLE;
 	symbol_t stable = NULL;
-	int deslocamento = 0;
-	int desloc_temp = 0;
+	/*
+	Comeamos a contar o deslocamento a partir de 1 para SP
+	e a partir de -1 para Rx
+	0 eh reservado para indicar que o argumento nao foi passado
+	na impressao subtraimos um do endereco para obter zero
+	*/
+	int deslocamento = 1;
+	int desloc_temp = -1;
 	tac_list codigo_tac = NULL;
 
-	tac_list gera_codigo( int op, int arg1, char arg1_location, int arg2, char arg2_location, int res, char res_location, char* literal)
+	tac_list gera_codigo( int op, int arg1, int arg2, int res, char* literal)
 	{
 		tac_list new;
 		tac_instruction* taci;
@@ -28,11 +34,8 @@
 		taci = malloc(sizeof(tac_instruction));
 		taci->op = op;
 		taci->arg1 = arg1;
-		taci->arg1_location = arg1_location;
 		taci->arg2 = arg2;
-		taci->arg2_location = arg1_location;
 		taci->res = res;
-		taci->res_location = res_location;
 		taci->literal = literal;
 		append(new, taci);
 		return new;
@@ -41,7 +44,7 @@
 	int gera_temp(int type)
 	{
 		int tmp = desloc_temp;
-		desloc_temp += get_size(type);
+		desloc_temp -= get_size(type);
 		return tmp;
 	}
 
@@ -120,6 +123,7 @@
 	struct einfo {
 		int type;
 		int desloc;
+		char* literal;
 		void* codigo;
 	} einfo;
 	char* double_val;
@@ -200,11 +204,7 @@ command:		attr |
 		
 attr:			lvalue '=' expr
 				{
-					if($3.codigo == NULL)
-						codigo_tac = concat_tac(codigo_tac, gera_codigo('=', -1, '\0', -1, '\0', ((entry_t *) $1)->desloc, 'r', NULL));
-					else
-						codigo_tac = concat_tac(codigo_tac, $3.codigo);//concat_tac((tac_list) $3.codigo, gera_codigo('=', $3.desloc, 'r', -1, '\0', ((entry_t *) $1)->desloc, 'r', NULL)));
-					//gera_cod($1->desloc);
+					codigo_tac = concat_tac(codigo_tac, concat_tac($3.codigo, gera_codigo('=', $3.desloc, 0, ((entry_t *) $1)->desloc, $3.literal)));
 				}
 				;
 
@@ -234,8 +234,9 @@ expr:			expr ADD expr
 						printf("Erro de tipo. Tentativa de somar um char\n");
 						return -1;
 					}
+					//printf("Gerando codigo para soma: %i = %i + %i");
 					$$.desloc = gera_temp($1.type);
-//					$$.codigo = (void*) concat_tac(concat_tac((tac_list) $1.codigo, (tac_list) $3.codigo), gera_codigo(ADD, $1.desloc, 's', $3.desloc, 's', $$.desloc, 'r', NULL));
+					$$.codigo = (void*) concat_tac(concat_tac((tac_list) $1.codigo, (tac_list) $3.codigo), gera_codigo(ADD, $1.desloc, $3.desloc, $$.desloc, NULL));
 				}
 				| expr SUB expr 
 				{
@@ -273,12 +274,15 @@ expr:			expr ADD expr
 				{
 					$$.type = INT;
 					$$.codigo = NULL;
-
+					$$.literal = $1.text;
+					$$.desloc = 0;
 				}
 				| F_LIT
 				{
 					$$.type = FLOAT;
 					$$.codigo = NULL;
+					$$.literal = $1.text;
+					$$.desloc = 0;
 				}
 				| lvalue 
 				{
@@ -339,16 +343,25 @@ int lineno;
 int yydebug=0;
 
 int main(int argc, char* argv[]) {
-   progname = argv[0];
+	progname = argv[0];
 
-   init_table(&stable);
-   init_list(&codigo_tac);
+	init_table(&stable);
+	init_list(&codigo_tac);
 
-   if (!yyparse()) 
-      printf("OKAY.\n");
-   else 
-      printf("ERROR.\n");
-   return(0);
+	if (!yyparse())
+	{
+		/*
+		Subtraimos 1 do deslocamento pois ele deve comecar no endereco 0
+		No delocamento dos temporarios subtraimos 1 do valor absoluto, pois estavamos contando numeros negativos
+		*/
+		printf("%i\n", deslocamento - 1);
+		printf("%i\n", abs(desloc_temp) - 1);
+		print_tac(codigo_tac);
+	}
+	else 
+		printf("ERROR.\n");
+
+	return(0);
 }
 
 yyerror(char* s) {

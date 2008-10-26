@@ -40,6 +40,7 @@ tac: tac_list.c tac_list.h
 # compilado, por isso a dependencia.
 #
 install: pico tac
+	cp tokens.h $(INC_DIR)/
 	cp pico $(PICO_DIR)/Tests
 
 clean:

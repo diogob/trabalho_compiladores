@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "tokens.h"
 #include "tac_list.h"
 
 int main(int argc, char** argv)
@@ -13,12 +14,13 @@ int main(int argc, char** argv)
 	tac_instruction tac1;
 	tac_instruction tac2;
 	
-	tac1.op = 1;
+	printf("ADD: %i DIV: %i", ADD, DIV);
+	tac1.op = ADD;
 	tac1.arg1 = 2;
 	tac1.arg2 = 3;
 	tac1.res = 4;
 
-	tac2.op = 5;
+	tac2.op = DIV;
 	tac2.arg1 = 6;
 	tac2.arg2 = 7;
 	tac2.res = 8;
@@ -45,7 +47,7 @@ int main(int argc, char** argv)
 
 	printf("Testando append:");
 	append(l, &tac1);
-	if(((int) l->tac->op) == 1 && ((int) l->tac->arg1) == 2 && ((int) l->tac->arg2) == 3 && ((int) l->tac->res) == 4 && !empty_list(l))
+	if(((int) l->tac->op) == ADD && ((int) l->tac->arg1) == 2 && ((int) l->tac->arg2) == 3 && ((int) l->tac->res) == 4 && !empty_list(l))
 		printf(" OK\n");
 	else
 		printf(" ERROR\n");
@@ -66,8 +68,7 @@ int main(int argc, char** argv)
 
 	init_list(&l3);
 	l3 = concat_tac(l3, l);
-	for(lasti = l3; lasti->next != NULL; lasti = lasti->next)
-		printf("Elemento: %i\n", lasti->tac->op);
 
+	print_tac(l3);
 	return 0;
 }

@@ -12,11 +12,8 @@
 typedef struct {
    int op;  /**< operador. */
    int arg1;    /**< argumento 1. */
-   char arg1_location;
    int arg2;    /**< argumento 2. */
-   char arg2_location;
    int res;  /**< resultado. */
-   char res_location;   
    char* literal;
 } tac_instruction ;
 
@@ -55,7 +52,7 @@ int append(tac_list tac, tac_instruction* i) ;
  * @param table uma tabela de simbolos.
  * @return o numero de entradas na tabela.
  */
-int print_tac(tac_list tac);
+void print_tac(tac_list);
 
 /**
  * \brief Libera uma lista encadeada

@@ -159,11 +159,17 @@
 	int VAL_INT;
 	double VAL_DOUBLE;
 	symbol_t stable = NULL;
-	int deslocamento = 0;
-	int desloc_temp = 0;
+	/*
+	Comeamos a contar o deslocamento a partir de 1 para SP
+	e a partir de -1 para Rx
+	0 eh reservado para indicar que o argumento nao foi passado
+	na impressao subtraimos um do endereco para obter zero
+	*/
+	int deslocamento = 1;
+	int desloc_temp = -1;
 	tac_list codigo_tac = NULL;
 
-	tac_list gera_codigo( int op, int arg1, char arg1_location, int arg2, char arg2_location, int res, char res_location, char* literal)
+	tac_list gera_codigo( int op, int arg1, int arg2, int res, char* literal)
 	{
 		tac_list new;
 		tac_instruction* taci;
@@ -171,11 +177,8 @@
 		taci = malloc(sizeof(tac_instruction));
 		taci->op = op;
 		taci->arg1 = arg1;
-		taci->arg1_location = arg1_location;
 		taci->arg2 = arg2;
-		taci->arg2_location = arg1_location;
 		taci->res = res;
-		taci->res_location = res_location;
 		taci->literal = literal;
 		append(new, taci);
 		return new;
@@ -184,7 +187,7 @@
 	int gera_temp(int type)
 	{
 		int tmp = desloc_temp;
-		desloc_temp += get_size(type);
+		desloc_temp -= get_size(type);
 		return tmp;
 	}
 
@@ -229,7 +232,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 108 "pico.y"
+#line 111 "pico.y"
 {
 	char* name;
 	struct tinfo{ 
@@ -245,13 +248,14 @@ typedef union YYSTYPE
 	struct einfo {
 		int type;
 		int desloc;
+		char* literal;
 		void* codigo;
 	} einfo;
 	char* double_val;
 	void* stable_entry;
 }
 /* Line 187 of yacc.c.  */
-#line 255 "y.tab.c"
+#line 259 "y.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -264,7 +268,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 268 "y.tab.c"
+#line 272 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -573,12 +577,12 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   141,   141,   142,   145,   146,   152,   165,   166,   169,
-     170,   173,   174,   175,   176,   179,   183,   192,   193,   194,
-     197,   198,   201,   211,   221,   226,   227,   230,   240,   249,
-     258,   267,   272,   278,   283,   288,   291,   294,   295,   298,
-     299,   302,   303,   306,   309,   310,   313,   316,   317,   318,
-     319,   320,   321,   322,   323,   324,   325,   326,   327
+       0,   145,   145,   146,   149,   150,   156,   169,   170,   173,
+     174,   177,   178,   179,   180,   183,   187,   196,   197,   198,
+     201,   202,   205,   211,   221,   226,   227,   230,   241,   250,
+     259,   268,   273,   280,   287,   292,   295,   298,   299,   302,
+     303,   306,   307,   310,   313,   314,   317,   320,   321,   322,
+     323,   324,   325,   326,   327,   328,   329,   330,   331
 };
 #endif
 
@@ -1571,7 +1575,7 @@ yyreduce:
   switch (yyn)
     {
         case 6:
-#line 152 "pico.y"
+#line 156 "pico.y"
     {
 								entry_t *idf;
 								idf = malloc(sizeof(entry_t));
@@ -1587,37 +1591,33 @@ yyreduce:
     break;
 
   case 9:
-#line 169 "pico.y"
+#line 173 "pico.y"
     { (yyval.tinfo).size = 0; }
     break;
 
   case 10:
-#line 170 "pico.y"
+#line 174 "pico.y"
     { (yyval.tinfo).size = (yyvsp[(3) - (3)].nelements); }
     break;
 
   case 15:
-#line 180 "pico.y"
+#line 184 "pico.y"
     {
 					(yyval.nelements) = (yyvsp[(3) - (5)].linfo).int_val - (yyvsp[(1) - (5)].linfo).int_val + (yyvsp[(5) - (5)].nelements);
 				}
     break;
 
   case 16:
-#line 184 "pico.y"
+#line 188 "pico.y"
     {
 					(yyval.nelements) = (yyvsp[(3) - (4)].linfo).int_val - (yyvsp[(1) - (4)].linfo).int_val;
 				}
     break;
 
   case 22:
-#line 202 "pico.y"
+#line 206 "pico.y"
     {
-					if((yyvsp[(3) - (3)].einfo).codigo == NULL)
-						codigo_tac = concat_tac(codigo_tac, gera_codigo('=', -1, '\0', -1, '\0', ((entry_t *) (yyvsp[(1) - (3)].stable_entry))->desloc, 'r', NULL));
-					else
-						codigo_tac = concat_tac(codigo_tac, (yyvsp[(3) - (3)].einfo).codigo);//concat_tac((tac_list) $3.codigo, gera_codigo('=', $3.desloc, 'r', -1, '\0', ((entry_t *) $1)->desloc, 'r', NULL)));
-					//gera_cod($1->desloc);
+					codigo_tac = concat_tac(codigo_tac, concat_tac((yyvsp[(3) - (3)].einfo).codigo, gera_codigo('=', (yyvsp[(3) - (3)].einfo).desloc, 0, ((entry_t *) (yyvsp[(1) - (3)].stable_entry))->desloc, (yyvsp[(3) - (3)].einfo).literal)));
 				}
     break;
 
@@ -1650,13 +1650,14 @@ yyreduce:
 						printf("Erro de tipo. Tentativa de somar um char\n");
 						return -1;
 					}
+					//printf("Gerando codigo para soma: %i = %i + %i");
 					(yyval.einfo).desloc = gera_temp((yyvsp[(1) - (3)].einfo).type);
-//					$$.codigo = (void*) concat_tac(concat_tac((tac_list) $1.codigo, (tac_list) $3.codigo), gera_codigo(ADD, $1.desloc, 's', $3.desloc, 's', $$.desloc, 'r', NULL));
+					(yyval.einfo).codigo = (void*) concat_tac(concat_tac((tac_list) (yyvsp[(1) - (3)].einfo).codigo, (tac_list) (yyvsp[(3) - (3)].einfo).codigo), gera_codigo(ADD, (yyvsp[(1) - (3)].einfo).desloc, (yyvsp[(3) - (3)].einfo).desloc, (yyval.einfo).desloc, NULL));
 				}
     break;
 
   case 28:
-#line 241 "pico.y"
+#line 242 "pico.y"
     {
 					if((yyvsp[(1) - (3)].einfo).type == CHAR || (yyvsp[(3) - (3)].einfo).type == CHAR)
 					{
@@ -1668,7 +1669,7 @@ yyreduce:
     break;
 
   case 29:
-#line 250 "pico.y"
+#line 251 "pico.y"
     {
 					if((yyvsp[(1) - (3)].einfo).type == CHAR || (yyvsp[(3) - (3)].einfo).type == CHAR)
 					{
@@ -1680,7 +1681,7 @@ yyreduce:
     break;
 
   case 30:
-#line 259 "pico.y"
+#line 260 "pico.y"
     {
 					if((yyvsp[(1) - (3)].einfo).type == CHAR || (yyvsp[(3) - (3)].einfo).type == CHAR)
 					{
@@ -1692,7 +1693,7 @@ yyreduce:
     break;
 
   case 31:
-#line 268 "pico.y"
+#line 269 "pico.y"
     {
 					(yyval.einfo).type = (yyvsp[(2) - (3)].einfo).type;
 					(yyval.einfo).desloc = (yyvsp[(2) - (3)].einfo).desloc;
@@ -1700,24 +1701,27 @@ yyreduce:
     break;
 
   case 32:
-#line 273 "pico.y"
+#line 274 "pico.y"
     {
 					(yyval.einfo).type = INT;
 					(yyval.einfo).codigo = NULL;
-
+					(yyval.einfo).literal = (yyvsp[(1) - (1)].linfo).text;
+					(yyval.einfo).desloc = 0;
 				}
     break;
 
   case 33:
-#line 279 "pico.y"
+#line 281 "pico.y"
     {
 					(yyval.einfo).type = FLOAT;
 					(yyval.einfo).codigo = NULL;
+					(yyval.einfo).literal = (yyvsp[(1) - (1)].linfo).text;
+					(yyval.einfo).desloc = 0;
 				}
     break;
 
   case 34:
-#line 284 "pico.y"
+#line 288 "pico.y"
     {
 					(yyval.einfo).type = ((entry_t *) (yyvsp[(1) - (1)].stable_entry))->type;
 					(yyval.einfo).desloc = ((entry_t *) (yyvsp[(1) - (1)].stable_entry))->desloc;
@@ -1726,7 +1730,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 1730 "y.tab.c"
+#line 1734 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -1940,7 +1944,7 @@ yyreturn:
 }
 
 
-#line 332 "pico.y"
+#line 336 "pico.y"
 
  /* A partir daqui, insere-se qlqer codigo C necessario.
   */
@@ -1951,16 +1955,25 @@ int lineno;
 int yydebug=0;
 
 int main(int argc, char* argv[]) {
-   progname = argv[0];
+	progname = argv[0];
 
-   init_table(&stable);
-   init_list(&codigo_tac);
+	init_table(&stable);
+	init_list(&codigo_tac);
 
-   if (!yyparse()) 
-      printf("OKAY.\n");
-   else 
-      printf("ERROR.\n");
-   return(0);
+	if (!yyparse())
+	{
+		/*
+		Subtraimos 1 do deslocamento pois ele deve comecar no endereco 0
+		No delocamento dos temporarios subtraimos 1 do valor absoluto, pois estavamos contando numeros negativos
+		*/
+		printf("%i\n", deslocamento - 1);
+		printf("%i\n", abs(desloc_temp) - 1);
+		print_tac(codigo_tac);
+	}
+	else 
+		printf("ERROR.\n");
+
+	return(0);
 }
 
 yyerror(char* s) {
