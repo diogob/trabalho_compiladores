@@ -234,9 +234,9 @@ expr:			expr ADD expr
 						printf("Erro de tipo. Tentativa de somar um char\n");
 						return -1;
 					}
-					//printf("Gerando codigo para soma: %i = %i + %i");
 					$$.desloc = gera_temp($1.type);
 					$$.codigo = (void*) concat_tac(concat_tac((tac_list) $1.codigo, (tac_list) $3.codigo), gera_codigo(ADD, $1.desloc, $3.desloc, $$.desloc, NULL));
+					//printf("Gerando codigo para soma: %i = %i + %i");
 				}
 				| expr SUB expr 
 				{
