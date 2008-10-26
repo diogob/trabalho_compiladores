@@ -164,7 +164,7 @@ decl:			ident types {
 								idf->desloc = deslocamento;
 								deslocamento += idf->size;
 								insert(&stable, idf);
-								printf("Decl da var %s tipo: %i tamanho: %i desloc: %i el: %i\n", $1, $2.type, idf->size, idf->desloc, $2.size);
+//								printf("Decl da var %s tipo: %i tamanho: %i desloc: %i el: %i\n", $1, $2.type, idf->size, idf->desloc, $2.size);
 							}
 		
 ident:			IDF ',' ident |
@@ -237,7 +237,7 @@ expr:			expr ADD expr
 					}
 					$$.desloc = gera_temp($1.type);
 					$$.codigo = (void*) concat_tac(concat_tac((tac_list) $1.codigo, (tac_list) $3.codigo), gera_codigo(ADD, $1.desloc, $3.desloc, $$.desloc, $1.literal, $3.literal));
-					printf("Gerando codigo para soma: %i = %i + %i - l1: %s l2: %s\n", $$.desloc, $1.desloc, $3.desloc, $1.literal, $3.literal);
+//					printf("Gerando codigo para soma: %i = %i + %i - l1: %s l2: %s\n", $$.desloc, $1.desloc, $3.desloc, $1.literal, $3.literal);
 				}
 				| expr SUB expr 
 				{
@@ -247,6 +247,8 @@ expr:			expr ADD expr
 						return -1;
 					}
 					$$.desloc = gera_temp($1.type);
+					$$.codigo = (void*) concat_tac(concat_tac((tac_list) $1.codigo, (tac_list) $3.codigo), gera_codigo(SUB, $1.desloc, $3.desloc, $$.desloc, $1.literal, $3.literal));
+
 				}
 				| expr MUL expr
 				{
@@ -256,6 +258,8 @@ expr:			expr ADD expr
 						return -1;
 					}
 					$$.desloc = gera_temp($1.type);
+					$$.codigo = (void*) concat_tac(concat_tac((tac_list) $1.codigo, (tac_list) $3.codigo), gera_codigo(MUL, $1.desloc, $3.desloc, $$.desloc, $1.literal, $3.literal));
+
 				} 
 				| expr DIV expr
 				{
@@ -265,7 +269,8 @@ expr:			expr ADD expr
 						return -1;
 					}
 					$$.desloc = gera_temp($1.type);
-				} 
+					$$.codigo = (void*) concat_tac(concat_tac((tac_list) $1.codigo, (tac_list) $3.codigo), gera_codigo(DIV, $1.desloc, $3.desloc, $$.desloc, $1.literal, $3.literal));
+				}
 				| OPEN_PAR expr CLOSE_PAR
 				{
 					$$.type = $2.type;
