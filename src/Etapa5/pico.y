@@ -12,6 +12,13 @@
 	#include "symbol_table.h"
 	#include "tac_list.h"
 	
+	/* Definicao de constantes de erros */
+	#define UNDEFINED_SYMBOL_ERROR -21
+	#define TYPE_MISMATCH_ERROR -20
+
+	/* Definicao de macro com erro de type mismatch */
+	#define DISPARA_TYPE_MISMATCH() printf("ERRO DE COMPATIBILIDADE DE TIPO. Quem te ensinou a programar?\n"); return TYPE_MISMATCH_ERROR;
+
 	/* Globais para valores de literais encontradas */
 	int VAL_INT;
 	double VAL_DOUBLE;
@@ -198,6 +205,9 @@
 %token TRUE
 %token FALSE
 
+%token PRINT
+%token FPRINT
+
 %left ADD SUB
 %left MUL DIV
 %left OR
@@ -234,6 +244,7 @@
 %type<linfo> F_LIT
 %type<stable_entry> lvalue
 %type<einfo> expr
+%type<einfo> expr_list2
 %%
 
 /* area de definicao de gramatica */
@@ -311,8 +322,8 @@ lvalue:			IDF {
 						idf = lookup(stable, $1);
 						if( idf == NULL )
 						{
-							printf("Erro de sintaxe. Variavel %s nao declarada.\n", $1);
-							return -1;
+							printf("UNDEFINED SYMBOL. A variavel %s nao foi declarada.\n", $1);
+							return UNDEFINED_SYMBOL_ERROR;
 						}
 						$$ = idf;
 					}
@@ -321,40 +332,36 @@ lvalue:			IDF {
 									}
 				;
 		
-expr_list:		expr ',' expr_list |
-				expr ']'
+expr_list:		expr ',' expr_list
+				| expr ']'
 				;
 			
 expr:			expr ADD expr
 				{
 					if(gera_codigo_aritmetico(ADD, &$1, &$3, &$$) < 0)
 					{
-						printf("Erro de tipo. Tentativa de subtrair um char\n");
-						return -1;						
+						DISPARA_TYPE_MISMATCH()
 					}
 				}
 				| expr SUB expr 
 				{
 					if(gera_codigo_aritmetico(SUB, &$1, &$3, &$$) < 0)
 					{
-						printf("Erro de tipo. Tentativa de subtrair um char\n");
-						return -1;						
+						DISPARA_TYPE_MISMATCH()
 					}
 				}
 				| expr MUL expr
 				{
 					if(gera_codigo_aritmetico(MUL, &$1, &$3, &$$) < 0)
 					{
-						printf("Erro de tipo. Tentativa de subtrair um char\n");
-						return -1;						
+						DISPARA_TYPE_MISMATCH()
 					}
 				} 
 				| expr DIV expr
 				{
 					if(gera_codigo_aritmetico(DIV, &$1, &$3, &$$) < 0)
 					{
-						printf("Erro de tipo. Tentativa de subtrair um char\n");
-						return -1;						
+						DISPARA_TYPE_MISMATCH()
 					}
 				}
 				| OPEN_PAR expr CLOSE_PAR
@@ -386,10 +393,28 @@ expr:			expr ADD expr
 				;
 
 proc_call:		IDF OPEN_PAR expr_list2
+				{
+					if(!strcmp($1, "print"))
+					{
+						if($3.type == FLOAT || $3.type == DOUBLE)
+						{
+							concat_tac(codigo_tac, gera_codigo(FPRINT, $3.desloc, 0, 0, NULL, NULL));
+						}
+						else if($3.type == INT)
+						{
+							concat_tac(codigo_tac, gera_codigo(PRINT, $3.desloc, 0, 0, NULL, NULL));
+							printf("PRINT %i\n", PRINT);
+						}
+						else
+						{
+							DISPARA_TYPE_MISMATCH()
+						}
+					}
+				}
 				;
 
-expr_list2:		expr ',' expr_list2 |
-				expr CLOSE_PAR
+expr_list2:		expr ',' expr_list2 { $$.type = $1.type; }
+				| expr CLOSE_PAR { $$.type = $1.type; }
 				;
 			
 simple_enun:	expr |

@@ -1,0 +1,6 @@
+A:int[0:10,0:10];
+i:int;
+j:int;
+z:int
+z = A[i,j];
+print(z)

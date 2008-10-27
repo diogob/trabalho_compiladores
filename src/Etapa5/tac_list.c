@@ -8,10 +8,12 @@ const char* str_add = "ADD";
 const char* str_sub = "SUB";
 const char* str_mul = "MUL";
 const char* str_div = "DIV";
+const char* str_print = "PRINT";
 const char* str_fadd = "FADD";
 const char* str_fsub = "FSUB";
 const char* str_fmul = "FMUL";
 const char* str_fdiv = "FDIV";
+const char* str_fprint = "FPRINT";
 const char* str_error = "UNKNOWN";
 
 int init_list(tac_list* l)
@@ -105,6 +107,8 @@ const char* get_op(int op)
 			return str_mul;
 		case DIV:
 			return str_div;
+		case PRINT:
+			return str_print;
 		case FADD:
 			return str_fadd;
 		case FSUB:
@@ -113,6 +117,8 @@ const char* get_op(int op)
 			return str_fmul;
 		case FDIV:
 			return str_fdiv;
+		case FPRINT:
+			return str_fprint;
 		default:
 			return str_error;
 	}
@@ -132,7 +138,10 @@ void print_tac(tac_list l)
 		else if(lasti->tac->arg2 && lasti->tac->literal1 != NULL)
 			printf("%03i:   %03i(%s) := %s %s %03i(%s)\n", i, abs(lasti->tac->res) - 1, (lasti->tac->res < 0 ? "Rx" : "SP"), lasti->tac->literal1, get_op(lasti->tac->op), abs(lasti->tac->arg2) - 1, (lasti->tac->arg2 < 0 ? "Rx" : "SP"));
 		else if(lasti->tac->arg1)
-			printf("%03i:   %03i(%s) := %03i(%s)\n", i, abs(lasti->tac->res) - 1, (lasti->tac->res < 0 ? "Rx" : "SP"), abs(lasti->tac->arg1) - 1, (lasti->tac->arg1 < 0 ? "Rx" : "SP"));
+			if(lasti->tac->op != PRINT && lasti->tac->op != FPRINT)
+				printf("%03i:   %03i(%s) := %03i(%s)\n", i, abs(lasti->tac->res) - 1, (lasti->tac->res < 0 ? "Rx" : "SP"), abs(lasti->tac->arg1) - 1, (lasti->tac->arg1 < 0 ? "Rx" : "SP"));
+			else
+				printf("%03i:   %s %03i(%s)\n", i, get_op(lasti->tac->op), abs(lasti->tac->arg1) - 1, (lasti->tac->arg1 < 0 ? "Rx" : "SP"));
 		else if(lasti->tac->op)
 			printf("%03i:   %03i(%s) := %s %s %s\n", i, abs(lasti->tac->res) - 1, (lasti->tac->res < 0 ? "Rx" : "SP"), lasti->tac->literal1, get_op(lasti->tac->op), lasti->tac->literal2);
 		else
