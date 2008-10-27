@@ -1,6 +1,6 @@
-A:int[0:10,0:10];
+z:int;
 i:int;
 j:int;
-z:int
+A:int[0:9,0:9]
 z = A[i,j];
 print(z)

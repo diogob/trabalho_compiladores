@@ -7,8 +7,8 @@ all: pico tac
 #
 # 'pico' depende de pico.c (codigo fonte do parser) e lex.yy.c (codigo fonte
 # do scanner).
-pico: pico.c lex.yy.c tac
-	gcc -o pico -I$(INC_DIR) $(OBJ_DIR)/symbol_table.o $(OBJ_DIR)/tac_list.o pico.c -lfl
+pico: pico.c lex.yy.c tac adata
+	gcc -o pico -I$(INC_DIR) $(OBJ_DIR)/stack.o $(OBJ_DIR)/array_data.o $(OBJ_DIR)/symbol_table.o $(OBJ_DIR)/tac_list.o pico.c -lfl
 #
 # 'pico.c' eh gerado pelo Yacc a partir de pico.y.
 # o comando yacc -d gera tanto y.tab.c como y.tab.h. 
@@ -35,6 +35,11 @@ tac: tac_list.c tac_list.h
 	gcc -c -o tac_list.o tac_list.c
 	cp tac_list.o $(OBJ_DIR)/
 	cp tac_list.h $(INC_DIR)/
+
+adata: array_data.c array_data.h
+	gcc -c -o array_data.o -I$(INC_DIR) $(OBJ_DIR)/stack.o array_data.c
+	cp array_data.o $(OBJ_DIR)/
+	cp array_data.h $(INC_DIR)/
 
 # o 'install' soh copia 'pico' em Tests/, mas primeiro ele deve ter sido
 # compilado, por isso a dependencia.

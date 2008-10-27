@@ -11,6 +11,7 @@
 	#include "tokens.h"
 	#include "symbol_table.h"
 	#include "tac_list.h"
+	#include "array_data.h"
 	
 	/* Definicao de constantes de erros */
 	#define UNDEFINED_SYMBOL_ERROR -21
@@ -35,20 +36,6 @@
 
 	tac_list gera_codigo( int op, int arg1, int arg2, int res, char* literal1, char* literal2)
 	{
-	/*
-		char* tmp1 = NULL;
-		char* tmp2 = NULL;
-		if(literal1 != NULL)
-		{
-			tmp1 = (char*) malloc(strlen(literal1) + 1);
-			strcpy(tmp1, literal1);
-		}
-		if(literal2 != NULL)
-		{
-			tmp2 = (char*) malloc(strlen(literal1) + 1);
-			strcpy(tmp2, literal2);		
-		}
-		*/
 		tac_list new;
 		tac_instruction* taci;
 		init_list(&new);
@@ -219,8 +206,8 @@
 	struct tinfo{ 
 		int type;
 		int size;
+		void* extra;
 	} tinfo;
-	int nelements;
 	struct linfo {
 		char* text;
 		int int_val;
@@ -239,11 +226,12 @@
 %type<name> ident
 %type<name> IDF
 %type<tinfo> types
-%type<nelements> type_array
+%type<tinfo> type_array
 %type<linfo> INT_LIT
 %type<linfo> F_LIT
 %type<stable_entry> lvalue
 %type<einfo> expr
+%type<einfo> expr_list
 %type<einfo> expr_list2
 %%
 
@@ -269,16 +257,36 @@ decl:			ident types {
 								idf->size = get_size($2.type) * ($2.size ? $2.size : 1);
 								idf->desloc = deslocamento;
 								deslocamento += idf->size;
+								
+								if($2.extra != NULL)
+								{
+									/*
+									printf("==== Inicio de decl de array. Dimensoes: %03i =====\n", count_dim((stack) $2.extra));
+									print_array_data((stack) $2.extra);
+									printf("=================== Fim de array ==================\n");
+									*/
+									idf->extra = $2.extra;
+								}
 								insert(&stable, idf);
-//								printf("Decl da var %s tipo: %i tamanho: %i desloc: %i el: %i\n", $1, $2.type, idf->size, idf->desloc, $2.size);
+								/*
+								printf("Decl da var %s tipo: %i tamanho: %i desloc: %i el: %i\n", $1, $2.type, idf->size, idf->desloc, $2.size);
+*/
 							}
 		
 ident:			IDF ',' ident |
 				IDF ':'
 				;
 		
-types:			type { $$.size = 0; }
-				| type '[' type_array { $$.size = $3; }
+types:			type 
+				{ 
+					$$.size = 0;
+					$$.extra = NULL;
+				}
+				| type '[' type_array 
+				{
+					$$.size = $3.size; 
+					$$.extra = $3.extra;
+				}
 				;
 		
 type:			INT |
@@ -289,11 +297,16 @@ type:			INT |
 		
 type_array:		INT_LIT ':' INT_LIT ',' type_array
 				{
-					$$ = $3.int_val - $1.int_val + $5;
+					$$.size = ($3.int_val - $1.int_val) + 1 + $5.size;
+					$$.extra = (void*) append_dim((stack*) &($5.extra), ($$.size - $5.size));
 				}
 				| INT_LIT ':' INT_LIT ']'
 				{
-					$$ = $3.int_val - $1.int_val;
+					$$.size = ($3.int_val - $1.int_val) + 1;
+					stack adata = NULL;
+					append_dim(&adata, $$.size);
+					$$.extra = (void*) adata;
+					adata = NULL;
 				}
 				;
 
@@ -317,7 +330,6 @@ attr:			lvalue '=' expr
 				;
 
 lvalue:			IDF {
-
 						entry_t *idf = NULL;
 						idf = lookup(stable, $1);
 						if( idf == NULL )
@@ -327,13 +339,25 @@ lvalue:			IDF {
 						}
 						$$ = idf;
 					}
-				| IDF '[' expr_list {
-										
-									}
+				| IDF '[' expr_list 
+				{
+				}
 				;
 		
 expr_list:		expr ',' expr_list
+				{
+					if($1.type != INT)
+					{
+						DISPARA_TYPE_MISMATCH()
+					}
+				}
 				| expr ']'
+				{
+					if($1.type != INT)
+					{
+						DISPARA_TYPE_MISMATCH()
+					}
+				}
 				;
 			
 expr:			expr ADD expr
@@ -403,7 +427,6 @@ proc_call:		IDF OPEN_PAR expr_list2
 						else if($3.type == INT)
 						{
 							concat_tac(codigo_tac, gera_codigo(PRINT, $3.desloc, 0, 0, NULL, NULL));
-							printf("PRINT %i\n", PRINT);
 						}
 						else
 						{

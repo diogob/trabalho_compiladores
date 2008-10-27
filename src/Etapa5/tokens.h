@@ -126,14 +126,14 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 217 "pico.y"
+#line 204 "pico.y"
 {
 	char* name;
 	struct tinfo{ 
 		int type;
 		int size;
+		void* extra;
 	} tinfo;
-	int nelements;
 	struct linfo {
 		char* text;
 		int int_val;
