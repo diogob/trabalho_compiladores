@@ -8,6 +8,10 @@ const char* str_add = "ADD";
 const char* str_sub = "SUB";
 const char* str_mul = "MUL";
 const char* str_div = "DIV";
+const char* str_fadd = "FADD";
+const char* str_fsub = "FSUB";
+const char* str_fmul = "FMUL";
+const char* str_fdiv = "FDIV";
 const char* str_error = "UNKNOWN";
 
 int init_list(tac_list* l)
@@ -41,6 +45,11 @@ tac_list last(tac_list l)
 
 int append(tac_list l, tac_instruction* i)
 {
+	if(i == NULL)
+	{
+		printf("INSTRUCAO NULA NO APPEND\n");
+		return -2;
+	}
 	tac_list lasti = NULL;
 	tac_list new = NULL;
 	lasti = last(l);
@@ -48,7 +57,10 @@ int append(tac_list l, tac_instruction* i)
 	init_list(&new);
 	// Em caso de falha na alocacao saimos com -1
 	if(new == NULL)
+	{
+		printf("ERRO NO INIT\n");
 		return -1;
+	}
 	lasti->next = new;
 	return 0;
 }
@@ -93,6 +105,14 @@ const char* get_op(int op)
 			return str_mul;
 		case DIV:
 			return str_div;
+		case FADD:
+			return str_fadd;
+		case FSUB:
+			return str_fsub;
+		case FMUL:
+			return str_fmul;
+		case FDIV:
+			return str_fdiv;
 		default:
 			return str_error;
 	}

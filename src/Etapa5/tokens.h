@@ -47,31 +47,35 @@
      ADD = 263,
      SUB = 264,
      DIV = 265,
-     F_LIT = 266,
-     INT_LIT = 267,
-     DIG = 268,
-     OPCMP = 269,
-     INT = 270,
-     DOUBLE = 271,
-     FLOAT = 272,
-     CHAR = 273,
-     QUOTE = 274,
-     DQUOTE = 275,
-     LE = 276,
-     GE = 277,
-     EQ = 278,
-     NE = 279,
-     AND = 280,
-     OR = 281,
-     NOT = 282,
-     IF = 283,
-     THEN = 284,
-     ELSE = 285,
-     WHILE = 286,
-     BRANCO = 287,
-     END = 288,
-     TRUE = 289,
-     FALSE = 290
+     FMUL = 266,
+     FADD = 267,
+     FSUB = 268,
+     FDIV = 269,
+     F_LIT = 270,
+     INT_LIT = 271,
+     DIG = 272,
+     OPCMP = 273,
+     INT = 274,
+     DOUBLE = 275,
+     FLOAT = 276,
+     CHAR = 277,
+     QUOTE = 278,
+     DQUOTE = 279,
+     LE = 280,
+     GE = 281,
+     EQ = 282,
+     NE = 283,
+     AND = 284,
+     OR = 285,
+     NOT = 286,
+     IF = 287,
+     THEN = 288,
+     ELSE = 289,
+     WHILE = 290,
+     BRANCO = 291,
+     END = 292,
+     TRUE = 293,
+     FALSE = 294
    };
 #endif
 /* Tokens.  */
@@ -83,38 +87,42 @@
 #define ADD 263
 #define SUB 264
 #define DIV 265
-#define F_LIT 266
-#define INT_LIT 267
-#define DIG 268
-#define OPCMP 269
-#define INT 270
-#define DOUBLE 271
-#define FLOAT 272
-#define CHAR 273
-#define QUOTE 274
-#define DQUOTE 275
-#define LE 276
-#define GE 277
-#define EQ 278
-#define NE 279
-#define AND 280
-#define OR 281
-#define NOT 282
-#define IF 283
-#define THEN 284
-#define ELSE 285
-#define WHILE 286
-#define BRANCO 287
-#define END 288
-#define TRUE 289
-#define FALSE 290
+#define FMUL 266
+#define FADD 267
+#define FSUB 268
+#define FDIV 269
+#define F_LIT 270
+#define INT_LIT 271
+#define DIG 272
+#define OPCMP 273
+#define INT 274
+#define DOUBLE 275
+#define FLOAT 276
+#define CHAR 277
+#define QUOTE 278
+#define DQUOTE 279
+#define LE 280
+#define GE 281
+#define EQ 282
+#define NE 283
+#define AND 284
+#define OR 285
+#define NOT 286
+#define IF 287
+#define THEN 288
+#define ELSE 289
+#define WHILE 290
+#define BRANCO 291
+#define END 292
+#define TRUE 293
+#define FALSE 294
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 112 "pico.y"
+#line 207 "pico.y"
 {
 	char* name;
 	struct tinfo{ 
@@ -137,7 +145,7 @@ typedef union YYSTYPE
 	void* stable_entry;
 }
 /* Line 1489 of yacc.c.  */
-#line 141 "y.tab.h"
+#line 149 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

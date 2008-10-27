@@ -1,0 +1,8 @@
+x:int;
+y:char;
+y2:char;
+z:int
+x=10;
+y=32;
+z=x+z+z+x+5*3;
+y2=y

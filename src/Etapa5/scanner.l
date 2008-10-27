@@ -88,8 +88,8 @@ branco		[ |\t|\n]
 												tmp = malloc(sizeof(char) * (strlen(yytext) + 1));
 												strcpy(tmp, yytext);
 												yylval.linfo.text = tmp;
-												yylval.linfo.double_val = strtod(yytext, (char **)NULL);
-												return(F_LIT); 
+//												yylval.linfo.double_val = (double) strtod(yytext, (char **)NULL);
+												return(F_LIT);
 											}
 
 .                     	{ printf("Erro lexical - caractere nao reconhecido: %c.\n", yytext[0]);  exit(-1); }

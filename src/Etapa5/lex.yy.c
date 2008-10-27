@@ -992,8 +992,8 @@ YY_RULE_SETUP
 												tmp = malloc(sizeof(char) * (strlen(yytext) + 1));
 												strcpy(tmp, yytext);
 												yylval.linfo.text = tmp;
-												yylval.linfo.double_val = strtod(yytext, (char **)NULL);
-												return(F_LIT); 
+//												yylval.linfo.double_val = (double) strtod(yytext, (char **)NULL);
+												return(F_LIT);
 											}
 	YY_BREAK
 case 41:
