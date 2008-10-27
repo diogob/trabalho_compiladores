@@ -1,0 +1,7 @@
+x:int;
+y:double;
+z:double
+x=1;
+y=4.0;
+z=x+y
+
