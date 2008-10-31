@@ -1,0 +1,7 @@
+a:int;
+AR:int[0:9];
+d:float
+a = 3.12;
+d = a+1;
+AR[1] = 2
+

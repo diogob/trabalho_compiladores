@@ -15,7 +15,7 @@ Terminals which are not used
 
 
 State 1 conflicts: 1 shift/reduce
-State 25 conflicts: 1 shift/reduce
+State 26 conflicts: 1 shift/reduce
 
 
 Grammar
@@ -54,10 +54,10 @@ Grammar
    21 attr: lvalue '=' expr
 
    22 lvalue: IDF
-   23       | IDF '[' expr_list
+   23       | expr_list ']'
 
-   24 expr_list: expr ',' expr_list
-   25          | expr ']'
+   24 expr_list: expr_list ',' expr
+   25          | IDF '[' expr
 
    26 expr: expr ADD expr
    27     | expr SUB expr
@@ -110,12 +110,12 @@ $end (0) 0
 '<' (60) 51
 '=' (61) 21
 '>' (62) 52
-'[' (91) 9 23
-']' (93) 15 25
+'[' (91) 9 25
+']' (93) 15 23
 '{' (123) 45
 '}' (125) 45
 error (256)
-IDF (258) 6 7 22 23 35
+IDF (258) 6 7 22 25 35
 VAZIO (259)
 OPEN_PAR (260) 30 35 42 45 48
 CLOSE_PAR (261) 30 37 42 45 48
@@ -225,12 +225,13 @@ state 0
     command        go to state 12
     attr           go to state 13
     lvalue         go to state 14
-    expr           go to state 15
-    proc_call      go to state 16
-    simple_enun    go to state 17
-    control_instr  go to state 18
-    if_expr        go to state 19
-    while_expr     go to state 20
+    expr_list      go to state 15
+    expr           go to state 16
+    proc_call      go to state 17
+    simple_enun    go to state 18
+    control_instr  go to state 19
+    if_expr        go to state 20
+    while_expr     go to state 21
 
 
 state 1
@@ -238,13 +239,13 @@ state 1
     6 ident: IDF . ',' ident
     7      | IDF . ':'
    22 lvalue: IDF .
-   23       | IDF . '[' expr_list
+   25 expr_list: IDF . '[' expr
    35 proc_call: IDF . OPEN_PAR expr_list2
 
-    OPEN_PAR  shift, and go to state 21
-    ','       shift, and go to state 22
-    ':'       shift, and go to state 23
-    '['       shift, and go to state 24
+    OPEN_PAR  shift, and go to state 22
+    ','       shift, and go to state 23
+    ':'       shift, and go to state 24
+    '['       shift, and go to state 25
 
     OPEN_PAR  [reduce using rule 22 (lvalue)]
     $default  reduce using rule 22 (lvalue)
@@ -254,14 +255,15 @@ state 2
 
    30 expr: OPEN_PAR . expr CLOSE_PAR
 
-    IDF       shift, and go to state 25
+    IDF       shift, and go to state 26
     OPEN_PAR  shift, and go to state 2
     F_LIT     shift, and go to state 3
     INT_LIT   shift, and go to state 4
 
-    lvalue     go to state 26
-    expr       go to state 27
-    proc_call  go to state 16
+    lvalue     go to state 27
+    expr_list  go to state 15
+    expr       go to state 28
+    proc_call  go to state 17
 
 
 state 3
@@ -282,21 +284,21 @@ state 5
 
    42 if_expr: IF . OPEN_PAR bool_expr CLOSE_PAR THEN action if_end
 
-    OPEN_PAR  shift, and go to state 28
+    OPEN_PAR  shift, and go to state 29
 
 
 state 6
 
    45 while_expr: WHILE . OPEN_PAR bool_expr CLOSE_PAR '{' action '}'
 
-    OPEN_PAR  shift, and go to state 29
+    OPEN_PAR  shift, and go to state 30
 
 
 state 7
 
     0 $accept: code . $end
 
-    $end  shift, and go to state 30
+    $end  shift, and go to state 31
 
 
 state 8
@@ -304,24 +306,25 @@ state 8
     1 code: decls . action
     4 decls: decls . ';' decl
 
-    IDF       shift, and go to state 25
+    IDF       shift, and go to state 26
     OPEN_PAR  shift, and go to state 2
     F_LIT     shift, and go to state 3
     INT_LIT   shift, and go to state 4
     IF        shift, and go to state 5
     WHILE     shift, and go to state 6
-    ';'       shift, and go to state 31
+    ';'       shift, and go to state 32
 
-    action         go to state 32
+    action         go to state 33
     command        go to state 12
     attr           go to state 13
     lvalue         go to state 14
-    expr           go to state 15
-    proc_call      go to state 16
-    simple_enun    go to state 17
-    control_instr  go to state 18
-    if_expr        go to state 19
-    while_expr     go to state 20
+    expr_list      go to state 15
+    expr           go to state 16
+    proc_call      go to state 17
+    simple_enun    go to state 18
+    control_instr  go to state 19
+    if_expr        go to state 20
+    while_expr     go to state 21
 
 
 state 9
@@ -335,13 +338,13 @@ state 10
 
     5 decl: ident . types
 
-    INT     shift, and go to state 33
-    DOUBLE  shift, and go to state 34
-    FLOAT   shift, and go to state 35
-    CHAR    shift, and go to state 36
+    INT     shift, and go to state 34
+    DOUBLE  shift, and go to state 35
+    FLOAT   shift, and go to state 36
+    CHAR    shift, and go to state 37
 
-    types  go to state 37
-    type   go to state 38
+    types  go to state 38
+    type   go to state 39
 
 
 state 11
@@ -356,7 +359,7 @@ state 12
    16 action: command .
    17       | command . ';' action
 
-    ';'  shift, and go to state 39
+    ';'  shift, and go to state 40
 
     $default  reduce using rule 16 (action)
 
@@ -373,12 +376,21 @@ state 14
    21 attr: lvalue . '=' expr
    33 expr: lvalue .
 
-    '='  shift, and go to state 40
+    '='  shift, and go to state 41
 
     $default  reduce using rule 33 (expr)
 
 
 state 15
+
+   23 lvalue: expr_list . ']'
+   24 expr_list: expr_list . ',' expr
+
+    ','  shift, and go to state 42
+    ']'  shift, and go to state 43
+
+
+state 16
 
    26 expr: expr . ADD expr
    27     | expr . SUB expr
@@ -386,27 +398,27 @@ state 15
    29     | expr . DIV expr
    38 simple_enun: expr .
 
-    MUL  shift, and go to state 41
-    ADD  shift, and go to state 42
-    SUB  shift, and go to state 43
-    DIV  shift, and go to state 44
+    MUL  shift, and go to state 44
+    ADD  shift, and go to state 45
+    SUB  shift, and go to state 46
+    DIV  shift, and go to state 47
 
     $default  reduce using rule 38 (simple_enun)
 
 
-state 16
+state 17
 
    34 expr: proc_call .
 
     $default  reduce using rule 34 (expr)
 
 
-state 17
+state 18
 
    18 action: simple_enun . action
    20 command: simple_enun .
 
-    IDF       shift, and go to state 25
+    IDF       shift, and go to state 26
     OPEN_PAR  shift, and go to state 2
     F_LIT     shift, and go to state 3
     INT_LIT   shift, and go to state 4
@@ -415,106 +427,108 @@ state 17
 
     $default  reduce using rule 20 (command)
 
-    action         go to state 45
+    action         go to state 48
     command        go to state 12
     attr           go to state 13
     lvalue         go to state 14
-    expr           go to state 15
-    proc_call      go to state 16
-    simple_enun    go to state 17
-    control_instr  go to state 18
-    if_expr        go to state 19
-    while_expr     go to state 20
+    expr_list      go to state 15
+    expr           go to state 16
+    proc_call      go to state 17
+    simple_enun    go to state 18
+    control_instr  go to state 19
+    if_expr        go to state 20
+    while_expr     go to state 21
 
 
-state 18
+state 19
 
    39 simple_enun: control_instr .
 
     $default  reduce using rule 39 (simple_enun)
 
 
-state 19
+state 20
 
    40 control_instr: if_expr .
 
     $default  reduce using rule 40 (control_instr)
 
 
-state 20
+state 21
 
    41 control_instr: while_expr .
 
     $default  reduce using rule 41 (control_instr)
 
 
-state 21
+state 22
 
    35 proc_call: IDF OPEN_PAR . expr_list2
 
-    IDF       shift, and go to state 25
+    IDF       shift, and go to state 26
     OPEN_PAR  shift, and go to state 2
     F_LIT     shift, and go to state 3
     INT_LIT   shift, and go to state 4
 
-    lvalue      go to state 26
-    expr        go to state 46
-    proc_call   go to state 16
-    expr_list2  go to state 47
-
-
-state 22
-
-    6 ident: IDF ',' . ident
-
-    IDF  shift, and go to state 48
-
-    ident  go to state 49
+    lvalue      go to state 27
+    expr_list   go to state 15
+    expr        go to state 49
+    proc_call   go to state 17
+    expr_list2  go to state 50
 
 
 state 23
+
+    6 ident: IDF ',' . ident
+
+    IDF  shift, and go to state 51
+
+    ident  go to state 52
+
+
+state 24
 
     7 ident: IDF ':' .
 
     $default  reduce using rule 7 (ident)
 
 
-state 24
+state 25
 
-   23 lvalue: IDF '[' . expr_list
+   25 expr_list: IDF '[' . expr
 
-    IDF       shift, and go to state 25
+    IDF       shift, and go to state 26
     OPEN_PAR  shift, and go to state 2
     F_LIT     shift, and go to state 3
     INT_LIT   shift, and go to state 4
 
-    lvalue     go to state 26
-    expr_list  go to state 50
-    expr       go to state 51
-    proc_call  go to state 16
+    lvalue     go to state 27
+    expr_list  go to state 15
+    expr       go to state 53
+    proc_call  go to state 17
 
 
-state 25
+state 26
 
    22 lvalue: IDF .
-   23       | IDF . '[' expr_list
+   25 expr_list: IDF . '[' expr
    35 proc_call: IDF . OPEN_PAR expr_list2
 
-    OPEN_PAR  shift, and go to state 21
-    '['       shift, and go to state 24
+    OPEN_PAR  shift, and go to state 22
+    '['       shift, and go to state 25
 
     OPEN_PAR  [reduce using rule 22 (lvalue)]
     $default  reduce using rule 22 (lvalue)
 
 
-state 26
+state 27
 
    33 expr: lvalue .
 
     $default  reduce using rule 33 (expr)
 
 
-state 27
+state 28
 
    26 expr: expr . ADD expr
    27     | expr . SUB expr
@@ -522,219 +536,249 @@ state 27
    29     | expr . DIV expr
    30     | OPEN_PAR expr . CLOSE_PAR
 
-    CLOSE_PAR  shift, and go to state 52
-    MUL        shift, and go to state 41
-    ADD        shift, and go to state 42
-    SUB        shift, and go to state 43
-    DIV        shift, and go to state 44
-
-
-state 28
-
-   42 if_expr: IF OPEN_PAR . bool_expr CLOSE_PAR THEN action if_end
-
-    IDF       shift, and go to state 25
-    OPEN_PAR  shift, and go to state 53
-    F_LIT     shift, and go to state 3
-    INT_LIT   shift, and go to state 4
-    NOT       shift, and go to state 54
-    TRUE      shift, and go to state 55
-    FALSE     shift, and go to state 56
-
-    lvalue     go to state 26
-    expr       go to state 57
-    proc_call  go to state 16
-    bool_expr  go to state 58
+    CLOSE_PAR  shift, and go to state 54
+    MUL        shift, and go to state 44
+    ADD        shift, and go to state 45
+    SUB        shift, and go to state 46
+    DIV        shift, and go to state 47
 
 
 state 29
 
-   45 while_expr: WHILE OPEN_PAR . bool_expr CLOSE_PAR '{' action '}'
+   42 if_expr: IF OPEN_PAR . bool_expr CLOSE_PAR THEN action if_end
 
-    IDF       shift, and go to state 25
-    OPEN_PAR  shift, and go to state 53
+    IDF       shift, and go to state 26
+    OPEN_PAR  shift, and go to state 55
     F_LIT     shift, and go to state 3
     INT_LIT   shift, and go to state 4
-    NOT       shift, and go to state 54
-    TRUE      shift, and go to state 55
-    FALSE     shift, and go to state 56
+    NOT       shift, and go to state 56
+    TRUE      shift, and go to state 57
+    FALSE     shift, and go to state 58
 
-    lvalue     go to state 26
-    expr       go to state 57
-    proc_call  go to state 16
-    bool_expr  go to state 59
+    lvalue     go to state 27
+    expr_list  go to state 15
+    expr       go to state 59
+    proc_call  go to state 17
+    bool_expr  go to state 60
 
 
 state 30
+
+   45 while_expr: WHILE OPEN_PAR . bool_expr CLOSE_PAR '{' action '}'
+
+    IDF       shift, and go to state 26
+    OPEN_PAR  shift, and go to state 55
+    F_LIT     shift, and go to state 3
+    INT_LIT   shift, and go to state 4
+    NOT       shift, and go to state 56
+    TRUE      shift, and go to state 57
+    FALSE     shift, and go to state 58
+
+    lvalue     go to state 27
+    expr_list  go to state 15
+    expr       go to state 59
+    proc_call  go to state 17
+    bool_expr  go to state 61
+
+
+state 31
 
     0 $accept: code $end .
 
     $default  accept
 
 
-state 31
+state 32
 
     4 decls: decls ';' . decl
 
-    IDF  shift, and go to state 48
+    IDF  shift, and go to state 51
 
-    decl   go to state 60
+    decl   go to state 62
     ident  go to state 10
 
 
-state 32
+state 33
 
     1 code: decls action .
 
     $default  reduce using rule 1 (code)
 
 
-state 33
+state 34
 
    10 type: INT .
 
     $default  reduce using rule 10 (type)
 
 
-state 34
+state 35
 
    11 type: DOUBLE .
 
     $default  reduce using rule 11 (type)
 
 
-state 35
+state 36
 
    12 type: FLOAT .
 
     $default  reduce using rule 12 (type)
 
 
-state 36
+state 37
 
    13 type: CHAR .
 
     $default  reduce using rule 13 (type)
 
 
-state 37
+state 38
 
     5 decl: ident types .
 
     $default  reduce using rule 5 (decl)
 
 
-state 38
+state 39
 
     8 types: type .
     9      | type . '[' type_array
 
-    '['  shift, and go to state 61
+    '['  shift, and go to state 63
 
     $default  reduce using rule 8 (types)
 
 
-state 39
+state 40
 
    17 action: command ';' . action
 
-    IDF       shift, and go to state 25
+    IDF       shift, and go to state 26
     OPEN_PAR  shift, and go to state 2
     F_LIT     shift, and go to state 3
     INT_LIT   shift, and go to state 4
     IF        shift, and go to state 5
     WHILE     shift, and go to state 6
 
-    action         go to state 62
+    action         go to state 64
     command        go to state 12
     attr           go to state 13
     lvalue         go to state 14
-    expr           go to state 15
-    proc_call      go to state 16
-    simple_enun    go to state 17
-    control_instr  go to state 18
-    if_expr        go to state 19
-    while_expr     go to state 20
-
-
-state 40
-
-   21 attr: lvalue '=' . expr
-
-    IDF       shift, and go to state 25
-    OPEN_PAR  shift, and go to state 2
-    F_LIT     shift, and go to state 3
-    INT_LIT   shift, and go to state 4
-
-    lvalue     go to state 26
-    expr       go to state 63
-    proc_call  go to state 16
+    expr_list      go to state 15
+    expr           go to state 16
+    proc_call      go to state 17
+    simple_enun    go to state 18
+    control_instr  go to state 19
+    if_expr        go to state 20
+    while_expr     go to state 21
 
 
 state 41
 
-   28 expr: expr MUL . expr
+   21 attr: lvalue '=' . expr
 
-    IDF       shift, and go to state 25
+    IDF       shift, and go to state 26
     OPEN_PAR  shift, and go to state 2
     F_LIT     shift, and go to state 3
     INT_LIT   shift, and go to state 4
 
-    lvalue     go to state 26
-    expr       go to state 64
-    proc_call  go to state 16
+    lvalue     go to state 27
+    expr_list  go to state 15
+    expr       go to state 65
+    proc_call  go to state 17
 
 
 state 42
 
-   26 expr: expr ADD . expr
+   24 expr_list: expr_list ',' . expr
 
-    IDF       shift, and go to state 25
+    IDF       shift, and go to state 26
     OPEN_PAR  shift, and go to state 2
     F_LIT     shift, and go to state 3
     INT_LIT   shift, and go to state 4
 
-    lvalue     go to state 26
-    expr       go to state 65
-    proc_call  go to state 16
+    lvalue     go to state 27
+    expr_list  go to state 15
+    expr       go to state 66
+    proc_call  go to state 17
 
 
 state 43
 
-   27 expr: expr SUB . expr
+   23 lvalue: expr_list ']' .
 
-    IDF       shift, and go to state 25
-    OPEN_PAR  shift, and go to state 2
-    F_LIT     shift, and go to state 3
-    INT_LIT   shift, and go to state 4
-
-    lvalue     go to state 26
-    expr       go to state 66
-    proc_call  go to state 16
+    $default  reduce using rule 23 (lvalue)
 
 
 state 44
 
-   29 expr: expr DIV . expr
+   28 expr: expr MUL . expr
 
-    IDF       shift, and go to state 25
+    IDF       shift, and go to state 26
     OPEN_PAR  shift, and go to state 2
     F_LIT     shift, and go to state 3
     INT_LIT   shift, and go to state 4
 
-    lvalue     go to state 26
+    lvalue     go to state 27
+    expr_list  go to state 15
     expr       go to state 67
-    proc_call  go to state 16
+    proc_call  go to state 17
 
 
 state 45
+
+   26 expr: expr ADD . expr
+
+    IDF       shift, and go to state 26
+    OPEN_PAR  shift, and go to state 2
+    F_LIT     shift, and go to state 3
+    INT_LIT   shift, and go to state 4
+
+    lvalue     go to state 27
+    expr_list  go to state 15
+    expr       go to state 68
+    proc_call  go to state 17
+
+
+state 46
+
+   27 expr: expr SUB . expr
+
+    IDF       shift, and go to state 26
+    OPEN_PAR  shift, and go to state 2
+    F_LIT     shift, and go to state 3
+    INT_LIT   shift, and go to state 4
+
+    lvalue     go to state 27
+    expr_list  go to state 15
+    expr       go to state 69
+    proc_call  go to state 17
+
+
+state 47
+
+   29 expr: expr DIV . expr
+
+    IDF       shift, and go to state 26
+    OPEN_PAR  shift, and go to state 2
+    F_LIT     shift, and go to state 3
+    INT_LIT   shift, and go to state 4
+
+    lvalue     go to state 27
+    expr_list  go to state 15
+    expr       go to state 70
+    proc_call  go to state 17
+
+
+state 48
 
    18 action: simple_enun action .
 
     $default  reduce using rule 18 (action)
 
 
-state 46
+state 49
 
    26 expr: expr . ADD expr
    27     | expr . SUB expr
@@ -743,120 +787,114 @@ state 46
    36 expr_list2: expr . ',' expr_list2
    37           | expr . CLOSE_PAR
 
-    CLOSE_PAR  shift, and go to state 68
-    MUL        shift, and go to state 41
-    ADD        shift, and go to state 42
-    SUB        shift, and go to state 43
-    DIV        shift, and go to state 44
-    ','        shift, and go to state 69
+    CLOSE_PAR  shift, and go to state 71
+    MUL        shift, and go to state 44
+    ADD        shift, and go to state 45
+    SUB        shift, and go to state 46
+    DIV        shift, and go to state 47
+    ','        shift, and go to state 72
 
 
-state 47
+state 50
 
    35 proc_call: IDF OPEN_PAR expr_list2 .
 
     $default  reduce using rule 35 (proc_call)
 
 
-state 48
+state 51
 
     6 ident: IDF . ',' ident
     7      | IDF . ':'
 
-    ','  shift, and go to state 22
-    ':'  shift, and go to state 23
+    ','  shift, and go to state 23
+    ':'  shift, and go to state 24
 
 
-state 49
+state 52
 
     6 ident: IDF ',' ident .
 
     $default  reduce using rule 6 (ident)
 
 
-state 50
+state 53
 
-   23 lvalue: IDF '[' expr_list .
-
-    $default  reduce using rule 23 (lvalue)
-
-
-state 51
-
-   24 expr_list: expr . ',' expr_list
-   25          | expr . ']'
+   25 expr_list: IDF '[' expr .
    26 expr: expr . ADD expr
    27     | expr . SUB expr
    28     | expr . MUL expr
    29     | expr . DIV expr
 
-    MUL  shift, and go to state 41
-    ADD  shift, and go to state 42
-    SUB  shift, and go to state 43
-    DIV  shift, and go to state 44
-    ','  shift, and go to state 70
-    ']'  shift, and go to state 71
+    MUL  shift, and go to state 44
+    ADD  shift, and go to state 45
+    SUB  shift, and go to state 46
+    DIV  shift, and go to state 47
+
+    $default  reduce using rule 25 (expr_list)
 
 
-state 52
+state 54
 
    30 expr: OPEN_PAR expr CLOSE_PAR .
 
     $default  reduce using rule 30 (expr)
 
 
-state 53
+state 55
 
    30 expr: OPEN_PAR . expr CLOSE_PAR
    48 bool_expr: OPEN_PAR . bool_expr CLOSE_PAR
 
-    IDF       shift, and go to state 25
-    OPEN_PAR  shift, and go to state 53
+    IDF       shift, and go to state 26
+    OPEN_PAR  shift, and go to state 55
     F_LIT     shift, and go to state 3
     INT_LIT   shift, and go to state 4
-    NOT       shift, and go to state 54
-    TRUE      shift, and go to state 55
-    FALSE     shift, and go to state 56
+    NOT       shift, and go to state 56
+    TRUE      shift, and go to state 57
+    FALSE     shift, and go to state 58
 
-    lvalue     go to state 26
-    expr       go to state 72
-    proc_call  go to state 16
-    bool_expr  go to state 73
-
-
-state 54
-
-   57 bool_expr: NOT . bool_expr
-
-    IDF       shift, and go to state 25
-    OPEN_PAR  shift, and go to state 53
-    F_LIT     shift, and go to state 3
-    INT_LIT   shift, and go to state 4
-    NOT       shift, and go to state 54
-    TRUE      shift, and go to state 55
-    FALSE     shift, and go to state 56
-
-    lvalue     go to state 26
-    expr       go to state 57
-    proc_call  go to state 16
+    lvalue     go to state 27
+    expr_list  go to state 15
+    expr       go to state 73
+    proc_call  go to state 17
     bool_expr  go to state 74
 
 
-state 55
+state 56
+
+   57 bool_expr: NOT . bool_expr
+
+    IDF       shift, and go to state 26
+    OPEN_PAR  shift, and go to state 55
+    F_LIT     shift, and go to state 3
+    INT_LIT   shift, and go to state 4
+    NOT       shift, and go to state 56
+    TRUE      shift, and go to state 57
+    FALSE     shift, and go to state 58
+
+    lvalue     go to state 27
+    expr_list  go to state 15
+    expr       go to state 59
+    proc_call  go to state 17
+    bool_expr  go to state 75
+
+
+state 57
 
    46 bool_expr: TRUE .
 
     $default  reduce using rule 46 (bool_expr)
 
 
-state 56
+state 58
 
    47 bool_expr: FALSE .
 
     $default  reduce using rule 47 (bool_expr)
 
 
-state 57
+state 59
 
    26 expr: expr . ADD expr
    27     | expr . SUB expr
@@ -869,64 +907,64 @@ state 57
    55          | expr . EQ expr
    56          | expr . NE expr
 
-    MUL  shift, and go to state 41
-    ADD  shift, and go to state 42
-    SUB  shift, and go to state 43
-    DIV  shift, and go to state 44
-    LE   shift, and go to state 75
-    GE   shift, and go to state 76
-    EQ   shift, and go to state 77
-    NE   shift, and go to state 78
-    '<'  shift, and go to state 79
-    '>'  shift, and go to state 80
+    MUL  shift, and go to state 44
+    ADD  shift, and go to state 45
+    SUB  shift, and go to state 46
+    DIV  shift, and go to state 47
+    LE   shift, and go to state 76
+    GE   shift, and go to state 77
+    EQ   shift, and go to state 78
+    NE   shift, and go to state 79
+    '<'  shift, and go to state 80
+    '>'  shift, and go to state 81
 
 
-state 58
+state 60
 
    42 if_expr: IF OPEN_PAR bool_expr . CLOSE_PAR THEN action if_end
    49 bool_expr: bool_expr . AND bool_expr
    50          | bool_expr . OR bool_expr
 
-    CLOSE_PAR  shift, and go to state 81
-    AND        shift, and go to state 82
-    OR         shift, and go to state 83
+    CLOSE_PAR  shift, and go to state 82
+    AND        shift, and go to state 83
+    OR         shift, and go to state 84
 
 
-state 59
+state 61
 
    45 while_expr: WHILE OPEN_PAR bool_expr . CLOSE_PAR '{' action '}'
    49 bool_expr: bool_expr . AND bool_expr
    50          | bool_expr . OR bool_expr
 
-    CLOSE_PAR  shift, and go to state 84
-    AND        shift, and go to state 82
-    OR         shift, and go to state 83
+    CLOSE_PAR  shift, and go to state 85
+    AND        shift, and go to state 83
+    OR         shift, and go to state 84
 
 
-state 60
+state 62
 
     4 decls: decls ';' decl .
 
     $default  reduce using rule 4 (decls)
 
 
-state 61
+state 63
 
     9 types: type '[' . type_array
 
-    INT_LIT  shift, and go to state 85
+    INT_LIT  shift, and go to state 86
 
-    type_array  go to state 86
+    type_array  go to state 87
 
 
-state 62
+state 64
 
    17 action: command ';' action .
 
     $default  reduce using rule 17 (action)
 
 
-state 63
+state 65
 
    21 attr: lvalue '=' expr .
    26 expr: expr . ADD expr
@@ -934,15 +972,31 @@ state 63
    28     | expr . MUL expr
    29     | expr . DIV expr
 
-    MUL  shift, and go to state 41
-    ADD  shift, and go to state 42
-    SUB  shift, and go to state 43
-    DIV  shift, and go to state 44
+    MUL  shift, and go to state 44
+    ADD  shift, and go to state 45
+    SUB  shift, and go to state 46
+    DIV  shift, and go to state 47
 
     $default  reduce using rule 21 (attr)
 
 
-state 64
+state 66
+
+   24 expr_list: expr_list ',' expr .
+   26 expr: expr . ADD expr
+   27     | expr . SUB expr
+   28     | expr . MUL expr
+   29     | expr . DIV expr
+
+    MUL  shift, and go to state 44
+    ADD  shift, and go to state 45
+    SUB  shift, and go to state 46
+    DIV  shift, and go to state 47
+
+    $default  reduce using rule 24 (expr_list)
+
+
+state 67
 
    26 expr: expr . ADD expr
    27     | expr . SUB expr
@@ -953,7 +1007,7 @@ state 64
     $default  reduce using rule 28 (expr)
 
 
-state 65
+state 68
 
    26 expr: expr . ADD expr
    26     | expr ADD expr .
@@ -961,13 +1015,13 @@ state 65
    28     | expr . MUL expr
    29     | expr . DIV expr
 
-    MUL  shift, and go to state 41
-    DIV  shift, and go to state 44
+    MUL  shift, and go to state 44
+    DIV  shift, and go to state 47
 
     $default  reduce using rule 26 (expr)
 
 
-state 66
+state 69
 
    26 expr: expr . ADD expr
    27     | expr . SUB expr
@@ -975,13 +1029,13 @@ state 66
    28     | expr . MUL expr
    29     | expr . DIV expr
 
-    MUL  shift, and go to state 41
-    DIV  shift, and go to state 44
+    MUL  shift, and go to state 44
+    DIV  shift, and go to state 47
 
     $default  reduce using rule 27 (expr)
 
 
-state 67
+state 70
 
    26 expr: expr . ADD expr
    27     | expr . SUB expr
@@ -992,51 +1046,30 @@ state 67
     $default  reduce using rule 29 (expr)
 
 
-state 68
+state 71
 
    37 expr_list2: expr CLOSE_PAR .
 
     $default  reduce using rule 37 (expr_list2)
 
 
-state 69
+state 72
 
    36 expr_list2: expr ',' . expr_list2
 
-    IDF       shift, and go to state 25
+    IDF       shift, and go to state 26
     OPEN_PAR  shift, and go to state 2
     F_LIT     shift, and go to state 3
     INT_LIT   shift, and go to state 4
 
-    lvalue      go to state 26
-    expr        go to state 46
-    proc_call   go to state 16
-    expr_list2  go to state 87
+    lvalue      go to state 27
+    expr_list   go to state 15
+    expr        go to state 49
+    proc_call   go to state 17
+    expr_list2  go to state 88
 
 
-state 70
-
-   24 expr_list: expr ',' . expr_list
-
-    IDF       shift, and go to state 25
-    OPEN_PAR  shift, and go to state 2
-    F_LIT     shift, and go to state 3
-    INT_LIT   shift, and go to state 4
-
-    lvalue     go to state 26
-    expr_list  go to state 88
-    expr       go to state 51
-    proc_call  go to state 16
-
-
-state 71
-
-   25 expr_list: expr ']' .
-
-    $default  reduce using rule 25 (expr_list)
-
-
-state 72
+state 73
 
    26 expr: expr . ADD expr
    27     | expr . SUB expr
@@ -1050,31 +1083,31 @@ state 72
    55          | expr . EQ expr
    56          | expr . NE expr
 
-    CLOSE_PAR  shift, and go to state 52
-    MUL        shift, and go to state 41
-    ADD        shift, and go to state 42
-    SUB        shift, and go to state 43
-    DIV        shift, and go to state 44
-    LE         shift, and go to state 75
-    GE         shift, and go to state 76
-    EQ         shift, and go to state 77
-    NE         shift, and go to state 78
-    '<'        shift, and go to state 79
-    '>'        shift, and go to state 80
+    CLOSE_PAR  shift, and go to state 54
+    MUL        shift, and go to state 44
+    ADD        shift, and go to state 45
+    SUB        shift, and go to state 46
+    DIV        shift, and go to state 47
+    LE         shift, and go to state 76
+    GE         shift, and go to state 77
+    EQ         shift, and go to state 78
+    NE         shift, and go to state 79
+    '<'        shift, and go to state 80
+    '>'        shift, and go to state 81
 
 
-state 73
+state 74
 
    48 bool_expr: OPEN_PAR bool_expr . CLOSE_PAR
    49          | bool_expr . AND bool_expr
    50          | bool_expr . OR bool_expr
 
     CLOSE_PAR  shift, and go to state 89
-    AND        shift, and go to state 82
-    OR         shift, and go to state 83
+    AND        shift, and go to state 83
+    OR         shift, and go to state 84
 
 
-state 74
+state 75
 
    49 bool_expr: bool_expr . AND bool_expr
    50          | bool_expr . OR bool_expr
@@ -1083,141 +1116,149 @@ state 74
     $default  reduce using rule 57 (bool_expr)
 
 
-state 75
+state 76
 
    53 bool_expr: expr LE . expr
 
-    IDF       shift, and go to state 25
+    IDF       shift, and go to state 26
     OPEN_PAR  shift, and go to state 2
     F_LIT     shift, and go to state 3
     INT_LIT   shift, and go to state 4
 
-    lvalue     go to state 26
+    lvalue     go to state 27
+    expr_list  go to state 15
     expr       go to state 90
-    proc_call  go to state 16
-
-
-state 76
-
-   54 bool_expr: expr GE . expr
-
-    IDF       shift, and go to state 25
-    OPEN_PAR  shift, and go to state 2
-    F_LIT     shift, and go to state 3
-    INT_LIT   shift, and go to state 4
-
-    lvalue     go to state 26
-    expr       go to state 91
-    proc_call  go to state 16
+    proc_call  go to state 17
 
 
 state 77
 
-   55 bool_expr: expr EQ . expr
+   54 bool_expr: expr GE . expr
 
-    IDF       shift, and go to state 25
+    IDF       shift, and go to state 26
     OPEN_PAR  shift, and go to state 2
     F_LIT     shift, and go to state 3
     INT_LIT   shift, and go to state 4
 
-    lvalue     go to state 26
-    expr       go to state 92
-    proc_call  go to state 16
+    lvalue     go to state 27
+    expr_list  go to state 15
+    expr       go to state 91
+    proc_call  go to state 17
 
 
 state 78
 
-   56 bool_expr: expr NE . expr
+   55 bool_expr: expr EQ . expr
 
-    IDF       shift, and go to state 25
+    IDF       shift, and go to state 26
     OPEN_PAR  shift, and go to state 2
     F_LIT     shift, and go to state 3
     INT_LIT   shift, and go to state 4
 
-    lvalue     go to state 26
-    expr       go to state 93
-    proc_call  go to state 16
+    lvalue     go to state 27
+    expr_list  go to state 15
+    expr       go to state 92
+    proc_call  go to state 17
 
 
 state 79
 
-   51 bool_expr: expr '<' . expr
+   56 bool_expr: expr NE . expr
 
-    IDF       shift, and go to state 25
+    IDF       shift, and go to state 26
     OPEN_PAR  shift, and go to state 2
     F_LIT     shift, and go to state 3
     INT_LIT   shift, and go to state 4
 
-    lvalue     go to state 26
-    expr       go to state 94
-    proc_call  go to state 16
+    lvalue     go to state 27
+    expr_list  go to state 15
+    expr       go to state 93
+    proc_call  go to state 17
 
 
 state 80
 
-   52 bool_expr: expr '>' . expr
+   51 bool_expr: expr '<' . expr
 
-    IDF       shift, and go to state 25
+    IDF       shift, and go to state 26
     OPEN_PAR  shift, and go to state 2
     F_LIT     shift, and go to state 3
     INT_LIT   shift, and go to state 4
 
-    lvalue     go to state 26
-    expr       go to state 95
-    proc_call  go to state 16
+    lvalue     go to state 27
+    expr_list  go to state 15
+    expr       go to state 94
+    proc_call  go to state 17
 
 
 state 81
+
+   52 bool_expr: expr '>' . expr
+
+    IDF       shift, and go to state 26
+    OPEN_PAR  shift, and go to state 2
+    F_LIT     shift, and go to state 3
+    INT_LIT   shift, and go to state 4
+
+    lvalue     go to state 27
+    expr_list  go to state 15
+    expr       go to state 95
+    proc_call  go to state 17
+
+
+state 82
 
    42 if_expr: IF OPEN_PAR bool_expr CLOSE_PAR . THEN action if_end
 
     THEN  shift, and go to state 96
 
 
-state 82
+state 83
 
    49 bool_expr: bool_expr AND . bool_expr
 
-    IDF       shift, and go to state 25
-    OPEN_PAR  shift, and go to state 53
+    IDF       shift, and go to state 26
+    OPEN_PAR  shift, and go to state 55
     F_LIT     shift, and go to state 3
     INT_LIT   shift, and go to state 4
-    NOT       shift, and go to state 54
-    TRUE      shift, and go to state 55
-    FALSE     shift, and go to state 56
+    NOT       shift, and go to state 56
+    TRUE      shift, and go to state 57
+    FALSE     shift, and go to state 58
 
-    lvalue     go to state 26
-    expr       go to state 57
-    proc_call  go to state 16
+    lvalue     go to state 27
+    expr_list  go to state 15
+    expr       go to state 59
+    proc_call  go to state 17
     bool_expr  go to state 97
 
 
-state 83
+state 84
 
    50 bool_expr: bool_expr OR . bool_expr
 
-    IDF       shift, and go to state 25
-    OPEN_PAR  shift, and go to state 53
+    IDF       shift, and go to state 26
+    OPEN_PAR  shift, and go to state 55
     F_LIT     shift, and go to state 3
     INT_LIT   shift, and go to state 4
-    NOT       shift, and go to state 54
-    TRUE      shift, and go to state 55
-    FALSE     shift, and go to state 56
+    NOT       shift, and go to state 56
+    TRUE      shift, and go to state 57
+    FALSE     shift, and go to state 58
 
-    lvalue     go to state 26
-    expr       go to state 57
-    proc_call  go to state 16
+    lvalue     go to state 27
+    expr_list  go to state 15
+    expr       go to state 59
+    proc_call  go to state 17
     bool_expr  go to state 98
 
 
-state 84
+state 85
 
    45 while_expr: WHILE OPEN_PAR bool_expr CLOSE_PAR . '{' action '}'
 
     '{'  shift, and go to state 99
 
 
-state 85
+state 86
 
    14 type_array: INT_LIT . ':' INT_LIT ',' type_array
    15           | INT_LIT . ':' INT_LIT ']'
@@ -1225,25 +1266,18 @@ state 85
     ':'  shift, and go to state 100
 
 
-state 86
+state 87
 
     9 types: type '[' type_array .
 
     $default  reduce using rule 9 (types)
 
 
-state 87
+state 88
 
    36 expr_list2: expr ',' expr_list2 .
 
     $default  reduce using rule 36 (expr_list2)
-
-
-state 88
-
-   24 expr_list: expr ',' expr_list .
-
-    $default  reduce using rule 24 (expr_list)
 
 
 state 89
@@ -1261,10 +1295,10 @@ state 90
    29     | expr . DIV expr
    53 bool_expr: expr LE expr .
 
-    MUL  shift, and go to state 41
-    ADD  shift, and go to state 42
-    SUB  shift, and go to state 43
-    DIV  shift, and go to state 44
+    MUL  shift, and go to state 44
+    ADD  shift, and go to state 45
+    SUB  shift, and go to state 46
+    DIV  shift, and go to state 47
 
     $default  reduce using rule 53 (bool_expr)
 
@@ -1277,10 +1311,10 @@ state 91
    29     | expr . DIV expr
    54 bool_expr: expr GE expr .
 
-    MUL  shift, and go to state 41
-    ADD  shift, and go to state 42
-    SUB  shift, and go to state 43
-    DIV  shift, and go to state 44
+    MUL  shift, and go to state 44
+    ADD  shift, and go to state 45
+    SUB  shift, and go to state 46
+    DIV  shift, and go to state 47
 
     $default  reduce using rule 54 (bool_expr)
 
@@ -1293,10 +1327,10 @@ state 92
    29     | expr . DIV expr
    55 bool_expr: expr EQ expr .
 
-    MUL  shift, and go to state 41
-    ADD  shift, and go to state 42
-    SUB  shift, and go to state 43
-    DIV  shift, and go to state 44
+    MUL  shift, and go to state 44
+    ADD  shift, and go to state 45
+    SUB  shift, and go to state 46
+    DIV  shift, and go to state 47
 
     $default  reduce using rule 55 (bool_expr)
 
@@ -1309,10 +1343,10 @@ state 93
    29     | expr . DIV expr
    56 bool_expr: expr NE expr .
 
-    MUL  shift, and go to state 41
-    ADD  shift, and go to state 42
-    SUB  shift, and go to state 43
-    DIV  shift, and go to state 44
+    MUL  shift, and go to state 44
+    ADD  shift, and go to state 45
+    SUB  shift, and go to state 46
+    DIV  shift, and go to state 47
 
     $default  reduce using rule 56 (bool_expr)
 
@@ -1325,10 +1359,10 @@ state 94
    29     | expr . DIV expr
    51 bool_expr: expr '<' expr .
 
-    MUL  shift, and go to state 41
-    ADD  shift, and go to state 42
-    SUB  shift, and go to state 43
-    DIV  shift, and go to state 44
+    MUL  shift, and go to state 44
+    ADD  shift, and go to state 45
+    SUB  shift, and go to state 46
+    DIV  shift, and go to state 47
 
     $default  reduce using rule 51 (bool_expr)
 
@@ -1341,10 +1375,10 @@ state 95
    29     | expr . DIV expr
    52 bool_expr: expr '>' expr .
 
-    MUL  shift, and go to state 41
-    ADD  shift, and go to state 42
-    SUB  shift, and go to state 43
-    DIV  shift, and go to state 44
+    MUL  shift, and go to state 44
+    ADD  shift, and go to state 45
+    SUB  shift, and go to state 46
+    DIV  shift, and go to state 47
 
     $default  reduce using rule 52 (bool_expr)
 
@@ -1353,7 +1387,7 @@ state 96
 
    42 if_expr: IF OPEN_PAR bool_expr CLOSE_PAR THEN . action if_end
 
-    IDF       shift, and go to state 25
+    IDF       shift, and go to state 26
     OPEN_PAR  shift, and go to state 2
     F_LIT     shift, and go to state 3
     INT_LIT   shift, and go to state 4
@@ -1364,12 +1398,13 @@ state 96
     command        go to state 12
     attr           go to state 13
     lvalue         go to state 14
-    expr           go to state 15
-    proc_call      go to state 16
-    simple_enun    go to state 17
-    control_instr  go to state 18
-    if_expr        go to state 19
-    while_expr     go to state 20
+    expr_list      go to state 15
+    expr           go to state 16
+    proc_call      go to state 17
+    simple_enun    go to state 18
+    control_instr  go to state 19
+    if_expr        go to state 20
+    while_expr     go to state 21
 
 
 state 97
@@ -1387,7 +1422,7 @@ state 98
    50          | bool_expr . OR bool_expr
    50          | bool_expr OR bool_expr .
 
-    AND  shift, and go to state 82
+    AND  shift, and go to state 83
 
     $default  reduce using rule 50 (bool_expr)
 
@@ -1396,7 +1431,7 @@ state 99
 
    45 while_expr: WHILE OPEN_PAR bool_expr CLOSE_PAR '{' . action '}'
 
-    IDF       shift, and go to state 25
+    IDF       shift, and go to state 26
     OPEN_PAR  shift, and go to state 2
     F_LIT     shift, and go to state 3
     INT_LIT   shift, and go to state 4
@@ -1407,12 +1442,13 @@ state 99
     command        go to state 12
     attr           go to state 13
     lvalue         go to state 14
-    expr           go to state 15
-    proc_call      go to state 16
-    simple_enun    go to state 17
-    control_instr  go to state 18
-    if_expr        go to state 19
-    while_expr     go to state 20
+    expr_list      go to state 15
+    expr           go to state 16
+    proc_call      go to state 17
+    simple_enun    go to state 18
+    control_instr  go to state 19
+    if_expr        go to state 20
+    while_expr     go to state 21
 
 
 state 100
@@ -1453,7 +1489,7 @@ state 104
 
    43 if_end: ELSE . action END
 
-    IDF       shift, and go to state 25
+    IDF       shift, and go to state 26
     OPEN_PAR  shift, and go to state 2
     F_LIT     shift, and go to state 3
     INT_LIT   shift, and go to state 4
@@ -1464,12 +1500,13 @@ state 104
     command        go to state 12
     attr           go to state 13
     lvalue         go to state 14
-    expr           go to state 15
-    proc_call      go to state 16
-    simple_enun    go to state 17
-    control_instr  go to state 18
-    if_expr        go to state 19
-    while_expr     go to state 20
+    expr_list      go to state 15
+    expr           go to state 16
+    proc_call      go to state 17
+    simple_enun    go to state 18
+    control_instr  go to state 19
+    if_expr        go to state 20
+    while_expr     go to state 21
 
 
 state 105
@@ -1497,7 +1534,7 @@ state 108
 
    14 type_array: INT_LIT ':' INT_LIT ',' . type_array
 
-    INT_LIT  shift, and go to state 85
+    INT_LIT  shift, and go to state 86
 
     type_array  go to state 111
 

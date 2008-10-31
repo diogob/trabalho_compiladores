@@ -19,6 +19,7 @@
 
 	/* Definicao de macro com erro de type mismatch */
 	#define DISPARA_TYPE_MISMATCH() printf("ERRO DE COMPATIBILIDADE DE TIPO. Quem te ensinou a programar?\n"); return TYPE_MISMATCH_ERROR;
+	#define DISPARA_UNDEFINED_SYMBOL(varref) printf("UNDEFINED SYMBOL. A variavel %s nao foi declarada.\n", varref); return UNDEFINED_SYMBOL_ERROR;
 
 	/* Globais para valores de literais encontradas */
 	int VAL_INT;
@@ -218,6 +219,8 @@
 		int desloc;
 		char* literal;
 		void* codigo;
+		int ndim;
+		void* ar;
 	} einfo;
 	char* double_val;
 	void* stable_entry;
@@ -296,19 +299,19 @@ type:		INT
 				;
 		
 type_array:		INT_LIT ':' INT_LIT ',' type_array
-				{
-					$$.size = ($3.int_val - $1.int_val) + 1 + $5.size;
-					$$.extra = (void*) append_dim((stack*) &($5.extra), ($$.size - $5.size));
-				}
-				| INT_LIT ':' INT_LIT ']'
-				{
-					$$.size = ($3.int_val - $1.int_val) + 1;
-					stack adata = NULL;
-					append_dim(&adata, $$.size);
-					$$.extra = (void*) adata;
-					adata = NULL;
-				}
-				;
+						{
+							$$.size = ($3.int_val - $1.int_val) + 1 + $5.size;
+							$$.extra = (void*) append_dim((stack*) &($5.extra), ($$.size - $5.size));
+						}
+						| INT_LIT ':' INT_LIT ']'
+						{
+							$$.size = ($3.int_val - $1.int_val) + 1;
+							stack adata = NULL;
+							append_dim(&adata, $$.size);
+							$$.extra = (void*) adata;
+							adata = NULL;
+						}
+						;
 
 /*----END Declarations----*/		
 			
@@ -329,36 +332,46 @@ attr:			lvalue '=' expr
 				}
 				;
 
-lvalue:			IDF {
-						entry_t *idf = NULL;
-						idf = lookup(stable, $1);
-						if( idf == NULL )
-						{
-							printf("UNDEFINED SYMBOL. A variavel %s nao foi declarada.\n", $1);
-							return UNDEFINED_SYMBOL_ERROR;
-						}
-						$$ = idf;
+lvalue:		IDF 
+				{
+					entry_t *idf = NULL;
+					idf = lookup(stable, $1);
+					if( idf == NULL )
+					{
+						DISPARA_UNDEFINED_SYMBOL($1)
 					}
-				| IDF '[' expr_list 
+					$$ = idf;
+				}
+				| expr_list ']' 
 				{
 				}
 				;
 		
-expr_list:		expr ',' expr_list
-				{
-					if($1.type != INT)
+expr_list:		expr_list ',' expr
 					{
-						DISPARA_TYPE_MISMATCH()
+						if($3.type != INT)
+						{
+							DISPARA_TYPE_MISMATCH()
+						}
 					}
-				}
-				| expr ']'
-				{
-					if($1.type != INT)
+					| IDF '[' expr
 					{
-						DISPARA_TYPE_MISMATCH()
+						entry_t *idf = NULL;
+						idf = lookup(stable, $1);
+						if( idf == NULL )
+						{
+							DISPARA_UNDEFINED_SYMBOL($1)
+						}
+						$$.ar = (void*) idf;
+						$$.desloc = $3.desloc;
+						$$.ndim = 1;
+
+						if($3.type != INT)
+						{
+							DISPARA_TYPE_MISMATCH()
+						}
 					}
-				}
-				;
+					;
 			
 expr:		expr ADD expr
 				{

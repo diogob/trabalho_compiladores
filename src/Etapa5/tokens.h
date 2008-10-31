@@ -126,7 +126,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 204 "pico.y"
+#line 205 "pico.y"
 {
 	char* name;
 	struct tinfo{ 
@@ -144,12 +144,14 @@ typedef union YYSTYPE
 		int desloc;
 		char* literal;
 		void* codigo;
+		int ndim;
+		void* ar;
 	} einfo;
 	char* double_val;
 	void* stable_entry;
 }
 /* Line 1489 of yacc.c.  */
-#line 153 "y.tab.h"
+#line 155 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
