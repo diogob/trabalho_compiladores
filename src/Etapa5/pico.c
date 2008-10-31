@@ -2131,10 +2131,8 @@ int main(int argc, char* argv[]) {
 		printf("%i\n", abs(desloc_temp) - 1);
 		print_tac(codigo_tac);
 	}
-	else 
-		printf("ERROR.\n");
-
 	return(0);
+
 }
 
 yyerror(char* s) {

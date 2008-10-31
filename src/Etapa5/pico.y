@@ -237,12 +237,12 @@
 
 /* area de definicao de gramatica */
 
-code:			decls action |
-				action
+code:			decls action 
+					| action
 				;
 
-decls: 			decl |
-				decls ';' decl
+decls: 			decl 
+					| decls ';' decl
 				;	
 
 
@@ -273,10 +273,10 @@ decl:			ident types {
 */
 							}
 		
-ident:			IDF ',' ident |
-				IDF ':'
+ident:			IDF ',' ident 
+					| IDF ':'
 				;
-		
+
 types:			type 
 				{ 
 					$$.size = 0;
@@ -289,10 +289,10 @@ types:			type
 				}
 				;
 		
-type:			INT |
-				DOUBLE |
-				FLOAT |
-				CHAR
+type:		INT 
+				| DOUBLE 
+				| FLOAT 
+				| CHAR
 				;
 		
 type_array:		INT_LIT ':' INT_LIT ',' type_array
@@ -313,13 +313,13 @@ type_array:		INT_LIT ':' INT_LIT ',' type_array
 /*----END Declarations----*/		
 			
 /*----Actions----*/			
-action:			command |
-				command ';' action |
-				simple_enun action 
+action:			command 
+					| command ';' action 
+					| simple_enun action 
 				;
 		
-command:		attr |
-				simple_enun
+command:		attr 
+						| simple_enun
 				;
 		
 attr:			lvalue '=' expr
@@ -360,7 +360,7 @@ expr_list:		expr ',' expr_list
 				}
 				;
 			
-expr:			expr ADD expr
+expr:		expr ADD expr
 				{
 					if(gera_codigo_aritmetico(ADD, &$1, &$3, &$$) < 0)
 					{
@@ -417,59 +417,59 @@ expr:			expr ADD expr
 				;
 
 proc_call:		IDF OPEN_PAR expr_list2
-				{
-					if(!strcmp($1, "print"))
 					{
-						if($3.type == FLOAT || $3.type == DOUBLE)
+						if(!strcmp($1, "print"))
 						{
-							concat_tac(codigo_tac, gera_codigo(FPRINT, $3.desloc, 0, 0, NULL, NULL));
-						}
-						else if($3.type == INT)
-						{
-							concat_tac(codigo_tac, gera_codigo(PRINT, $3.desloc, 0, 0, NULL, NULL));
-						}
-						else
-						{
-							DISPARA_TYPE_MISMATCH()
+							if($3.type == FLOAT || $3.type == DOUBLE)
+							{
+								concat_tac(codigo_tac, gera_codigo(FPRINT, $3.desloc, 0, 0, NULL, NULL));
+							}
+							else if($3.type == INT)
+							{
+								concat_tac(codigo_tac, gera_codigo(PRINT, $3.desloc, 0, 0, NULL, NULL));
+							}
+							else
+							{
+								DISPARA_TYPE_MISMATCH()
+							}
 						}
 					}
-				}
-				;
+					;
 
 expr_list2:		expr ',' expr_list2 { $$.type = $1.type; }
-				| expr CLOSE_PAR { $$.type = $1.type; }
+						| expr CLOSE_PAR { $$.type = $1.type; }
 				;
 			
-simple_enun:	expr |
-				control_instr
+simple_enun:	expr 
+						| control_instr
 				;
 				
-control_instr:	if_expr |
-				while_expr
+control_instr:	if_expr 
+						| while_expr
 				;
 				
 if_expr:		IF OPEN_PAR bool_expr CLOSE_PAR THEN action if_end
 				;
 
-if_end:			ELSE action END |
-				END
+if_end:			ELSE action END 
+					| END
 				;
 				
 while_expr:		WHILE OPEN_PAR bool_expr CLOSE_PAR '{' action '}'
 				;
 
-bool_expr:		TRUE |
-				FALSE |
-				OPEN_PAR bool_expr CLOSE_PAR |
-				bool_expr AND bool_expr |
-				bool_expr OR bool_expr |
-				expr '<' expr |
-				expr '>' expr |
-				expr LE expr |
-				expr GE expr |
-				expr EQ expr |
-				expr NE expr |
-				NOT bool_expr
+bool_expr:	TRUE 
+					| FALSE 
+					| OPEN_PAR bool_expr CLOSE_PAR 
+					| bool_expr AND bool_expr 
+					| bool_expr OR bool_expr 
+					| expr '<' expr 
+					| expr '>' expr 
+					| expr LE expr 
+					| expr GE expr 
+					| expr EQ expr 
+					| expr NE expr 
+					| NOT bool_expr
 				;
 
 /*----END Actions----*/
@@ -477,7 +477,7 @@ bool_expr:		TRUE |
 %%
  /* A partir daqui, insere-se qlqer codigo C necessario.
   */
-  #include "lex.yy.c"   /* Para poder usar o scanner */
+#include "lex.yy.c"   /* Para poder usar o scanner */
 
 char* progname;
 int lineno;
@@ -500,10 +500,8 @@ int main(int argc, char* argv[]) {
 		printf("%i\n", abs(desloc_temp) - 1);
 		print_tac(codigo_tac);
 	}
-	else 
-		printf("ERROR.\n");
-
 	return(0);
+
 }
 
 yyerror(char* s) {
