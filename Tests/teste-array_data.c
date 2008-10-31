@@ -25,7 +25,7 @@ int main(int argc, char** argv)
 	else
 		printf(" ERROR wrong count: c1=%i c2=%i\n", c1, c2);
 
-	printf("Testando count_dim:");
+	printf("Testando len_dim:");
 	c1 = len_dim(adata, 2);
 	if(c1 == 7)
 		printf(" OK\n");

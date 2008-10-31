@@ -263,17 +263,15 @@ decl:			ident types {
 								
 								if($2.extra != NULL)
 								{
-									/*
+/*
 									printf("==== Inicio de decl de array. Dimensoes: %03i =====\n", count_dim((stack) $2.extra));
 									print_array_data((stack) $2.extra);
 									printf("=================== Fim de array ==================\n");
-									*/
+*/
 									idf->extra = $2.extra;
 								}
 								insert(&stable, idf);
-								/*
-								printf("Decl da var %s tipo: %i tamanho: %i desloc: %i el: %i\n", $1, $2.type, idf->size, idf->desloc, $2.size);
-*/
+//								printf("Decl da var %s tipo: %i tamanho: %i desloc: %i el: %i\n", $1, $2.type, idf->size, idf->desloc, $2.size);
 							}
 		
 ident:			IDF ',' ident 
@@ -344,11 +342,23 @@ lvalue:		IDF
 				}
 				| expr_list ']' 
 				{
+					
 				}
 				;
 		
 expr_list:		expr_list ',' expr
 					{
+						int tmp = gera_temp(INT);
+						int dim = $1.ndim + 1;
+						char* num = (char*) malloc(sizeof(char) * 6);
+//						printf("Busca array tamanho da dim %i eh %i\n", dim, len_dim((stack) ((entry_t*) $1.ar)->extra, dim));
+						sprintf(num, "%i", len_dim((stack) ((entry_t*) $1.ar)->extra, dim));
+						codigo_tac = concat_tac(codigo_tac, 
+											concat_tac(gera_codigo(MUL, $1.desloc, 0, tmp, NULL, num),
+																	gera_codigo(ADD, tmp, $3.desloc, tmp, NULL, NULL)));
+						$$.ar = $1.ar;
+						$$.desloc = tmp;
+						$$.ndim = dim;
 						if($3.type != INT)
 						{
 							DISPARA_TYPE_MISMATCH()
@@ -362,6 +372,7 @@ expr_list:		expr_list ',' expr
 						{
 							DISPARA_UNDEFINED_SYMBOL($1)
 						}
+//						printf("ARRAY: %s\n", $1);
 						$$.ar = (void*) idf;
 						$$.desloc = $3.desloc;
 						$$.ndim = 1;
