@@ -151,6 +151,7 @@
 				return 1;
 				break;
 		}
+		return -1;
 	}
 
 %}
@@ -195,6 +196,7 @@
 
 %token PRINT
 %token FPRINT
+%token DEF
 
 %left ADD SUB
 %left MUL DIV
@@ -220,10 +222,9 @@
 		char* literal;
 		void* codigo;
 		int ndim;
-		void* ar;
+		void* stable_e;
 	} einfo;
 	char* double_val;
-	void* stable_entry;
 }
 
 %type<name> ident
@@ -232,7 +233,7 @@
 %type<tinfo> type_array
 %type<linfo> INT_LIT
 %type<linfo> F_LIT
-%type<stable_entry> lvalue
+%type<einfo> lvalue
 %type<einfo> expr
 %type<einfo> expr_list
 %type<einfo> expr_list2
@@ -325,7 +326,11 @@ command:		attr
 		
 attr:			lvalue '=' expr
 				{
-					tac_list cod_gerado = gera_codigo(0, $3.desloc, 0, ((entry_t *) $1)->desloc, $3.literal, NULL);
+					tac_list cod_gerado;
+					if($3.stable_e == NULL)
+						cod_gerado = gera_codigo(0, $3.desloc, 0, $1.desloc, $3.literal, NULL);
+					else
+						cod_gerado = gera_codigo(DEF, $3.desloc, ((entry_t*) $3.stable_e)->desloc, $1.desloc, NULL, NULL);
 					codigo_tac = concat_tac(codigo_tac, concat_tac($3.codigo, cod_gerado));
 				}
 				;
@@ -338,11 +343,22 @@ lvalue:		IDF
 					{
 						DISPARA_UNDEFINED_SYMBOL($1)
 					}
-					$$ = idf;
+					$$.type = idf->type;
+					$$.desloc = idf->desloc;
+					$$.stable_e = NULL;
 				}
 				| expr_list ']' 
 				{
-					
+					int tmp = gera_temp(INT);
+					char* num_w = (char*) malloc(sizeof(char) * 6);
+
+					$$.desloc = gera_temp(INT);
+					$$.type = $1.type;
+					$$.stable_e = $1.stable_e;
+					sprintf(num_w, "%i", get_size(((entry_t*) $1.stable_e)->type));
+					codigo_tac = concat_tac(codigo_tac,                                               
+															concat_tac(gera_codigo(MUL, $1.desloc, 0, tmp, NULL, num_w), 
+																				gera_codigo(ADD, ((entry_t*) $1.stable_e)->desloc, tmp, $$.desloc, NULL, NULL)));
 				}
 				;
 		
@@ -351,12 +367,11 @@ expr_list:		expr_list ',' expr
 						int tmp = gera_temp(INT);
 						int dim = $1.ndim + 1;
 						char* num = (char*) malloc(sizeof(char) * 6);
-//						printf("Busca array tamanho da dim %i eh %i\n", dim, len_dim((stack) ((entry_t*) $1.ar)->extra, dim));
-						sprintf(num, "%i", len_dim((stack) ((entry_t*) $1.ar)->extra, dim));
+						sprintf(num, "%i", len_dim((stack) ((entry_t*) $1.stable_e)->extra, dim));
 						codigo_tac = concat_tac(codigo_tac, 
 											concat_tac(gera_codigo(MUL, $1.desloc, 0, tmp, NULL, num),
 																	gera_codigo(ADD, tmp, $3.desloc, tmp, NULL, NULL)));
-						$$.ar = $1.ar;
+						$$.stable_e = $1.stable_e;
 						$$.desloc = tmp;
 						$$.ndim = dim;
 						if($3.type != INT)
@@ -373,10 +388,10 @@ expr_list:		expr_list ',' expr
 							DISPARA_UNDEFINED_SYMBOL($1)
 						}
 //						printf("ARRAY: %s\n", $1);
-						$$.ar = (void*) idf;
+						$$.stable_e = (void*) idf;
 						$$.desloc = $3.desloc;
 						$$.ndim = 1;
-
+						$$.type = idf->type;
 						if($3.type != INT)
 						{
 							DISPARA_TYPE_MISMATCH()
@@ -434,8 +449,8 @@ expr:		expr ADD expr
 				}
 				| lvalue 
 				{
-					$$.type = ((entry_t *) $1)->type;
-					$$.desloc = ((entry_t *) $1)->desloc;
+					$$.type = $1.type;
+					$$.desloc = $1.desloc;
 				}
 				| proc_call
 				;

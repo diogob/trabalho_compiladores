@@ -77,7 +77,8 @@
      TRUE = 293,
      FALSE = 294,
      PRINT = 295,
-     FPRINT = 296
+     FPRINT = 296,
+     DEF = 297
    };
 #endif
 /* Tokens.  */
@@ -120,13 +121,14 @@
 #define FALSE 294
 #define PRINT 295
 #define FPRINT 296
+#define DEF 297
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 205 "pico.y"
+#line 207 "pico.y"
 {
 	char* name;
 	struct tinfo{ 
@@ -145,13 +147,12 @@ typedef union YYSTYPE
 		char* literal;
 		void* codigo;
 		int ndim;
-		void* ar;
+		void* stable_e;
 	} einfo;
 	char* double_val;
-	void* stable_entry;
 }
 /* Line 1489 of yacc.c.  */
-#line 155 "y.tab.h"
+#line 156 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

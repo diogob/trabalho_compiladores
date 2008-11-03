@@ -132,7 +132,10 @@ void print_tac(tac_list l)
 	for(lasti = l; lasti->next != NULL; lasti = lasti->next, i++)
 	{
 		if(lasti->tac->arg1 && lasti->tac->arg2)
-			printf("%03i:   %03i(%s) := %03i(%s) %s %03i(%s)\n", i, abs(lasti->tac->res) - 1, (lasti->tac->res < 0 ? "Rx" : "SP"), abs(lasti->tac->arg1) - 1, (lasti->tac->arg1 < 0 ? "Rx" : "SP"), get_op(lasti->tac->op), abs(lasti->tac->arg2) - 1, (lasti->tac->arg2 < 0 ? "Rx" : "SP"));
+			if(lasti->tac->op == DEF)
+				printf("%03i:   %03i(%s) := %03i(%s)(%03i(%s))\n", i, abs(lasti->tac->res) - 1, (lasti->tac->res < 0 ? "Rx" : "SP"), abs(lasti->tac->arg1) - 1, (lasti->tac->arg1 < 0 ? "Rx" : "SP"), abs(lasti->tac->arg2) - 1, (lasti->tac->arg2 < 0 ? "Rx" : "SP"));
+			else
+				printf("%03i:   %03i(%s) := %03i(%s) %s %03i(%s)\n", i, abs(lasti->tac->res) - 1, (lasti->tac->res < 0 ? "Rx" : "SP"), abs(lasti->tac->arg1) - 1, (lasti->tac->arg1 < 0 ? "Rx" : "SP"), get_op(lasti->tac->op), abs(lasti->tac->arg2) - 1, (lasti->tac->arg2 < 0 ? "Rx" : "SP"));
 		else if(lasti->tac->arg1 && lasti->tac->literal2 != NULL)
 			printf("%03i:   %03i(%s) := %03i(%s) %s %s\n", i, abs(lasti->tac->res) - 1, (lasti->tac->res < 0 ? "Rx" : "SP"), abs(lasti->tac->arg1) - 1, (lasti->tac->arg1 < 0 ? "Rx" : "SP"), get_op(lasti->tac->op), lasti->tac->literal2);
 		else if(lasti->tac->arg2 && lasti->tac->literal1 != NULL)
