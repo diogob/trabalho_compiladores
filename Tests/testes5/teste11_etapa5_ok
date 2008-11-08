@@ -1,0 +1,7 @@
+z:double;
+i:int;
+j:int;
+k:int;
+A:int[0:9,0:19]
+A[1,2] = z;
+print(z)

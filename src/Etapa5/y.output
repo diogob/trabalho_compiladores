@@ -12,7 +12,8 @@ Terminals which are not used
    BRANCO
    PRINT
    FPRINT
-   DEF
+   RDEF
+   LDEF
 
 
 State 1 conflicts: 1 shift/reduce
@@ -155,55 +156,56 @@ TRUE (293) 46
 FALSE (294) 47
 PRINT (295)
 FPRINT (296)
-DEF (297)
+RDEF (297)
+LDEF (298)
 
 
 Nonterminals, with rules where they appear
 
-$accept (53)
+$accept (54)
     on left: 0
-code (54)
+code (55)
     on left: 1 2, on right: 0
-decls (55)
+decls (56)
     on left: 3 4, on right: 1 4
-decl (56)
+decl (57)
     on left: 5, on right: 3 4
-ident (57)
+ident (58)
     on left: 6 7, on right: 5 6
-types (58)
+types (59)
     on left: 8 9, on right: 5
-type (59)
+type (60)
     on left: 10 11 12 13, on right: 8 9
-type_array (60)
+type_array (61)
     on left: 14 15, on right: 9 14
-action (61)
+action (62)
     on left: 16 17 18, on right: 1 2 17 18 42 43 45
-command (62)
+command (63)
     on left: 19 20, on right: 16 17
-attr (63)
+attr (64)
     on left: 21, on right: 19
-lvalue (64)
+lvalue (65)
     on left: 22 23, on right: 21 33
-expr_list (65)
+expr_list (66)
     on left: 24 25, on right: 23 24
-expr (66)
+expr (67)
     on left: 26 27 28 29 30 31 32 33 34, on right: 21 24 25 26 27 28
     29 30 36 37 38 51 52 53 54 55 56
-proc_call (67)
+proc_call (68)
     on left: 35, on right: 34
-expr_list2 (68)
+expr_list2 (69)
     on left: 36 37, on right: 35 36
-simple_enun (69)
+simple_enun (70)
     on left: 38 39, on right: 18 20
-control_instr (70)
+control_instr (71)
     on left: 40 41, on right: 39
-if_expr (71)
+if_expr (72)
     on left: 42, on right: 40
-if_end (72)
+if_end (73)
     on left: 43 44, on right: 42
-while_expr (73)
+while_expr (74)
     on left: 45, on right: 41
-bool_expr (74)
+bool_expr (75)
     on left: 46 47 48 49 50 51 52 53 54 55 56 57, on right: 42 45 48
     49 50 57
 

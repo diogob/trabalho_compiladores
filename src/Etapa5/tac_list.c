@@ -15,6 +15,8 @@ const char* str_fmul = "FMUL";
 const char* str_fdiv = "FDIV";
 const char* str_fprint = "FPRINT";
 const char* str_error = "UNKNOWN";
+const char* str_rdef = "RDEF";
+const char* str_ldef = "LDEF";
 
 int init_list(tac_list* l)
 {
@@ -119,8 +121,23 @@ const char* get_op(int op)
 			return str_fdiv;
 		case FPRINT:
 			return str_fprint;
+		case RDEF:
+			return str_rdef;
+		case LDEF:
+			return str_ldef;
 		default:
 			return str_error;
+	}
+}
+
+void debug_tac(tac_list l)
+{
+	int i = 0;
+	tac_list lasti;
+
+	for(lasti = l; lasti->next != NULL; lasti = lasti->next, i++)
+	{
+		printf("%03i: OP: %s RES: %03i(%s) ARG1: %03i(%s) ARG2: %03i(%s) LIT1: %s LIT2: %s\n", i, get_op(lasti->tac->op), abs(lasti->tac->res) - 1, (lasti->tac->res < 0 ? "Rx" : "SP"), abs(lasti->tac->arg1) - 1, (lasti->tac->arg1 < 0 ? "Rx" : "SP"), abs(lasti->tac->arg2) - 1, (lasti->tac->arg2 < 0 ? "Rx" : "SP"), lasti->tac->literal1, lasti->tac->literal2);
 	}
 }
 
@@ -132,8 +149,10 @@ void print_tac(tac_list l)
 	for(lasti = l; lasti->next != NULL; lasti = lasti->next, i++)
 	{
 		if(lasti->tac->arg1 && lasti->tac->arg2)
-			if(lasti->tac->op == DEF)
+			if(lasti->tac->op == RDEF)
 				printf("%03i:   %03i(%s) := %03i(%s)(%03i(%s))\n", i, abs(lasti->tac->res) - 1, (lasti->tac->res < 0 ? "Rx" : "SP"), abs(lasti->tac->arg1) - 1, (lasti->tac->arg1 < 0 ? "Rx" : "SP"), abs(lasti->tac->arg2) - 1, (lasti->tac->arg2 < 0 ? "Rx" : "SP"));
+			else if(lasti->tac->op == LDEF)
+				printf("%03i:   %03i(%s)(%03i(%s)) := %03i(%s)\n", i, abs(lasti->tac->arg1) - 1, (lasti->tac->arg1 < 0 ? "Rx" : "SP"), abs(lasti->tac->arg2) - 1, (lasti->tac->arg2 < 0 ? "Rx" : "SP"), abs(lasti->tac->res) - 1, (lasti->tac->res < 0 ? "Rx" : "SP"));
 			else
 				printf("%03i:   %03i(%s) := %03i(%s) %s %03i(%s)\n", i, abs(lasti->tac->res) - 1, (lasti->tac->res < 0 ? "Rx" : "SP"), abs(lasti->tac->arg1) - 1, (lasti->tac->arg1 < 0 ? "Rx" : "SP"), get_op(lasti->tac->op), abs(lasti->tac->arg2) - 1, (lasti->tac->arg2 < 0 ? "Rx" : "SP"));
 		else if(lasti->tac->arg1 && lasti->tac->literal2 != NULL)

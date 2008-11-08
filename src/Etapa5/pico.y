@@ -25,6 +25,7 @@
 	int VAL_INT;
 	double VAL_DOUBLE;
 	symbol_t stable = NULL;
+	stack idents = NULL;
 	/*
 	Comeamos a contar o deslocamento a partir de 1 para SP
 	e a partir de -1 para Rx
@@ -196,7 +197,10 @@
 
 %token PRINT
 %token FPRINT
-%token DEF
+
+// Marcedores para deferenciar ponteiros a direita (RDEF) e a esquerda (LDEF) de uma atribuicao
+%token RDEF
+%token LDEF
 
 %left ADD SUB
 %left MUL DIV
@@ -254,29 +258,42 @@ decls: 			decl
 
 decl:			ident types {
 								entry_t *idf;
-								idf = malloc(sizeof(entry_t));
-								idf->name = malloc(sizeof(char) * (strlen($1) + 1));
-								strcpy(idf->name, $1);
-								idf->type = $2.type;
-								idf->size = get_size($2.type) * ($2.size ? $2.size : 1);
-								idf->desloc = deslocamento;
-								deslocamento += idf->size;
-								
-								if($2.extra != NULL)
+								char* id;								
+								while(1)
 								{
-/*
-									printf("==== Inicio de decl de array. Dimensoes: %03i =====\n", count_dim((stack) $2.extra));
-									print_array_data((stack) $2.extra);
-									printf("=================== Fim de array ==================\n");
-*/
-									idf->extra = $2.extra;
+									id = (char*) pop(&idents);
+									if(id == NULL)
+										break;
+									idf = malloc(sizeof(entry_t));
+									idf->name = malloc(sizeof(char) * (strlen(id) + 1));
+									strcpy(idf->name, id);
+									idf->type = $2.type;
+									idf->size = get_size($2.type) * ($2.size ? $2.size : 1);
+									idf->desloc = deslocamento;
+									deslocamento += idf->size;
+								
+									if($2.extra != NULL)
+									{
+	/*
+										printf("==== Inicio de decl de array. Dimensoes: %03i =====\n", count_dim((stack) $2.extra));
+										print_array_data((stack) $2.extra);
+										printf("=================== Fim de array ==================\n");
+	*/
+										idf->extra = $2.extra;
+									}
+									insert(&stable, idf);
+//									printf("Decl da var %s tipo: %i tamanho: %i desloc: %i el: %i\n", id, $2.type, idf->size, idf->desloc, $2.size);
 								}
-								insert(&stable, idf);
-//								printf("Decl da var %s tipo: %i tamanho: %i desloc: %i el: %i\n", $1, $2.type, idf->size, idf->desloc, $2.size);
 							}
 		
-ident:			IDF ',' ident 
-					| IDF ':'
+ident:			IDF ',' ident
+				{
+					push(&idents, $1);
+				}
+				| IDF ':'
+				{
+					push(&idents, $1);
+				}
 				;
 
 types:			type 
@@ -327,10 +344,12 @@ command:		attr
 attr:			lvalue '=' expr
 				{
 					tac_list cod_gerado;
-					if($3.stable_e == NULL)
+					if($1.stable_e == NULL && $3.stable_e == NULL)
 						cod_gerado = gera_codigo(0, $3.desloc, 0, $1.desloc, $3.literal, NULL);
+					else if($3.stable_e != NULL)
+						cod_gerado = gera_codigo(RDEF, $3.desloc, ((entry_t*) $3.stable_e)->desloc, $1.desloc, NULL, NULL);
 					else
-						cod_gerado = gera_codigo(DEF, $3.desloc, ((entry_t*) $3.stable_e)->desloc, $1.desloc, NULL, NULL);
+						cod_gerado = gera_codigo(LDEF, $1.desloc, ((entry_t*) $1.stable_e)->desloc, $3.desloc, NULL, NULL);
 					codigo_tac = concat_tac(codigo_tac, concat_tac($3.codigo, cod_gerado));
 				}
 				;
@@ -356,9 +375,10 @@ lvalue:		IDF
 					$$.type = $1.type;
 					$$.stable_e = $1.stable_e;
 					sprintf(num_w, "%i", get_size(((entry_t*) $1.stable_e)->type));
+//					printf("Tipo do expr_list: %i tamanho: %s desloc: %i desloc do ar:%i\n", $1.type, num_w, $1.desloc, ((entry_t*) $1.stable_e)->desloc);
 					codigo_tac = concat_tac(codigo_tac,                                               
-															concat_tac(gera_codigo(MUL, $1.desloc, 0, tmp, NULL, num_w), 
-																				gera_codigo(ADD, ((entry_t*) $1.stable_e)->desloc, tmp, $$.desloc, NULL, NULL)));
+															concat_tac(gera_codigo(MUL, $1.desloc, 0, tmp, $1.literal, num_w), 
+																				gera_codigo(ADD, ((entry_t*) $1.stable_e)->desloc, tmp, $$.desloc, $1.literal, NULL)));
 				}
 				;
 		
@@ -368,9 +388,10 @@ expr_list:		expr_list ',' expr
 						int dim = $1.ndim + 1;
 						char* num = (char*) malloc(sizeof(char) * 6);
 						sprintf(num, "%i", len_dim((stack) ((entry_t*) $1.stable_e)->extra, dim));
+//						printf("lendim: %s dim: %i desloc: %i lit:%s\n", num, dim, $1.desloc, $1.literal);
 						codigo_tac = concat_tac(codigo_tac, 
-											concat_tac(gera_codigo(MUL, $1.desloc, 0, tmp, NULL, num),
-																	gera_codigo(ADD, tmp, $3.desloc, tmp, NULL, NULL)));
+											concat_tac(gera_codigo(MUL, $1.desloc, 0, tmp, $1.literal, num),
+																	gera_codigo(ADD, tmp, $3.desloc, tmp, NULL, $3.literal)));
 						$$.stable_e = $1.stable_e;
 						$$.desloc = tmp;
 						$$.ndim = dim;
@@ -381,6 +402,7 @@ expr_list:		expr_list ',' expr
 					}
 					| IDF '[' expr
 					{
+						tac_list cod_gerado = NULL;
 						entry_t *idf = NULL;
 						idf = lookup(stable, $1);
 						if( idf == NULL )
@@ -390,6 +412,7 @@ expr_list:		expr_list ',' expr
 //						printf("ARRAY: %s\n", $1);
 						$$.stable_e = (void*) idf;
 						$$.desloc = $3.desloc;
+						$$.literal = $3.literal;
 						$$.ndim = 1;
 						$$.type = idf->type;
 						if($3.type != INT)
@@ -432,6 +455,7 @@ expr:		expr ADD expr
 					$$.type = $2.type;
 					$$.desloc = $2.desloc;
 					$$.codigo = $2.codigo;
+					$$.literal = $2.literal;
 				}
 				| INT_LIT
 				{
@@ -459,13 +483,19 @@ proc_call:		IDF OPEN_PAR expr_list2
 					{
 						if(!strcmp($1, "print"))
 						{
+							int var_print = $3.desloc;
+							if($3.stable_e != NULL)
+							{
+								var_print = gera_temp($3.type);
+								codigo_tac = concat_tac(codigo_tac, gera_codigo(RDEF, $3.desloc, ((entry_t*) $3.stable_e)->desloc, var_print, NULL, NULL));
+							}
 							if($3.type == FLOAT || $3.type == DOUBLE)
 							{
-								concat_tac(codigo_tac, gera_codigo(FPRINT, $3.desloc, 0, 0, NULL, NULL));
+								codigo_tac = concat_tac(codigo_tac, gera_codigo(FPRINT, var_print, 0, 0, NULL, NULL));
 							}
 							else if($3.type == INT)
 							{
-								concat_tac(codigo_tac, gera_codigo(PRINT, $3.desloc, 0, 0, NULL, NULL));
+								codigo_tac = concat_tac(codigo_tac, gera_codigo(PRINT, var_print, 0, 0, NULL, NULL));
 							}
 							else
 							{
@@ -475,8 +505,20 @@ proc_call:		IDF OPEN_PAR expr_list2
 					}
 					;
 
-expr_list2:		expr ',' expr_list2 { $$.type = $1.type; }
-						| expr CLOSE_PAR { $$.type = $1.type; }
+expr_list2:		expr ',' expr_list2 
+				{ 
+					$$.type = $1.type;
+					$$.desloc = $1.desloc;
+					$$.desloc = $1.desloc;
+					$$.stable_e = $1.stable_e;
+				}
+				| expr CLOSE_PAR 
+				{ 
+					$$.type = $1.type;
+					$$.desloc = $1.desloc;
+					$$.desloc = $1.desloc;
+					$$.stable_e = $1.stable_e;
+				}
 				;
 			
 simple_enun:	expr 
@@ -527,6 +569,7 @@ int main(int argc, char* argv[]) {
 
 	init_table(&stable);
 	init_list(&codigo_tac);
+	init_stack(&idents);
 
 	if (!yyparse())
 	{
@@ -538,6 +581,7 @@ int main(int argc, char* argv[]) {
 		printf("%i\n", deslocamento - 1);
 		printf("%i\n", abs(desloc_temp) - 1);
 		print_tac(codigo_tac);
+//		debug_tac(codigo_tac);
 	}
 	return(0);
 
