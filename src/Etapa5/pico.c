@@ -193,7 +193,15 @@
 	*/
 	int deslocamento = 1;
 	int desloc_temp = -1;
+	int proximo_rotulo = 0;
 	tac_list codigo_tac = NULL;
+
+	char* gera_rotulo()
+	{
+		char* rotulo = malloc(10 * sizeof(char));
+		sprintf(rotulo, "label%03i:", proximo_rotulo++);
+		return rotulo;
+	}
 
 	tac_list gera_codigo( int op, int arg1, int arg2, int res, char* literal1, char* literal2)
 	{
@@ -336,7 +344,7 @@
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 211 "pico.y"
+#line 219 "pico.y"
 {
 	char* name;
 	struct tinfo{ 
@@ -360,7 +368,7 @@ typedef union YYSTYPE
 	char* double_val;
 }
 /* Line 187 of yacc.c.  */
-#line 364 "y.tab.c"
+#line 372 "y.tab.c"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
@@ -373,7 +381,7 @@ typedef union YYSTYPE
 
 
 /* Line 216 of yacc.c.  */
-#line 377 "y.tab.c"
+#line 385 "y.tab.c"
 
 #ifdef short
 # undef short
@@ -682,12 +690,12 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint16 yyrline[] =
 {
-       0,   248,   248,   249,   252,   253,   259,   289,   293,   299,
-     304,   311,   312,   313,   314,   317,   322,   335,   336,   337,
-     340,   341,   344,   357,   369,   385,   403,   425,   432,   439,
-     446,   453,   460,   467,   474,   479,   482,   508,   515,   524,
-     525,   528,   529,   532,   535,   536,   539,   542,   543,   544,
-     545,   546,   547,   548,   549,   550,   551,   552,   553
+       0,   257,   257,   258,   261,   262,   268,   298,   302,   308,
+     313,   320,   321,   322,   323,   326,   331,   344,   345,   346,
+     349,   350,   353,   366,   378,   394,   412,   434,   441,   448,
+     455,   462,   469,   476,   483,   488,   491,   517,   524,   533,
+     534,   537,   538,   541,   544,   545,   548,   551,   552,   553,
+     554,   555,   556,   557,   558,   559,   560,   561,   562
 };
 #endif
 
@@ -1680,7 +1688,7 @@ yyreduce:
   switch (yyn)
     {
         case 6:
-#line 259 "pico.y"
+#line 268 "pico.y"
     {
 								entry_t *idf;
 								char* id;								
@@ -1713,21 +1721,21 @@ yyreduce:
     break;
 
   case 7:
-#line 290 "pico.y"
+#line 299 "pico.y"
     {
 					push(&idents, (yyvsp[(1) - (3)].name));
 				}
     break;
 
   case 8:
-#line 294 "pico.y"
+#line 303 "pico.y"
     {
 					push(&idents, (yyvsp[(1) - (2)].name));
 				}
     break;
 
   case 9:
-#line 300 "pico.y"
+#line 309 "pico.y"
     { 
 					(yyval.tinfo).size = 0;
 					(yyval.tinfo).extra = NULL;
@@ -1735,7 +1743,7 @@ yyreduce:
     break;
 
   case 10:
-#line 305 "pico.y"
+#line 314 "pico.y"
     {
 					(yyval.tinfo).size = (yyvsp[(3) - (3)].tinfo).size; 
 					(yyval.tinfo).extra = (yyvsp[(3) - (3)].tinfo).extra;
@@ -1743,7 +1751,7 @@ yyreduce:
     break;
 
   case 15:
-#line 318 "pico.y"
+#line 327 "pico.y"
     {
 							(yyval.tinfo).size = ((yyvsp[(3) - (5)].linfo).int_val - (yyvsp[(1) - (5)].linfo).int_val) + 1 + (yyvsp[(5) - (5)].tinfo).size;
 							(yyval.tinfo).extra = (void*) append_dim((stack*) &((yyvsp[(5) - (5)].tinfo).extra), ((yyval.tinfo).size - (yyvsp[(5) - (5)].tinfo).size));
@@ -1751,7 +1759,7 @@ yyreduce:
     break;
 
   case 16:
-#line 323 "pico.y"
+#line 332 "pico.y"
     {
 							(yyval.tinfo).size = ((yyvsp[(3) - (4)].linfo).int_val - (yyvsp[(1) - (4)].linfo).int_val) + 1;
 							stack adata = NULL;
@@ -1762,7 +1770,7 @@ yyreduce:
     break;
 
   case 22:
-#line 345 "pico.y"
+#line 354 "pico.y"
     {
 					tac_list cod_gerado;
 					if((yyvsp[(1) - (3)].einfo).stable_e == NULL && (yyvsp[(3) - (3)].einfo).stable_e == NULL)
@@ -1776,7 +1784,7 @@ yyreduce:
     break;
 
   case 23:
-#line 358 "pico.y"
+#line 367 "pico.y"
     {
 					entry_t *idf = NULL;
 					idf = lookup(stable, (yyvsp[(1) - (1)].name));
@@ -1791,7 +1799,7 @@ yyreduce:
     break;
 
   case 24:
-#line 370 "pico.y"
+#line 379 "pico.y"
     {
 					int tmp = gera_temp(INT);
 					char* num_w = (char*) malloc(sizeof(char) * 6);
@@ -1808,7 +1816,7 @@ yyreduce:
     break;
 
   case 25:
-#line 386 "pico.y"
+#line 395 "pico.y"
     {
 						int tmp = gera_temp(INT);
 						int dim = (yyvsp[(1) - (3)].einfo).ndim + 1;
@@ -1829,7 +1837,7 @@ yyreduce:
     break;
 
   case 26:
-#line 404 "pico.y"
+#line 413 "pico.y"
     {
 						tac_list cod_gerado = NULL;
 						entry_t *idf = NULL;
@@ -1852,7 +1860,7 @@ yyreduce:
     break;
 
   case 27:
-#line 426 "pico.y"
+#line 435 "pico.y"
     {
 					if(gera_codigo_aritmetico(ADD, &(yyvsp[(1) - (3)].einfo), &(yyvsp[(3) - (3)].einfo), &(yyval.einfo)) < 0)
 					{
@@ -1862,7 +1870,7 @@ yyreduce:
     break;
 
   case 28:
-#line 433 "pico.y"
+#line 442 "pico.y"
     {
 					if(gera_codigo_aritmetico(SUB, &(yyvsp[(1) - (3)].einfo), &(yyvsp[(3) - (3)].einfo), &(yyval.einfo)) < 0)
 					{
@@ -1872,7 +1880,7 @@ yyreduce:
     break;
 
   case 29:
-#line 440 "pico.y"
+#line 449 "pico.y"
     {
 					if(gera_codigo_aritmetico(MUL, &(yyvsp[(1) - (3)].einfo), &(yyvsp[(3) - (3)].einfo), &(yyval.einfo)) < 0)
 					{
@@ -1882,7 +1890,7 @@ yyreduce:
     break;
 
   case 30:
-#line 447 "pico.y"
+#line 456 "pico.y"
     {
 					if(gera_codigo_aritmetico(DIV, &(yyvsp[(1) - (3)].einfo), &(yyvsp[(3) - (3)].einfo), &(yyval.einfo)) < 0)
 					{
@@ -1892,7 +1900,7 @@ yyreduce:
     break;
 
   case 31:
-#line 454 "pico.y"
+#line 463 "pico.y"
     {
 					(yyval.einfo).type = (yyvsp[(2) - (3)].einfo).type;
 					(yyval.einfo).desloc = (yyvsp[(2) - (3)].einfo).desloc;
@@ -1902,7 +1910,7 @@ yyreduce:
     break;
 
   case 32:
-#line 461 "pico.y"
+#line 470 "pico.y"
     {
 					(yyval.einfo).type = INT;
 					(yyval.einfo).codigo = NULL;
@@ -1912,7 +1920,7 @@ yyreduce:
     break;
 
   case 33:
-#line 468 "pico.y"
+#line 477 "pico.y"
     {
 					(yyval.einfo).type = FLOAT;
 					(yyval.einfo).codigo = NULL;
@@ -1922,7 +1930,7 @@ yyreduce:
     break;
 
   case 34:
-#line 475 "pico.y"
+#line 484 "pico.y"
     {
 					(yyval.einfo).type = (yyvsp[(1) - (1)].einfo).type;
 					(yyval.einfo).desloc = (yyvsp[(1) - (1)].einfo).desloc;
@@ -1930,7 +1938,7 @@ yyreduce:
     break;
 
   case 36:
-#line 483 "pico.y"
+#line 492 "pico.y"
     {
 						if(!strcmp((yyvsp[(1) - (3)].name), "print"))
 						{
@@ -1957,7 +1965,7 @@ yyreduce:
     break;
 
   case 37:
-#line 509 "pico.y"
+#line 518 "pico.y"
     { 
 					(yyval.einfo).type = (yyvsp[(1) - (3)].einfo).type;
 					(yyval.einfo).desloc = (yyvsp[(1) - (3)].einfo).desloc;
@@ -1967,7 +1975,7 @@ yyreduce:
     break;
 
   case 38:
-#line 516 "pico.y"
+#line 525 "pico.y"
     { 
 					(yyval.einfo).type = (yyvsp[(1) - (2)].einfo).type;
 					(yyval.einfo).desloc = (yyvsp[(1) - (2)].einfo).desloc;
@@ -1978,7 +1986,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 1982 "y.tab.c"
+#line 1990 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2192,7 +2200,7 @@ yyreturn:
 }
 
 
-#line 558 "pico.y"
+#line 567 "pico.y"
 
  /* A partir daqui, insere-se qlqer codigo C necessario.
   */

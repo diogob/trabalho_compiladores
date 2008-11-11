@@ -34,7 +34,15 @@
 	*/
 	int deslocamento = 1;
 	int desloc_temp = -1;
+	int proximo_rotulo = 0;
 	tac_list codigo_tac = NULL;
+
+	char* gera_rotulo()
+	{
+		char* rotulo = malloc(10 * sizeof(char));
+		sprintf(rotulo, "label%03i:", proximo_rotulo++);
+		return rotulo;
+	}
 
 	tac_list gera_codigo( int op, int arg1, int arg2, int res, char* literal1, char* literal2)
 	{
@@ -241,6 +249,7 @@
 %type<einfo> expr
 %type<einfo> expr_list
 %type<einfo> expr_list2
+%type<einfo> bool_expr
 %%
 
 /* area de definicao de gramatica */
