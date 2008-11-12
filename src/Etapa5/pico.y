@@ -63,7 +63,6 @@
 
 	int gera_codigo_aritmetico( int op, struct einfo* arg1, struct einfo* arg2, struct einfo* res)
 	{
-
 		tac_list cod_gerado;
 		int fop;
 
@@ -355,10 +354,8 @@ attr:			lvalue '=' expr
 					tac_list cod_gerado;
 					if($1.stable_e == NULL && $3.stable_e == NULL)
 						cod_gerado = gera_codigo(0, $3.desloc, 0, $1.desloc, $3.literal, NULL);
-					else if($3.stable_e != NULL)
-						cod_gerado = gera_codigo(RDEF, $3.desloc, ((entry_t*) $3.stable_e)->desloc, $1.desloc, NULL, NULL);
 					else
-						cod_gerado = gera_codigo(LDEF, $1.desloc, ((entry_t*) $1.stable_e)->desloc, $3.desloc, NULL, NULL);
+						cod_gerado = gera_codigo(LDEF, $1.desloc, $3.desloc, ((entry_t*) $1.stable_e)->desloc, NULL, $3.literal);
 					codigo_tac = concat_tac(codigo_tac, concat_tac($3.codigo, cod_gerado));
 				}
 				;
@@ -433,6 +430,7 @@ expr_list:		expr_list ',' expr
 			
 expr:		expr ADD expr
 				{
+					printf("SOMA: %s\n", $3.literal);
 					if(gera_codigo_aritmetico(ADD, &$1, &$3, &$$) < 0)
 					{
 						DISPARA_TYPE_MISMATCH()
@@ -482,8 +480,15 @@ expr:		expr ADD expr
 				}
 				| lvalue 
 				{
+					tac_list cod_gerado = NULL;
 					$$.type = $1.type;
 					$$.desloc = $1.desloc;
+					if($1.stable_e != NULL)
+					{
+						cod_gerado = gera_codigo(RDEF, $1.desloc, ((entry_t*) $1.stable_e)->desloc, $1.desloc, NULL, NULL);
+						codigo_tac = concat_tac(codigo_tac, cod_gerado);
+					}
+					$$.stable_e = NULL;
 				}
 				| proc_call
 				;
@@ -590,7 +595,7 @@ int main(int argc, char* argv[]) {
 		printf("%i\n", deslocamento - 1);
 		printf("%i\n", abs(desloc_temp) - 1);
 		print_tac(codigo_tac);
-//		debug_tac(codigo_tac);
+		debug_tac(codigo_tac);
 	}
 	return(0);
 
