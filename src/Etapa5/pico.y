@@ -131,7 +131,6 @@
 			cod_gerado = concat_tac(cod_gerado, gera_codigo(fop, arg->desloc, upcast_tmp, res->desloc, arg->literal, NULL));
 		}
 		res->codigo = (void*) concat_tac(concat_tac((tac_list) arg1->codigo, (tac_list) arg2->codigo), cod_gerado);
-		
 		return 0;
 	}
 
@@ -396,8 +395,9 @@ expr_list:		expr_list ',' expr
 						sprintf(num, "%i", len_dim((stack) ((entry_t*) $1.stable_e)->extra, dim));
 //						printf("lendim: %s dim: %i desloc: %i lit:%s\n", num, dim, $1.desloc, $1.literal);
 						codigo_tac = concat_tac(codigo_tac, 
+											concat_tac($3.codigo,
 											concat_tac(gera_codigo(MUL, $1.desloc, 0, tmp, $1.literal, num),
-																	gera_codigo(ADD, tmp, $3.desloc, tmp, NULL, $3.literal)));
+																	gera_codigo(ADD, tmp, $3.desloc, tmp, NULL, $3.literal))));
 						$$.stable_e = $1.stable_e;
 						$$.desloc = tmp;
 						$$.ndim = dim;
@@ -425,6 +425,7 @@ expr_list:		expr_list ',' expr
 						{
 							DISPARA_TYPE_MISMATCH()
 						}
+						codigo_tac = concat_tac(codigo_tac, $3.codigo);
 					}
 					;
 			
