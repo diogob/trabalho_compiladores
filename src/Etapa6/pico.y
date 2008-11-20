@@ -40,10 +40,27 @@
 	char* gera_rotulo()
 	{
 		char* rotulo = malloc(10 * sizeof(char));
-		sprintf(rotulo, "label%03i:", proximo_rotulo++);
+		sprintf(rotulo, "Label%03i", proximo_rotulo++);
 		return rotulo;
 	}
 
+	tac_list gera_if( int op, int arg1, int arg2, char* literal1, char* literal2, char* literal3)
+	{
+		tac_list new;
+		tac_instruction* taci;
+		init_list(&new);
+		taci = malloc(sizeof(tac_instruction));
+		taci->op = op;
+		taci->arg1 = arg1;
+		taci->arg2 = arg2;
+		taci->res = 0;
+		taci->literal1 = literal1;
+		taci->literal2 = literal2;
+		taci->literal3 = literal3;
+		append(new, taci);
+		return new;
+	}
+	
 	tac_list gera_codigo( int op, int arg1, int arg2, int res, char* literal1, char* literal2)
 	{
 		tac_list new;
@@ -207,6 +224,10 @@
 // Marcedores para deferenciar ponteiros a direita (RDEF) e a esquerda (LDEF) de uma atribuicao
 %token RDEF
 %token LDEF
+
+// Operadores extra
+%token GOTO
+%token LABEL
 
 %left ADD SUB
 %left MUL DIV

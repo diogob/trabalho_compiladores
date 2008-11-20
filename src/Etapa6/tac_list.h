@@ -16,6 +16,7 @@ typedef struct {
 	int res;  /**< resultado. */
 	char* literal1;
 	char* literal2;
+	char* literal3;
 } tac_instruction ;
 
 /** \brief Encapsulamento da lista de instrucoes TAC

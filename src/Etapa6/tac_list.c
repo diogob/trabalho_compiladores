@@ -17,6 +17,15 @@ const char* str_fprint = "FPRINT";
 const char* str_error = "UNKNOWN";
 const char* str_rdef = "RDEF";
 const char* str_ldef = "LDEF";
+const char* str_goto = "GOTO";
+
+const char* str_eq = "==";
+const char* str_ne = "!=";
+const char* str_ge = ">=";
+const char* str_le = "<=";
+const char* str_gt = ">";
+const char* str_lt = "<";
+
 
 int init_list(tac_list* l)
 {
@@ -125,6 +134,21 @@ const char* get_op(int op)
 			return str_rdef;
 		case LDEF:
 			return str_ldef;
+		case GOTO:
+			return str_goto;
+		case EQ:
+			return str_eq;
+		case NE:
+			return str_ne;
+		case GE:
+			return str_ge;
+		case LE:
+			return str_le;
+		case '>':
+			return str_gt;
+		case '<':
+			return str_lt;
+
 		default:
 			return str_error;
 	}
@@ -158,6 +182,28 @@ void print_tac(tac_list l)
 				printf("%03i:   %03i(%s)(%03i(%s)) := %03i(%s)\n", i, abs(lasti->tac->arg1) - 1, (lasti->tac->arg1 < 0 ? "Rx" : "SP"), abs(lasti->tac->res) - 1, (lasti->tac->res < 0 ? "Rx" : "SP"), abs(lasti->tac->arg2) - 1, (lasti->tac->arg2 < 0 ? "Rx" : "SP"));
 			else
 				printf("%03i:   %03i(%s)(%03i(%s)) := %s\n", i, abs(lasti->tac->arg1) - 1, (lasti->tac->arg1 < 0 ? "Rx" : "SP"), abs(lasti->tac->res) - 1, (lasti->tac->res < 0 ? "Rx" : "SP"), lasti->tac->literal2);
+		}
+		else if(lasti->tac->op == GOTO)
+		{
+				printf("%03i:   GOTO %s\n", i, lasti->tac->literal1);
+		}
+		else if(lasti->tac->op == LABEL)
+		{
+			printf("%s:\n", lasti->tac->literal1);
+			i--;
+		}
+		else if(lasti->tac->op == '<' || lasti->tac->op == '>' || lasti->tac->op == GE || lasti->tac->op == LE || lasti->tac->op == EQ || lasti->tac->op == NE)
+		{
+			if(lasti->tac->arg1 && lasti->tac->arg2)
+				printf("%03i:   IF %03i(%s) %s %03i(%s) GOTO %s\n", i, abs(lasti->tac->arg1) - 1, (lasti->tac->arg1 < 0 ? "Rx" : "SP"), get_op(lasti->tac->op), abs(lasti->tac->arg2) - 1, (lasti->tac->arg2 < 0 ? "Rx" : "SP"), lasti->tac->literal3);
+			else if(lasti->tac->arg1 && lasti->tac->literal2 != NULL)
+				printf("%03i:   IF %03i(%s) %s %s GOTO %s\n", i, abs(lasti->tac->arg1) - 1, (lasti->tac->arg1 < 0 ? "Rx" : "SP"), get_op(lasti->tac->op), lasti->tac->literal2, lasti->tac->literal3);
+			else if(lasti->tac->arg2 && lasti->tac->literal1 != NULL)
+				printf("%03i:   IF %s %s %03i(%s) GOTO %s\n", i, lasti->tac->literal1, get_op(lasti->tac->op), abs(lasti->tac->arg2) - 1, (lasti->tac->arg2 < 0 ? "Rx" : "SP"), lasti->tac->literal3);
+			else if(lasti->tac->literal1 != NULL && lasti->tac->literal2 != NULL)
+				printf("%03i:   IF %s %s %s GOTO %s\n", i, lasti->tac->literal1, get_op(lasti->tac->op), lasti->tac->literal2, lasti->tac->literal3);
+			else
+				printf("%03i:   UNKNOW IF ERROR\n", i, lasti->tac->literal1, get_op(lasti->tac->op), lasti->tac->literal2, lasti->tac->literal3);
 		}
 		else
 		{

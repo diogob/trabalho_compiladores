@@ -79,7 +79,9 @@
      PRINT = 295,
      FPRINT = 296,
      RDEF = 297,
-     LDEF = 298
+     LDEF = 298,
+     GOTO = 299,
+     LABEL = 300
    };
 #endif
 /* Tokens.  */
@@ -124,13 +126,15 @@
 #define FPRINT 296
 #define RDEF 297
 #define LDEF 298
+#define GOTO 299
+#define LABEL 300
 
 
 
 
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 typedef union YYSTYPE
-#line 217 "pico.y"
+#line 238 "pico.y"
 {
 	char* name;
 	struct tinfo{ 
@@ -154,7 +158,7 @@ typedef union YYSTYPE
 	char* double_val;
 }
 /* Line 1489 of yacc.c.  */
-#line 158 "y.tab.h"
+#line 162 "y.tab.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
