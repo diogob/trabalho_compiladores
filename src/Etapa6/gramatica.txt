@@ -1,0 +1,106 @@
+
+code:			decls action |
+				action
+				;
+
+decls: 			decl |
+				decls ';' decl
+				;	
+
+
+/*----Declarations----*/
+
+decl:			ident types  
+		
+ident:			IDF ',' ident |
+				IDF ':'
+				;
+		
+types:			type |
+				type '[' type_array
+				;
+		
+type:			INT |
+				DOUBLE |
+				FLOAT |
+				CHAR
+				;
+		
+type_array:		INT_LIT ':' INT_LIT ',' type_array |
+				INT_LIT ':' INT_LIT ']'
+				;
+
+/*----END Declarations----*/		
+			
+/*----Actions----*/			
+action:			command |
+				command ';' action |
+				simple_enun action 
+				;
+		
+command:		attr |
+				simple_enun
+				;
+		
+attr:			lvalue '=' expr
+				;
+
+lvalue:			IDF |
+				IDF '[' expr_list
+				;
+		
+expr_list:		expr ',' expr_list |
+				expr ']'
+				;
+			
+expr:			expr ADD expr |
+				expr SUB expr |
+				expr MUL expr |
+				expr DIV expr |
+				OPEN_PAR expr CLOSE_PAR |
+				INT_LIT |
+				F_LIT |
+				lvalue |
+				proc_call
+				;
+		
+proc_call:		IDF OPEN_PAR expr_list2
+				;
+
+expr_list2:		expr ',' expr_list2 |
+				expr CLOSE_PAR
+				;
+			
+simple_enun:	expr |
+				control_instr
+				;
+				
+control_instr:	if_expr |
+				while_expr
+				;
+				
+if_expr:		IF OPEN_PAR bool_expr CLOSE_PAR THEN action if_end
+				;
+
+if_end:			ELSE action END |
+				END
+				;
+				
+while_expr:		WHILE OPEN_PAR bool_expr CLOSE_PAR '{' action '}'
+				;
+
+bool_expr:		TRUE |
+				FALSE |
+				OPEN_PAR bool_expr CLOSE_PAR |
+				bool_expr AND bool_expr |
+				bool_expr OR bool_expr |
+				expr '<' expr |
+				expr '>' expr |
+				expr LE expr |
+				expr GE expr |
+				expr EQ expr |
+				expr NE expr |
+				NOT bool_expr
+				;
+
+/*----END Actions----*/

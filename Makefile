@@ -32,7 +32,7 @@ DIR1    = $(SRC_DIR)/Etapa1
 etapa1: $(DIR1)/stack.h $(DIR1)/symbol_table.h
 	cd $(DIR1) && $(MAKE) -w install
 
-test: etapa1 etapa5
+test: etapa1 etapa6
 	cd $(PICO_DIR)/Tests && $(MAKE) -w
 
 DIR2    = $(SRC_DIR)/Etapa2
@@ -58,6 +58,11 @@ DIR5    = $(SRC_DIR)/Etapa5
 # Depois de 'make etapa5', 'pico' eh copiado em Testes.
 etapa5: etapa2 etapa1
 	cd $(DIR5) && $(MAKE) -w install
+
+DIR6    = $(SRC_DIR)/Etapa6
+# Depois de 'make etapa6', 'pico' eh copiado em Testes.
+etapa6: etapa2 etapa1
+	cd $(DIR6) && $(MAKE) -w install
 
 test4: etapa4
 	cd $(PICO_DIR)/Tests && $(MAKE) -w
