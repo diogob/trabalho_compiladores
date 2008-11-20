@@ -431,7 +431,6 @@ expr_list:		expr_list ',' expr
 			
 expr:		expr ADD expr
 				{
-					printf("SOMA: %s\n", $3.literal);
 					if(gera_codigo_aritmetico(ADD, &$1, &$3, &$$) < 0)
 					{
 						DISPARA_TYPE_MISMATCH()
@@ -596,7 +595,7 @@ int main(int argc, char* argv[]) {
 		printf("%i\n", deslocamento - 1);
 		printf("%i\n", abs(desloc_temp) - 1);
 		print_tac(codigo_tac);
-		debug_tac(codigo_tac);
+//		debug_tac(codigo_tac);
 	}
 	return(0);
 

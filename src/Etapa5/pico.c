@@ -690,10 +690,10 @@ static const yytype_uint16 yyrline[] =
 {
        0,   255,   255,   256,   259,   260,   266,   296,   300,   306,
      311,   318,   319,   320,   321,   324,   329,   342,   343,   344,
-     347,   348,   351,   362,   374,   390,   409,   432,   440,   447,
-     454,   461,   468,   475,   482,   494,   497,   523,   530,   539,
-     540,   543,   544,   547,   550,   551,   554,   557,   558,   559,
-     560,   561,   562,   563,   564,   565,   566,   567,   568
+     347,   348,   351,   362,   374,   390,   409,   432,   439,   446,
+     453,   460,   467,   474,   481,   493,   496,   522,   529,   538,
+     539,   542,   543,   546,   549,   550,   553,   556,   557,   558,
+     559,   560,   561,   562,   563,   564,   565,   566,   567
 };
 #endif
 
@@ -1860,7 +1860,6 @@ yyreduce:
   case 27:
 #line 433 "pico.y"
     {
-					printf("SOMA: %s\n", (yyvsp[(3) - (3)].einfo).literal);
 					if(gera_codigo_aritmetico(ADD, &(yyvsp[(1) - (3)].einfo), &(yyvsp[(3) - (3)].einfo), &(yyval.einfo)) < 0)
 					{
 						DISPARA_TYPE_MISMATCH()
@@ -1869,7 +1868,7 @@ yyreduce:
     break;
 
   case 28:
-#line 441 "pico.y"
+#line 440 "pico.y"
     {
 					if(gera_codigo_aritmetico(SUB, &(yyvsp[(1) - (3)].einfo), &(yyvsp[(3) - (3)].einfo), &(yyval.einfo)) < 0)
 					{
@@ -1879,7 +1878,7 @@ yyreduce:
     break;
 
   case 29:
-#line 448 "pico.y"
+#line 447 "pico.y"
     {
 					if(gera_codigo_aritmetico(MUL, &(yyvsp[(1) - (3)].einfo), &(yyvsp[(3) - (3)].einfo), &(yyval.einfo)) < 0)
 					{
@@ -1889,7 +1888,7 @@ yyreduce:
     break;
 
   case 30:
-#line 455 "pico.y"
+#line 454 "pico.y"
     {
 					if(gera_codigo_aritmetico(DIV, &(yyvsp[(1) - (3)].einfo), &(yyvsp[(3) - (3)].einfo), &(yyval.einfo)) < 0)
 					{
@@ -1899,7 +1898,7 @@ yyreduce:
     break;
 
   case 31:
-#line 462 "pico.y"
+#line 461 "pico.y"
     {
 					(yyval.einfo).type = (yyvsp[(2) - (3)].einfo).type;
 					(yyval.einfo).desloc = (yyvsp[(2) - (3)].einfo).desloc;
@@ -1909,7 +1908,7 @@ yyreduce:
     break;
 
   case 32:
-#line 469 "pico.y"
+#line 468 "pico.y"
     {
 					(yyval.einfo).type = INT;
 					(yyval.einfo).codigo = NULL;
@@ -1919,7 +1918,7 @@ yyreduce:
     break;
 
   case 33:
-#line 476 "pico.y"
+#line 475 "pico.y"
     {
 					(yyval.einfo).type = FLOAT;
 					(yyval.einfo).codigo = NULL;
@@ -1929,7 +1928,7 @@ yyreduce:
     break;
 
   case 34:
-#line 483 "pico.y"
+#line 482 "pico.y"
     {
 					tac_list cod_gerado = NULL;
 					(yyval.einfo).type = (yyvsp[(1) - (1)].einfo).type;
@@ -1944,7 +1943,7 @@ yyreduce:
     break;
 
   case 36:
-#line 498 "pico.y"
+#line 497 "pico.y"
     {
 						if(!strcmp((yyvsp[(1) - (3)].name), "print"))
 						{
@@ -1971,7 +1970,7 @@ yyreduce:
     break;
 
   case 37:
-#line 524 "pico.y"
+#line 523 "pico.y"
     { 
 					(yyval.einfo).type = (yyvsp[(1) - (3)].einfo).type;
 					(yyval.einfo).desloc = (yyvsp[(1) - (3)].einfo).desloc;
@@ -1981,7 +1980,7 @@ yyreduce:
     break;
 
   case 38:
-#line 531 "pico.y"
+#line 530 "pico.y"
     { 
 					(yyval.einfo).type = (yyvsp[(1) - (2)].einfo).type;
 					(yyval.einfo).desloc = (yyvsp[(1) - (2)].einfo).desloc;
@@ -1992,7 +1991,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 1996 "y.tab.c"
+#line 1995 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2206,7 +2205,7 @@ yyreturn:
 }
 
 
-#line 573 "pico.y"
+#line 572 "pico.y"
 
  /* A partir daqui, insere-se qlqer codigo C necessario.
   */
@@ -2233,7 +2232,7 @@ int main(int argc, char* argv[]) {
 		printf("%i\n", deslocamento - 1);
 		printf("%i\n", abs(desloc_temp) - 1);
 		print_tac(codigo_tac);
-		debug_tac(codigo_tac);
+//		debug_tac(codigo_tac);
 	}
 	return(0);
 
