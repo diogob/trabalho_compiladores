@@ -544,13 +544,11 @@ expr_list2:		expr ',' expr_list2
 				{ 
 					$$.type = $1.type;
 					$$.desloc = $1.desloc;
-					$$.desloc = $1.desloc;
 					$$.stable_e = $1.stable_e;
 				}
 				| expr CLOSE_PAR 
 				{ 
 					$$.type = $1.type;
-					$$.desloc = $1.desloc;
 					$$.desloc = $1.desloc;
 					$$.stable_e = $1.stable_e;
 				}
