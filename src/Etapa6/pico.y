@@ -254,6 +254,8 @@
 		void* codigo;
 		int ndim;
 		void* stable_e;
+		char* labelt;
+		char* labelf;
 	} einfo;
 	char* double_val;
 }
@@ -573,8 +575,17 @@ while_expr:		WHILE OPEN_PAR bool_expr CLOSE_PAR '{' action '}'
 				;
 
 bool_expr:	TRUE 
+					{
+						$$.codigo = gera_codigo(GOTO, 0, 0, 0, $$.labelt, NULL);
+					}
 					| FALSE 
+					{
+						$$.codigo = gera_codigo(GOTO, 0, 0, 0, $$.labelf, NULL);
+					}
 					| OPEN_PAR bool_expr CLOSE_PAR 
+					{
+						$$.codigo = $2.codigo;
+					}
 					| bool_expr AND bool_expr 
 					| bool_expr OR bool_expr 
 					| expr '<' expr 
