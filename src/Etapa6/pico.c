@@ -716,8 +716,8 @@ static const yytype_uint16 yyrline[] =
      342,   349,   350,   351,   352,   355,   360,   373,   377,   381,
      387,   391,   397,   408,   420,   435,   452,   474,   481,   488,
      495,   502,   509,   516,   523,   535,   541,   569,   576,   585,
-     589,   595,   599,   605,   611,   612,   615,   618,   622,   626,
-     630,   631,   632,   633,   634,   635,   636,   637,   638
+     589,   595,   599,   605,   613,   614,   617,   620,   624,   628,
+     632,   633,   634,   635,   636,   637,   638,   639,   640
 };
 #endif
 
@@ -2089,26 +2089,28 @@ yyreduce:
 #line 606 "pico.y"
     {
 						(yyvsp[(3) - (7)].einfo).labelt = gera_rotulo();
-						(yyval.einfo).codigo = concat_tac((yyvsp[(3) - (7)].einfo).codigo, gera_codigo(LABEL, 0, 0, 0, (yyvsp[(3) - (7)].einfo).labelt, NULL));
+						(yyval.einfo).codigo = concat_tac((yyvsp[(3) - (7)].einfo).codigo, 
+												concat_tac(gera_codigo(LABEL, 0, 0, 0, (yyvsp[(3) - (7)].einfo).labelt, NULL),
+													(yyvsp[(6) - (7)].einfo).codigo));
 					}
     break;
 
   case 47:
-#line 619 "pico.y"
+#line 621 "pico.y"
     {
 						(yyval.einfo).codigo = gera_codigo(GOTO, 0, 0, 0, (yyval.einfo).labelt, NULL);
 					}
     break;
 
   case 48:
-#line 623 "pico.y"
+#line 625 "pico.y"
     {
 						(yyval.einfo).codigo = gera_codigo(GOTO, 0, 0, 0, (yyval.einfo).labelf, NULL);
 					}
     break;
 
   case 49:
-#line 627 "pico.y"
+#line 629 "pico.y"
     {
 						(yyval.einfo).codigo = (yyvsp[(2) - (3)].einfo).codigo;
 					}
@@ -2116,7 +2118,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 2120 "y.tab.c"
+#line 2122 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2330,7 +2332,7 @@ yyreturn:
 }
 
 
-#line 643 "pico.y"
+#line 645 "pico.y"
 
  /* A partir daqui, insere-se qlqer codigo C necessario.
   */

@@ -605,7 +605,9 @@ control_instr:	if_expr
 if_expr:		IF OPEN_PAR bool_expr CLOSE_PAR THEN action if_end
 					{
 						$3.labelt = gera_rotulo();
-						$$.codigo = concat_tac($3.codigo, gera_codigo(LABEL, 0, 0, 0, $3.labelt, NULL));
+						$$.codigo = concat_tac($3.codigo, 
+												concat_tac(gera_codigo(LABEL, 0, 0, 0, $3.labelt, NULL),
+													$6.codigo));
 					};
 
 if_end:			ELSE action END 
