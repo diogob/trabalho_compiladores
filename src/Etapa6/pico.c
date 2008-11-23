@@ -715,9 +715,9 @@ static const yytype_uint16 yyrline[] =
        0,   286,   286,   290,   296,   297,   303,   327,   331,   337,
      342,   349,   350,   351,   352,   355,   360,   373,   377,   381,
      387,   391,   397,   408,   420,   435,   452,   474,   481,   488,
-     495,   502,   509,   516,   523,   535,   541,   567,   573,   581,
-     585,   591,   595,   601,   607,   608,   611,   614,   618,   622,
-     626,   627,   628,   629,   630,   631,   632,   633,   634
+     495,   502,   509,   516,   523,   535,   541,   569,   576,   585,
+     589,   595,   599,   605,   611,   612,   615,   618,   622,   626,
+     630,   631,   632,   633,   634,   635,   636,   637,   638
 };
 #endif
 
@@ -1995,7 +1995,7 @@ yyreduce:
 					if((yyvsp[(1) - (1)].einfo).stable_e != NULL)
 					{
 						cod_gerado = gera_codigo(RDEF, (yyvsp[(1) - (1)].einfo).desloc, ((entry_t*) (yyvsp[(1) - (1)].einfo).stable_e)->desloc, (yyvsp[(1) - (1)].einfo).desloc, NULL, NULL);
-						(yyval.einfo).codigo = cod_gerado;
+						(yyval.einfo).codigo = concat_tac((yyvsp[(1) - (1)].einfo).codigo, cod_gerado);
 					}
 					(yyval.einfo).stable_e = NULL;
 				}
@@ -2014,75 +2014,79 @@ yyreduce:
 						if(!strcmp((yyvsp[(1) - (3)].name), "print"))
 						{
 							int var_print = (yyvsp[(3) - (3)].einfo).desloc;
+							tac_list codigo_gerado;
 							if((yyvsp[(3) - (3)].einfo).stable_e != NULL)
 							{
 								var_print = gera_temp((yyvsp[(3) - (3)].einfo).type);
-								(yyval.einfo).codigo = gera_codigo(RDEF, (yyvsp[(3) - (3)].einfo).desloc, ((entry_t*) (yyvsp[(3) - (3)].einfo).stable_e)->desloc, var_print, NULL, NULL);
+								codigo_gerado = gera_codigo(RDEF, (yyvsp[(3) - (3)].einfo).desloc, ((entry_t*) (yyvsp[(3) - (3)].einfo).stable_e)->desloc, var_print, NULL, NULL);
 							}
 							if((yyvsp[(3) - (3)].einfo).type == FLOAT || (yyvsp[(3) - (3)].einfo).type == DOUBLE)
 							{
-								(yyval.einfo).codigo = gera_codigo(FPRINT, var_print, 0, 0, NULL, NULL);
+								codigo_gerado = gera_codigo(FPRINT, var_print, 0, 0, NULL, NULL);
 							}
 							else if((yyvsp[(3) - (3)].einfo).type == INT)
 							{
-								(yyval.einfo).codigo = gera_codigo(PRINT, var_print, 0, 0, NULL, NULL);
+								codigo_gerado = gera_codigo(PRINT, var_print, 0, 0, NULL, NULL);
 							}
 							else
 							{
 								DISPARA_TYPE_MISMATCH()
 							}
+							(yyval.einfo).codigo = concat_tac((yyvsp[(3) - (3)].einfo).codigo, codigo_gerado);
 						}
 					}
     break;
 
   case 37:
-#line 568 "pico.y"
+#line 570 "pico.y"
     { 
 					(yyval.einfo).type = (yyvsp[(1) - (3)].einfo).type;
 					(yyval.einfo).desloc = (yyvsp[(1) - (3)].einfo).desloc;
 					(yyval.einfo).stable_e = (yyvsp[(1) - (3)].einfo).stable_e;
+					(yyval.einfo).codigo = concat_tac((yyvsp[(1) - (3)].einfo).codigo, (yyvsp[(3) - (3)].einfo).codigo);
 				}
     break;
 
   case 38:
-#line 574 "pico.y"
+#line 577 "pico.y"
     { 
 					(yyval.einfo).type = (yyvsp[(1) - (2)].einfo).type;
 					(yyval.einfo).desloc = (yyvsp[(1) - (2)].einfo).desloc;
 					(yyval.einfo).stable_e = (yyvsp[(1) - (2)].einfo).stable_e;
+					(yyval.einfo).codigo = (yyvsp[(1) - (2)].einfo).codigo;
 				}
     break;
 
   case 39:
-#line 582 "pico.y"
-    {
-							(yyval.einfo).codigo = (yyvsp[(1) - (1)].einfo).codigo;
-						}
-    break;
-
-  case 40:
 #line 586 "pico.y"
     {
 							(yyval.einfo).codigo = (yyvsp[(1) - (1)].einfo).codigo;
 						}
     break;
 
-  case 41:
-#line 592 "pico.y"
+  case 40:
+#line 590 "pico.y"
     {
 							(yyval.einfo).codigo = (yyvsp[(1) - (1)].einfo).codigo;
 						}
     break;
 
-  case 42:
+  case 41:
 #line 596 "pico.y"
     {
 							(yyval.einfo).codigo = (yyvsp[(1) - (1)].einfo).codigo;
 						}
     break;
 
+  case 42:
+#line 600 "pico.y"
+    {
+							(yyval.einfo).codigo = (yyvsp[(1) - (1)].einfo).codigo;
+						}
+    break;
+
   case 43:
-#line 602 "pico.y"
+#line 606 "pico.y"
     {
 						(yyvsp[(3) - (7)].einfo).labelt = gera_rotulo();
 						(yyval.einfo).codigo = concat_tac((yyvsp[(3) - (7)].einfo).codigo, gera_codigo(LABEL, 0, 0, 0, (yyvsp[(3) - (7)].einfo).labelt, NULL));
@@ -2090,21 +2094,21 @@ yyreduce:
     break;
 
   case 47:
-#line 615 "pico.y"
+#line 619 "pico.y"
     {
 						(yyval.einfo).codigo = gera_codigo(GOTO, 0, 0, 0, (yyval.einfo).labelt, NULL);
 					}
     break;
 
   case 48:
-#line 619 "pico.y"
+#line 623 "pico.y"
     {
 						(yyval.einfo).codigo = gera_codigo(GOTO, 0, 0, 0, (yyval.einfo).labelf, NULL);
 					}
     break;
 
   case 49:
-#line 623 "pico.y"
+#line 627 "pico.y"
     {
 						(yyval.einfo).codigo = (yyvsp[(2) - (3)].einfo).codigo;
 					}
@@ -2112,7 +2116,7 @@ yyreduce:
 
 
 /* Line 1267 of yacc.c.  */
-#line 2116 "y.tab.c"
+#line 2120 "y.tab.c"
       default: break;
     }
   YY_SYMBOL_PRINT ("-> $$ =", yyr1[yyn], &yyval, &yyloc);
@@ -2326,7 +2330,7 @@ yyreturn:
 }
 
 
-#line 639 "pico.y"
+#line 643 "pico.y"
 
  /* A partir daqui, insere-se qlqer codigo C necessario.
   */

@@ -528,7 +528,7 @@ expr:		expr ADD expr
 					if($1.stable_e != NULL)
 					{
 						cod_gerado = gera_codigo(RDEF, $1.desloc, ((entry_t*) $1.stable_e)->desloc, $1.desloc, NULL, NULL);
-						$$.codigo = cod_gerado;
+						$$.codigo = concat_tac($1.codigo, cod_gerado);
 					}
 					$$.stable_e = NULL;
 				}
@@ -543,23 +543,25 @@ proc_call:		IDF OPEN_PAR expr_list2
 						if(!strcmp($1, "print"))
 						{
 							int var_print = $3.desloc;
+							tac_list codigo_gerado;
 							if($3.stable_e != NULL)
 							{
 								var_print = gera_temp($3.type);
-								$$.codigo = gera_codigo(RDEF, $3.desloc, ((entry_t*) $3.stable_e)->desloc, var_print, NULL, NULL);
+								codigo_gerado = gera_codigo(RDEF, $3.desloc, ((entry_t*) $3.stable_e)->desloc, var_print, NULL, NULL);
 							}
 							if($3.type == FLOAT || $3.type == DOUBLE)
 							{
-								$$.codigo = gera_codigo(FPRINT, var_print, 0, 0, NULL, NULL);
+								codigo_gerado = gera_codigo(FPRINT, var_print, 0, 0, NULL, NULL);
 							}
 							else if($3.type == INT)
 							{
-								$$.codigo = gera_codigo(PRINT, var_print, 0, 0, NULL, NULL);
+								codigo_gerado = gera_codigo(PRINT, var_print, 0, 0, NULL, NULL);
 							}
 							else
 							{
 								DISPARA_TYPE_MISMATCH()
 							}
+							$$.codigo = concat_tac($3.codigo, codigo_gerado);
 						}
 					}
 					;
@@ -569,15 +571,17 @@ expr_list2:		expr ',' expr_list2
 					$$.type = $1.type;
 					$$.desloc = $1.desloc;
 					$$.stable_e = $1.stable_e;
+					$$.codigo = concat_tac($1.codigo, $3.codigo);
 				}
 				| expr CLOSE_PAR 
 				{ 
 					$$.type = $1.type;
 					$$.desloc = $1.desloc;
 					$$.stable_e = $1.stable_e;
+					$$.codigo = $1.codigo;
 				}
 				;
-			
+
 simple_enun:	expr
 						{
 							$$.codigo = $1.codigo;
