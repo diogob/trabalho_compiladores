@@ -271,6 +271,8 @@
 %type<einfo> expr_list
 %type<einfo> expr_list2
 %type<einfo> bool_expr
+%type<einfo> proc_call
+%type<einfo> action
 %%
 
 /* area de definicao de gramatica */
@@ -514,6 +516,9 @@ expr:		expr ADD expr
 					$$.stable_e = NULL;
 				}
 				| proc_call
+				{
+					$$.codigo = $1.codigo;
+				}
 				;
 
 proc_call:		IDF OPEN_PAR expr_list2
@@ -524,15 +529,15 @@ proc_call:		IDF OPEN_PAR expr_list2
 							if($3.stable_e != NULL)
 							{
 								var_print = gera_temp($3.type);
-								codigo_tac = concat_tac(codigo_tac, gera_codigo(RDEF, $3.desloc, ((entry_t*) $3.stable_e)->desloc, var_print, NULL, NULL));
+								$$.codigo = gera_codigo(RDEF, $3.desloc, ((entry_t*) $3.stable_e)->desloc, var_print, NULL, NULL);
 							}
 							if($3.type == FLOAT || $3.type == DOUBLE)
 							{
-								codigo_tac = concat_tac(codigo_tac, gera_codigo(FPRINT, var_print, 0, 0, NULL, NULL));
+								$$.codigo = gera_codigo(FPRINT, var_print, 0, 0, NULL, NULL);
 							}
 							else if($3.type == INT)
 							{
-								codigo_tac = concat_tac(codigo_tac, gera_codigo(PRINT, var_print, 0, 0, NULL, NULL));
+								$$.codigo = gera_codigo(PRINT, var_print, 0, 0, NULL, NULL);
 							}
 							else
 							{
@@ -565,7 +570,10 @@ control_instr:	if_expr
 				;
 				
 if_expr:		IF OPEN_PAR bool_expr CLOSE_PAR THEN action if_end
-				;
+					{
+						$3.labelt = gera_rotulo();
+						codigo_tac = concat_tac(codigo_tac, concat_tac($3.codigo, gera_codigo(LABEL, 0, 0, 0, $3.labelt, NULL)));
+					};
 
 if_end:			ELSE action END 
 					| END
