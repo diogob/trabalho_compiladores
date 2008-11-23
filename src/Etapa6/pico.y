@@ -273,12 +273,24 @@
 %type<einfo> bool_expr
 %type<einfo> proc_call
 %type<einfo> action
+%type<einfo> attr
+%type<einfo> command
+%type<einfo> simple_enun
+%type<einfo> control_instr
+%type<einfo> if_expr
+%type<einfo> while_expr
 %%
 
 /* area de definicao de gramatica */
 
 code:			decls action 
+					{
+						codigo_tac = $2.codigo;
+					}
 					| action
+					{
+						codigo_tac = $1.codigo;
+					}
 				;
 
 decls: 			decl 
@@ -306,18 +318,12 @@ decl:			ident types {
 								
 									if($2.extra != NULL)
 									{
-	/*
-										printf("==== Inicio de decl de array. Dimensoes: %03i =====\n", count_dim((stack) $2.extra));
-										print_array_data((stack) $2.extra);
-										printf("=================== Fim de array ==================\n");
-	*/
 										idf->extra = $2.extra;
 									}
 									insert(&stable, idf);
-//									printf("Decl da var %s tipo: %i tamanho: %i desloc: %i el: %i\n", id, $2.type, idf->size, idf->desloc, $2.size);
 								}
 							}
-		
+
 ident:			IDF ',' ident
 				{
 					push(&idents, $1);
@@ -365,12 +371,27 @@ type_array:		INT_LIT ':' INT_LIT ',' type_array
 			
 /*----Actions----*/			
 action:			command 
-					| command ';' action 
-					| simple_enun action 
+					{
+						$$.codigo = $1.codigo;
+					}
+					| command ';' action
+					{
+						$$.codigo = concat_tac($1.codigo, $3.codigo);
+					}
+					| simple_enun action
+					{
+						$$.codigo = concat_tac($1.codigo, $2.codigo);
+					}
 				;
 		
 command:		attr 
+						{
+							$$.codigo = $1.codigo;
+						}
 						| simple_enun
+						{
+							$$.codigo = $1.codigo;
+						}
 				;
 		
 attr:			lvalue '=' expr
@@ -380,7 +401,7 @@ attr:			lvalue '=' expr
 						cod_gerado = gera_codigo(0, $3.desloc, 0, $1.desloc, $3.literal, NULL);
 					else
 						cod_gerado = gera_codigo(LDEF, $1.desloc, $3.desloc, ((entry_t*) $1.stable_e)->desloc, NULL, $3.literal);
-					codigo_tac = concat_tac(codigo_tac, concat_tac($3.codigo, cod_gerado));
+					$$.codigo = concat_tac($1.codigo, concat_tac($3.codigo, cod_gerado));
 				}
 				;
 
@@ -405,10 +426,9 @@ lvalue:		IDF
 					$$.type = $1.type;
 					$$.stable_e = $1.stable_e;
 					sprintf(num_w, "%i", get_size(((entry_t*) $1.stable_e)->type));
-//					printf("Tipo do expr_list: %i tamanho: %s desloc: %i desloc do ar:%i\n", $1.type, num_w, $1.desloc, ((entry_t*) $1.stable_e)->desloc);
-					codigo_tac = concat_tac(codigo_tac,                                               
-															concat_tac(gera_codigo(MUL, $1.desloc, 0, tmp, $1.literal, num_w), 
-																				gera_codigo(ADD, ((entry_t*) $1.stable_e)->desloc, tmp, $$.desloc, $1.literal, NULL)));
+					$$.codigo = concat_tac($1.codigo,
+											concat_tac(gera_codigo(MUL, $1.desloc, 0, tmp, $1.literal, num_w), 
+												gera_codigo(ADD, ((entry_t*) $1.stable_e)->desloc, tmp, $$.desloc, $1.literal, NULL)));
 				}
 				;
 		
@@ -418,11 +438,9 @@ expr_list:		expr_list ',' expr
 						int dim = $1.ndim + 1;
 						char* num = (char*) malloc(sizeof(char) * 6);
 						sprintf(num, "%i", len_dim((stack) ((entry_t*) $1.stable_e)->extra, dim));
-//						printf("lendim: %s dim: %i desloc: %i lit:%s\n", num, dim, $1.desloc, $1.literal);
-						codigo_tac = concat_tac(codigo_tac, 
-											concat_tac($3.codigo,
+						$$.codigo = concat_tac($3.codigo,
 											concat_tac(gera_codigo(MUL, $1.desloc, 0, tmp, $1.literal, num),
-																	gera_codigo(ADD, tmp, $3.desloc, tmp, NULL, $3.literal))));
+																	gera_codigo(ADD, tmp, $3.desloc, tmp, NULL, $3.literal)));
 						$$.stable_e = $1.stable_e;
 						$$.desloc = tmp;
 						$$.ndim = dim;
@@ -440,7 +458,6 @@ expr_list:		expr_list ',' expr
 						{
 							DISPARA_UNDEFINED_SYMBOL($1)
 						}
-//						printf("ARRAY: %s\n", $1);
 						$$.stable_e = (void*) idf;
 						$$.desloc = $3.desloc;
 						$$.literal = $3.literal;
@@ -450,7 +467,7 @@ expr_list:		expr_list ',' expr
 						{
 							DISPARA_TYPE_MISMATCH()
 						}
-						codigo_tac = concat_tac(codigo_tac, $3.codigo);
+						$$.codigo = $3.codigo;
 					}
 					;
 			
@@ -511,7 +528,7 @@ expr:		expr ADD expr
 					if($1.stable_e != NULL)
 					{
 						cod_gerado = gera_codigo(RDEF, $1.desloc, ((entry_t*) $1.stable_e)->desloc, $1.desloc, NULL, NULL);
-						codigo_tac = concat_tac(codigo_tac, cod_gerado);
+						$$.codigo = cod_gerado;
 					}
 					$$.stable_e = NULL;
 				}
@@ -561,18 +578,30 @@ expr_list2:		expr ',' expr_list2
 				}
 				;
 			
-simple_enun:	expr 
+simple_enun:	expr
+						{
+							$$.codigo = $1.codigo;
+						}
 						| control_instr
+						{
+							$$.codigo = $1.codigo;
+						}
 				;
 				
 control_instr:	if_expr 
+						{
+							$$.codigo = $1.codigo;
+						}
 						| while_expr
+						{
+							$$.codigo = $1.codigo;
+						}
 				;
 				
 if_expr:		IF OPEN_PAR bool_expr CLOSE_PAR THEN action if_end
 					{
 						$3.labelt = gera_rotulo();
-						codigo_tac = concat_tac(codigo_tac, concat_tac($3.codigo, gera_codigo(LABEL, 0, 0, 0, $3.labelt, NULL)));
+						$$.codigo = concat_tac($3.codigo, gera_codigo(LABEL, 0, 0, 0, $3.labelt, NULL));
 					};
 
 if_end:			ELSE action END 
