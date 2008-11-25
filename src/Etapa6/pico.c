@@ -2460,11 +2460,40 @@ yyreturn:
   */
 #include "lex.yy.c"   /* Para poder usar o scanner */
 
+/* Definicao de constantes */
+#define BUFFSIZE 256
+#define EXTENSAO ".pico"
+
 char* progname;
 int lineno;
 int yydebug=0;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[]) 
+{
+	int i;
+	char destino[BUFFSIZE], origem[BUFFSIZE];
+	for(i = 1; i < argc; i++)
+	{
+		/* 
+		Se tiver uma opcao -o e um parametro logo em seguida pegamos como nome do arquivo de saida
+		Redirecionamos a stdout pata esse arquivo
+		*/
+		if(!strcmp(argv[i], "-o") && argc >= (++i))
+		{
+			strncpy(destino, argv[i], BUFFSIZE);
+			freopen(destino, "w", stdout);
+		}
+		else if(!strcmp( &argv[i][strlen(argv[i])-strlen(EXTENSAO)], EXTENSAO ))
+		{
+			strncpy(origem, argv[i], BUFFSIZE);
+			freopen(origem, "r", stdin);
+		}
+		else
+		{
+			fprintf(stderr, "Uso: pico -o <arquivo_de_saida> <arquivo_de_entrada.pico>\n\nVerifique se os parâmetros estão corretos e se o arquivo de entrada tem a extensão \".pico\"\n");
+			exit(-1);
+		}
+	}
 	progname = argv[0];
 
 	init_table(&stable);
@@ -2484,8 +2513,9 @@ int main(int argc, char* argv[]) {
 		print_tac(codigo_tac);
 //		debug_tac(codigo_tac);
 	}
+	fclose(stdout);
+	fclose(stdin);
 	return(0);
-
 }
 
 yyerror(char* s) {

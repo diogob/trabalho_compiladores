@@ -1,0 +1,8 @@
+x:int
+x=0;
+if(1 == 0) then
+	print(x)
+else
+	x=1;
+	print(x)
+end
