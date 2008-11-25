@@ -651,9 +651,9 @@ while_expr:		WHILE OPEN_PAR bool_expr CLOSE_PAR '{' action '}'
 							char* labelt = gera_rotulo();
 							char* labelf = gera_rotulo();
 							$$.codigo = concat_tac(gera_codigo(LABEL, 0, 0, 0, labelt, NULL),
-													concat_tac($6.codigo, 
-														concat_tac($3.codigo,
-															concat_tac(gera_if(EQ, $3.desloc, 0, NULL, (char*) str_zero, labelf),
+													concat_tac($3.codigo,
+														concat_tac(gera_if(EQ, $3.desloc, 0, NULL, (char*) str_zero, labelf),
+															concat_tac($6.codigo,
 																concat_tac(gera_codigo(GOTO, 0, 0, 0, labelt, NULL),
 																	gera_codigo(LABEL, 0, 0, 0, labelf, NULL))))));
 						}

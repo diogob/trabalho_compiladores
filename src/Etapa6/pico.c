@@ -2140,9 +2140,9 @@ yyreduce:
 							char* labelt = gera_rotulo();
 							char* labelf = gera_rotulo();
 							(yyval.einfo).codigo = concat_tac(gera_codigo(LABEL, 0, 0, 0, labelt, NULL),
-													concat_tac((yyvsp[(6) - (7)].einfo).codigo, 
-														concat_tac((yyvsp[(3) - (7)].einfo).codigo,
-															concat_tac(gera_if(EQ, (yyvsp[(3) - (7)].einfo).desloc, 0, NULL, (char*) str_zero, labelf),
+													concat_tac((yyvsp[(3) - (7)].einfo).codigo,
+														concat_tac(gera_if(EQ, (yyvsp[(3) - (7)].einfo).desloc, 0, NULL, (char*) str_zero, labelf),
+															concat_tac((yyvsp[(6) - (7)].einfo).codigo,
 																concat_tac(gera_codigo(GOTO, 0, 0, 0, labelt, NULL),
 																	gera_codigo(LABEL, 0, 0, 0, labelf, NULL))))));
 						}
