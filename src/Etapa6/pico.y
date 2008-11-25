@@ -26,6 +26,8 @@
 	double VAL_DOUBLE;
 	symbol_t stable = NULL;
 	stack idents = NULL;
+	stack labels = NULL;
+
 	/*
 	Comeamos a contar o deslocamento a partir de 1 para SP
 	e a partir de -1 para Rx
@@ -35,6 +37,8 @@
 	int deslocamento = 1;
 	int desloc_temp = -1;
 	int proximo_rotulo = 0;
+	const char* str_zero = "0";
+	const char* str_um = "1";
 	tac_list codigo_tac = NULL;
 
 	char* gera_rotulo()
@@ -76,6 +80,21 @@
 		append(new, taci);
 //		printf("APPEND: %i %i %i %i %s %s\n", taci->op, taci->arg1, taci->arg2, taci->res, taci->literal1, taci->literal2);
 		return new;
+	}
+
+	void gera_codigo_relop( int op, struct einfo* arg1, struct einfo* arg2, struct einfo* res)
+	{
+		char* labelt = gera_rotulo();
+		char* labelf = gera_rotulo();
+		res->desloc = gera_temp(INT);
+		res->codigo = concat_tac(
+									concat_tac(arg1->codigo, arg2->codigo), 
+										concat_tac(gera_if( op, arg1->desloc, arg2->desloc, arg1->literal, arg2->literal, labelt),
+												concat_tac(gera_codigo(0, 0, 0, res->desloc, (char*) str_zero, NULL),
+														concat_tac(gera_codigo(GOTO, 0, 0, 0, labelf, NULL),
+															concat_tac(gera_codigo(LABEL, 0, 0, 0, labelt, NULL),
+																concat_tac(gera_codigo(0, 0, 0, res->desloc, (char*) str_um, NULL), 
+																	gera_codigo(LABEL, 0, 0, 0, labelf, NULL)))))));
 	}
 
 	int gera_codigo_aritmetico( int op, struct einfo* arg1, struct einfo* arg2, struct einfo* res)
@@ -278,6 +297,7 @@
 %type<einfo> simple_enun
 %type<einfo> control_instr
 %type<einfo> if_expr
+%type<einfo> if_end
 %type<einfo> while_expr
 %%
 
@@ -604,40 +624,95 @@ control_instr:	if_expr
 				
 if_expr:		IF OPEN_PAR bool_expr CLOSE_PAR THEN action if_end
 					{
-						$3.labelt = gera_rotulo();
+						char* labelt = gera_rotulo();
 						$$.codigo = concat_tac($3.codigo, 
-												concat_tac(gera_codigo(LABEL, 0, 0, 0, $3.labelt, NULL),
-													$6.codigo));
+												concat_tac(gera_if(EQ, $3.desloc, 0, NULL, (char*) str_zero, labelt), $6.codigo));
+						if($7.codigo != NULL)
+							$$.codigo = concat_tac($$.codigo, gera_codigo(GOTO, 0, 0, 0, $7.labelf, NULL));
+						$$.codigo = concat_tac($$.codigo, gera_codigo(LABEL, 0, 0, 0, labelt, NULL));
+						if($7.codigo != NULL)
+							$$.codigo = concat_tac($$.codigo, $7.codigo);
 					};
 
 if_end:			ELSE action END 
+					{
+						$$.labelf = gera_rotulo();
+						$$.codigo = concat_tac($2.codigo, gera_codigo(LABEL, 0, 0, 0, $$.labelf, NULL));
+					}
 					| END
+					{
+						$$.labelf = NULL;
+						$$.codigo = NULL;
+					}
 				;
 				
 while_expr:		WHILE OPEN_PAR bool_expr CLOSE_PAR '{' action '}'
+						{
+							char* labelt = gera_rotulo();
+							char* labelf = gera_rotulo();
+							$$.codigo = concat_tac(gera_codigo(LABEL, 0, 0, 0, labelt, NULL),
+													concat_tac($6.codigo, 
+														concat_tac($3.codigo,
+															concat_tac(gera_if(EQ, $3.desloc, 0, NULL, (char*) str_zero, labelf),
+																concat_tac(gera_codigo(GOTO, 0, 0, 0, labelt, NULL),
+																	gera_codigo(LABEL, 0, 0, 0, labelf, NULL))))));
+						}
 				;
 
 bool_expr:	TRUE 
 					{
-						$$.codigo = gera_codigo(GOTO, 0, 0, 0, $$.labelt, NULL);
+						$$.desloc = gera_temp(INT);
+						$$.codigo = gera_codigo(0, 0, 0, $$.desloc,(char*) str_um, NULL);
 					}
 					| FALSE 
 					{
-						$$.codigo = gera_codigo(GOTO, 0, 0, 0, $$.labelf, NULL);
+						$$.desloc = gera_temp(INT);
+						$$.codigo = gera_codigo(0, 0, 0, $$.desloc, (char*) str_zero, NULL);
 					}
 					| OPEN_PAR bool_expr CLOSE_PAR 
 					{
 						$$.codigo = $2.codigo;
+						$$.desloc = $2.desloc;
 					}
-					| bool_expr AND bool_expr 
-					| bool_expr OR bool_expr 
+					| bool_expr AND bool_expr
+					{
+						$$.desloc = gera_temp(INT);
+						$$.codigo = concat_tac(concat_tac($1.codigo, $3.codigo), gera_codigo(AND, $1.desloc, $3.desloc, $$.desloc, NULL, NULL));
+					}
+					| bool_expr OR bool_expr
+					{
+						$$.desloc = gera_temp(INT);
+						$$.codigo = concat_tac(concat_tac($1.codigo, $3.codigo), gera_codigo(OR, $1.desloc, $3.desloc, $$.desloc, NULL, NULL));
+					}
 					| expr '<' expr 
-					| expr '>' expr 
-					| expr LE expr 
-					| expr GE expr 
-					| expr EQ expr 
-					| expr NE expr 
+					{
+						gera_codigo_relop('<', &$1, &$3, &$$);
+					}
+					| expr '>' expr
+					{
+						gera_codigo_relop('>', &$1, &$3, &$$);
+					}
+					| expr LE expr
+					{
+						gera_codigo_relop(LE, &$1, &$3, &$$);
+					}
+					| expr GE expr
+					{
+						gera_codigo_relop(GE, &$1, &$3, &$$);
+					}
+					| expr EQ expr
+					{
+						gera_codigo_relop(EQ, &$1, &$3, &$$);
+					}
+					| expr NE expr
+					{
+						gera_codigo_relop(NE, &$1, &$3, &$$);
+					}
 					| NOT bool_expr
+					{
+						$$.desloc = gera_temp(INT);
+						$$.codigo = concat_tac($2.codigo, gera_codigo(NOT, $2.desloc, 0, $$.desloc, NULL, NULL));
+					}
 				;
 
 /*----END Actions----*/
@@ -657,6 +732,7 @@ int main(int argc, char* argv[]) {
 	init_table(&stable);
 	init_list(&codigo_tac);
 	init_stack(&idents);
+	init_stack(&labels);
 
 	if (!yyparse())
 	{

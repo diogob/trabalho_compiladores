@@ -18,6 +18,9 @@ const char* str_error = "UNKNOWN";
 const char* str_rdef = "RDEF";
 const char* str_ldef = "LDEF";
 const char* str_goto = "GOTO";
+const char* str_and = "AND";
+const char* str_or = "OR";
+
 
 const char* str_eq = "==";
 const char* str_ne = "!=";
@@ -148,7 +151,10 @@ const char* get_op(int op)
 			return str_gt;
 		case '<':
 			return str_lt;
-
+		case AND:
+			return str_and;
+		case OR:
+			return str_or;
 		default:
 			return str_error;
 	}
@@ -191,6 +197,10 @@ void print_tac(tac_list l)
 		{
 			printf("%s:\n", lasti->tac->literal1);
 			i--;
+		}
+		else if(lasti->tac->op == NOT)
+		{
+				printf("%03i:   %03i(%s) := NOT %03i(%s)\n", i, abs(lasti->tac->res) - 1, (lasti->tac->res < 0 ? "Rx" : "SP"), abs(lasti->tac->arg1) - 1, (lasti->tac->arg1 < 0 ? "Rx" : "SP"));
 		}
 		else if(lasti->tac->op == '<' || lasti->tac->op == '>' || lasti->tac->op == GE || lasti->tac->op == LE || lasti->tac->op == EQ || lasti->tac->op == NE)
 		{
